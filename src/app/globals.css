@@ -1,0 +1,368 @@
+@import "tailwindcss";
+
+/* ========================================
+   LIQUID GLASS UI - Configuración Base
+   ======================================== */
+
+@layer base {
+  /* Variables CSS para temas */
+:root {
+    /* Tema claro */
+    --glass-bg: rgba(255, 255, 255, 0.5);
+    --glass-border: rgba(255, 255, 255, 0.6);
+    --glass-hover: rgba(255, 255, 255, 0.6);
+    --text-primary: rgb(17, 24, 39);
+    --text-secondary: rgb(75, 85, 99);
+    --text-tertiary: rgb(107, 114, 128);
+    --backdrop-blur: 40px;
+}
+
+.dark {
+    /* Tema oscuro */
+    --glass-bg: rgba(255, 255, 255, 0.1);
+    --glass-border: rgba(255, 255, 255, 0.2);
+    --glass-hover: rgba(255, 255, 255, 0.15);
+    --text-primary: rgb(255, 255, 255);
+    --text-secondary: rgba(255, 255, 255, 0.8);
+    --text-tertiary: rgba(255, 255, 255, 0.6);
+    --backdrop-blur: 40px;
+  }
+
+  /* Configuración global del body */
+body {
+    transition: colors 700ms;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Mejoras de rendimiento para animaciones */
+  * {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+@layer components {
+  /* ========================================
+     COMPONENTES REUTILIZABLES GLASS
+     ======================================== */
+
+  /* Card principal con efecto glass */
+  .glass-card {
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    border-radius: 1.5rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    border: 1px solid;
+    transition: all 300ms;
+    background: var(--glass-bg);
+    border-color: var(--glass-border);
+  }
+
+  .glass-card:hover {
+    background: var(--glass-hover);
+  }
+
+  /* Glass secundario (menos prominente) */
+  .glass-secondary {
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-radius: 1rem;
+    border: 1px solid;
+    transition: all 300ms;
+    background: var(--glass-bg);
+    border-color: var(--glass-border);
+  }
+
+  /* Botones con efecto glass */
+  .glass-button {
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-radius: 9999px;
+    border: 1px solid;
+    transition: all 300ms;
+    background: var(--glass-bg);
+    border-color: var(--glass-border);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Botón redondo específico */
+  .glass-button-round {
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-radius: 50%;
+    border: 1px solid;
+    transition: all 300ms;
+    background: var(--glass-bg);
+    border-color: var(--glass-border);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+
+  .glass-button-round:hover {
+    background: var(--glass-hover);
+    transform: scale(1.1);
+  }
+
+  .glass-button-round:active {
+    transform: scale(0.95);
+  }
+
+  .glass-button:hover {
+    background: var(--glass-hover);
+    transform: scale(1.1);
+  }
+
+  .glass-button:active {
+    transform: scale(0.95);
+  }
+
+  .glass-button-primary {
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    background: rgba(255, 255, 255, 0.25);
+  }
+
+  .dark .glass-button-primary {
+    background: rgba(255, 255, 255, 0.25);
+  }
+
+  /* Input con efecto glass */
+  .glass-input {
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-radius: 0.75rem;
+    border: 1px solid;
+    padding: 0.75rem 1rem;
+    transition: all 300ms;
+    background: var(--glass-bg);
+    border-color: var(--glass-border);
+    color: var(--text-primary);
+  }
+
+  .glass-input:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(196, 181, 253, 1);
+  }
+
+  .glass-input::placeholder {
+    color: var(--text-tertiary);
+  }
+
+  /* Panel con efecto glass */
+  .glass-panel {
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-radius: 1rem;
+    padding: 1rem;
+    border: 1px solid;
+    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--glass-border);
+  }
+
+  .dark .glass-panel {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  /* ========================================
+     FONDOS ANIMADOS
+     ======================================== */
+
+  .animated-background {
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+    transition: all 700ms;
+    background-image: linear-gradient(to bottom right, rgb(88, 28, 135), rgb(30, 58, 138), rgb(49, 46, 129));
+    z-index: 0;
+  }
+
+  .animated-background.light {
+    background-image: linear-gradient(to bottom right, rgb(219, 234, 254), rgb(243, 232, 255), rgb(252, 231, 243));
+  }
+
+  .animated-background.dark {
+    background-image: linear-gradient(to bottom right, rgb(88, 28, 135), rgb(30, 58, 138), rgb(49, 46, 129));
+  }
+
+  /* Orbes de fondo animados */
+  .background-orb {
+    position: absolute;
+    border-radius: 9999px;
+    mix-blend-mode: multiply;
+    filter: blur(96px);
+    animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    z-index: 1;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+  }
+
+  .background-orb-1 {
+    top: 5rem;
+    left: 5rem;
+    width: 24rem;
+    height: 24rem;
+    background-color: rgb(168, 85, 247);
+    opacity: 0.3;
+    transform: none;
+  }
+
+  .background-orb-2 {
+    bottom: 5rem;
+    right: 5rem;
+    width: 24rem;
+    height: 24rem;
+    animation-delay: 1s;
+    background-color: rgb(59, 130, 246);
+    opacity: 0.3;
+    transform: none;
+  }
+
+  .background-orb-3 {
+    top: 50%;
+    left: 50%;
+    width: 24rem;
+    height: 24rem;
+    animation-delay: 2s;
+    background-color: rgb(236, 72, 153);
+    opacity: 0.2;
+  }
+
+  /* Colores de orbes para tema claro */
+  .light .background-orb-1 {
+    background-color: rgb(196, 181, 253);
+    opacity: 0.4;
+  }
+
+  .light .background-orb-2 {
+    background-color: rgb(147, 197, 253);
+    opacity: 0.4;
+  }
+
+  .light .background-orb-3 {
+    background-color: rgb(249, 168, 212);
+    opacity: 0.3;
+  }
+}
+
+@layer utilities {
+  /* ========================================
+     UTILIDADES PERSONALIZADAS
+     ======================================== */
+
+  /* Texto con colores adaptativos */
+  .text-adaptive-primary {
+    color: var(--text-primary);
+  }
+
+  .text-adaptive-secondary {
+    color: var(--text-secondary);
+  }
+
+  .text-adaptive-tertiary {
+    color: var(--text-tertiary);
+  }
+
+  /* Backdrop blur mejorado */
+  .backdrop-blur-strong {
+    backdrop-filter: blur(var(--backdrop-blur));
+    -webkit-backdrop-filter: blur(var(--backdrop-blur));
+  }
+
+  /* Efecto de elevación (hover) */
+  .hover-lift {
+    transition: all 300ms;
+  }
+
+  .hover-lift:hover {
+    transform: scale(1.05);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  }
+
+  /* Animación de aparición suave */
+  .fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Gradientes personalizados */
+  .gradient-purple-pink {
+    background-image: linear-gradient(to bottom right, rgb(196, 181, 253), rgb(249, 168, 212));
+  }
+
+  .dark .gradient-purple-pink {
+    background-image: linear-gradient(to bottom right, rgb(196, 181, 253), rgb(249, 168, 212));
+  }
+
+  .light .gradient-purple-pink {
+    background-image: linear-gradient(to bottom right, rgb(196, 181, 253), rgb(249, 168, 212));
+  }
+
+  /* Scrollbar personalizado */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+  }
+}
+
+/* ========================================
+   MEJORAS DE ACCESIBILIDAD
+   ======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ========================================
+   RESPONSIVE AJUSTES
+   ======================================== */
+
+@media (max-width: 640px) {
+  .glass-card {
+    border-radius: 1rem;
+    padding: 1.5rem;
+  }
+
+  .background-orb {
+    width: 16rem;
+    height: 16rem;
+  }
+}
