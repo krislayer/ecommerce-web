@@ -14,10 +14,18 @@ import type { IOrderRepository } from "../domain/repositories/order.repository";
 import type { Order } from "../domain/entities/order";
 
 export class FirestoreOrderRepository implements IOrderRepository {
+  private checkDb() {
+    if (!db) {
+      throw new Error("Firebase is not initialized");
+    }
+    return db;
+  }
+
   async create(
     order: Omit<Order, "id" | "createdAt" | "updatedAt">
   ): Promise<Order> {
-    const docRef = await addDoc(collection(db, "orders"), {
+    const firestore = this.checkDb();
+    const docRef = await addDoc(collection(firestore, "orders"), {
       ...order,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
@@ -28,7 +36,8 @@ export class FirestoreOrderRepository implements IOrderRepository {
   }
 
   async findById(id: string): Promise<Order | null> {
-    const docRef = doc(db, "orders", id);
+    const firestore = this.checkDb();
+    const docRef = doc(firestore, "orders", id);
     const docSnap = await getDoc(docRef);
 
     if (!docSnap.exists()) return null;
@@ -37,8 +46,9 @@ export class FirestoreOrderRepository implements IOrderRepository {
   }
 
   async findByUserId(userId: string): Promise<Order[]> {
+    const firestore = this.checkDb();
     const q = query(
-      collection(db, "orders"),
+      collection(firestore, "orders"),
       where("userId", "==", userId)
     );
 
@@ -49,8 +59,9 @@ export class FirestoreOrderRepository implements IOrderRepository {
   }
 
   async findByGuestPhone(phone: string): Promise<Order[]> {
+    const firestore = this.checkDb();
     const q = query(
-      collection(db, "orders"),
+      collection(firestore, "orders"),
       where("guestInfo.phone", "==", phone)
     );
 
@@ -61,7 +72,8 @@ export class FirestoreOrderRepository implements IOrderRepository {
   }
 
   async updateStatus(id: string, status: Order["status"]): Promise<void> {
-    const docRef = doc(db, "orders", id);
+    const firestore = this.checkDb();
+    const docRef = doc(firestore, "orders", id);
     await updateDoc(docRef, {
       status,
       updatedAt: serverTimestamp(),

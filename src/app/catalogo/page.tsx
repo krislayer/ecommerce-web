@@ -1,19 +1,384 @@
+"use client";
+
+import { useState, useMemo } from "react";
 import { ProductGrid } from "./product-grid";
-import { sampleProducts } from "@/lib/data/products";
+import { ProductList } from "./product-list";
+import { ProductSearch } from "@/components/product-search";
+import { ProductFilters, FilterState } from "@/components/product-filters";
+import { ProductSort, SortOption } from "@/components/product-sort";
+import { ViewToggle } from "@/components/view-toggle";
+import { Pagination } from "@/components/pagination";
 import { LiquidGlassCard } from "@/components/liquid-glass-card";
+import { CategoryNavigation } from "@/components/category-navigation";
+import { sampleProducts } from "@/lib/data/products";
+import { categories, getCategoriesForIds } from "@/lib/data/categories";
+
+type ViewMode = "grid" | "list";
 
 export default function CatalogoPage() {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [filters, setFilters] = useState<FilterState>({
+    facets: {},
+    priceRange: "all",
+  });
+  const [sortBy, setSortBy] = useState<SortOption>("relevance");
+  const [viewMode, setViewMode] = useState<ViewMode>("grid");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 12; // Mostrar 6 productos por página para demostrar paginación
+
+  // Extraer facetas disponibles de los productos según sus categorías (sin incluir categorías)
+  const availableFacets = useMemo(() => {
+    const allFacets = new Map<string, Set<string>>();
+    
+    // Filtrar productos por categoría seleccionada si hay una
+    let productsToProcess = sampleProducts;
+    if (selectedCategory) {
+      productsToProcess = sampleProducts.filter(product => 
+        product.categoryIds.includes(selectedCategory)
+      );
+    }
+    
+    // Agregar facetas desde las categorías de los productos filtrados
+    productsToProcess.forEach((product) => {
+      product.categoryIds.forEach(catId => {
+        const category = categories.find(c => c.id === catId);
+        if (category) {
+          category.facetDefs.forEach(facet => {
+            if (!allFacets.has(facet.key)) {
+              allFacets.set(facet.key, new Set(facet.values || []));
+            }
+          });
+        }
+      });
+    });
+
+    // Convertir a FacetDefinition con valores únicos
+    return Array.from(allFacets.entries()).map(([key, values]) => ({
+      key,
+      type: "enum" as const,
+      values: Array.from(values),
+      widget: key === "color" ? "swatch" as const : "select" as const,
+    }));
+  }, [selectedCategory]);
+
+  // Mapeo de categorías
+  const categoryMap: Record<string, string[]> = {
+    "ropa-mujer": ["mujer", "femenino", "femenina", "dama", "damas"],
+    "ropa-hombre": ["hombre", "masculino", "masculina", "caballero", "caballeros"],
+    "ropa-niño": ["niño", "niña", "niños", "niñas", "infantil"],
+    "accesorios": ["accesorio", "accesorios", "complemento", "complementos"],
+  };
+
+  const handleRemoveFilter = (type: keyof FilterState, value: string) => {
+    const newFilters = { ...filters };
+    
+    if (type === "facets") {
+      // value es el formato "key:value"
+      const [facetKey, facetValue] = value.split(":");
+      if (facetKey && facetValue) {
+        const newFacets = { ...newFilters.facets };
+        newFacets[facetKey] = newFacets[facetKey]?.filter(v => v !== facetValue) || [];
+        if (newFacets[facetKey].length === 0) {
+          delete newFacets[facetKey];
+        }
+        newFilters.facets = newFacets;
+      }
+    } else if (type === "priceRange") {
+      newFilters.priceRange = "all";
+    }
+    
+    setFilters(newFilters);
+  };
+
+  const handleClearAllFilters = () => {
+    setFilters({
+      facets: {},
+      priceRange: "all",
+    });
+  };
+
+  // Calcular contadores de facetas (cuántos productos coinciden con cada valor)
+  const facetCounts = useMemo(() => {
+    const counts: Record<string, Record<string, number>> = {};
+    
+    // Primero aplicar búsqueda y filtros de precio (pero no facetas específicas)
+    let baseProducts = sampleProducts;
+    
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      baseProducts = baseProducts.filter((product) => {
+        if (product.name.toLowerCase().includes(query)) return true;
+        if (product.description.toLowerCase().includes(query)) return true;
+        
+        const categoryMatches = product.categoryIds.some(catId => {
+          if (catId.toLowerCase().includes(query)) return true;
+          const mappedTerms = categoryMap[catId] || [];
+          return mappedTerms.some(term => term.includes(query));
+        });
+        if (categoryMatches) return true;
+        
+        const attrsMatch = Object.values(product.attrs).some(
+          value => value.toLowerCase().includes(query)
+        );
+        if (attrsMatch) return true;
+        
+        return false;
+      });
+    }
+
+    // Filtrar por precio
+    if (filters.priceRange !== "all") {
+      const [min, max] = filters.priceRange === "1000+" 
+        ? [1000, Infinity]
+        : filters.priceRange.split("-").map(Number);
+      
+      baseProducts = baseProducts.filter(product => 
+        product.price >= min && product.price <= max
+      );
+    }
+
+    // Contar cada faceta
+    availableFacets.forEach(facet => {
+      counts[facet.key] = {};
+      
+      facet.values?.forEach(value => {
+        const count = baseProducts.filter(product => {
+          // Aplicar filtros de otras facetas excepto la actual
+          for (const [otherFacetKey, selectedValues] of Object.entries(filters.facets)) {
+            if (otherFacetKey !== facet.key && selectedValues.length > 0) {
+              if (otherFacetKey === "categoria") {
+                // Para categorías, verificar si el producto pertenece a alguna de las categorías seleccionadas
+                const productCategoryNames = product.categoryIds.map(catId => {
+                  const category = categories.find(c => c.id === catId);
+                  return category?.name;
+                }).filter((name): name is string => Boolean(name));
+                
+                if (!productCategoryNames.some(catName => selectedValues.includes(catName))) {
+                  return false;
+                }
+              } else {
+                // Para otras facetas, usar los atributos del producto
+                const productValue = product.attrs[otherFacetKey];
+                if (!productValue || !selectedValues.includes(productValue)) {
+                  return false;
+                }
+              }
+            }
+          }
+          
+          // Contar si el producto tiene este valor en la faceta actual
+          if (facet.key === "categoria") {
+            // Para categorías, verificar si el producto pertenece a esta categoría
+            return product.categoryIds.some(catId => {
+              const category = categories.find(c => c.id === catId);
+              return category && category.name === value;
+            });
+          }
+          return product.attrs[facet.key] === value;
+        }).length;
+        
+        counts[facet.key][value] = count;
+      });
+    });
+
+    return counts;
+  }, [searchQuery, filters.priceRange, filters.facets, availableFacets]);
+
+  const filteredAndSortedProducts = useMemo(() => {
+    let products = sampleProducts;
+
+    // Aplicar filtro de categoría primero
+    if (selectedCategory) {
+      products = products.filter(product => 
+        product.categoryIds.includes(selectedCategory)
+      );
+    }
+
+    // Aplicar búsqueda
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      products = products.filter((product) => {
+        if (product.name.toLowerCase().includes(query)) return true;
+        if (product.description.toLowerCase().includes(query)) return true;
+        
+        const categoryMatches = product.categoryIds.some(catId => {
+          if (catId.toLowerCase().includes(query)) return true;
+          const mappedTerms = categoryMap[catId] || [];
+          return mappedTerms.some(term => term.includes(query));
+        });
+        if (categoryMatches) return true;
+        
+        const attrsMatch = Object.values(product.attrs).some(
+          value => value.toLowerCase().includes(query)
+        );
+        if (attrsMatch) return true;
+        
+        return false;
+      });
+    }
+
+    // Aplicar filtros de facetas
+    products = products.filter((product) => {
+      // Filtro de precio
+      if (filters.priceRange !== "all") {
+        const [min, max] = filters.priceRange === "1000+" 
+          ? [1000, Infinity]
+          : filters.priceRange.split("-").map(Number);
+        
+        if (product.price < min || product.price > max) {
+          return false;
+        }
+      }
+
+      // Filtros de facetas dinámicas
+      for (const [facetKey, selectedValues] of Object.entries(filters.facets)) {
+        if (selectedValues.length > 0) {
+          if (facetKey === "categoria") {
+            // Para categorías, verificar si el producto pertenece a alguna de las categorías seleccionadas
+            const productCategoryNames = product.categoryIds.map(catId => {
+              const category = categories.find(c => c.id === catId);
+              return category?.name;
+            }).filter((name): name is string => Boolean(name));
+            
+            if (!productCategoryNames.some(catName => selectedValues.includes(catName))) {
+              return false;
+            }
+          } else {
+            // Para otras facetas, usar los atributos del producto
+            const productValue = product.attrs[facetKey];
+            if (!productValue || !selectedValues.includes(productValue)) {
+              return false;
+            }
+          }
+        }
+      }
+
+      return true;
+    });
+
+    // Aplicar ordenamiento
+    const sorted = [...products].sort((a, b) => {
+      switch (sortBy) {
+        case "price-asc":
+          return a.price - b.price;
+        case "price-desc":
+          return b.price - a.price;
+        case "name-asc":
+          return a.name.localeCompare(b.name);
+        case "name-desc":
+          return b.name.localeCompare(a.name);
+        default:
+          return 0;
+      }
+    });
+
+    return sorted;
+  }, [searchQuery, selectedCategory, filters, sortBy]);
+
+  // Paginación
+  const totalPages = Math.ceil(filteredAndSortedProducts.length / itemsPerPage);
+  const paginatedProducts = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return filteredAndSortedProducts.slice(startIndex, endIndex);
+  }, [filteredAndSortedProducts, currentPage, itemsPerPage]);
+
+  // Resetear a página 1 cuando cambian los filtros
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-12 fade-in">
       <LiquidGlassCard className="p-8 mb-8">
         <h1 className="text-4xl sm:text-5xl font-bold mb-2 text-adaptive-primary">
           Catálogo
         </h1>
-        <p className="text-lg text-adaptive-secondary">
-          Descubre nuestra colección de moda y estilo
+        <p className="text-lg text-adaptive-secondary mb-6">
+          Descubre moda, belleza, hogar, tecnología y más. Encuentra todo lo que necesitas en un solo lugar.
         </p>
+        
+        <ProductSearch 
+          onSearch={setSearchQuery}
+          placeholder="Buscar por nombre, descripción o categoría..."
+        />
+        
+        {/* Navegación de categorías */}
+        <div className="mt-4">
+          <CategoryNavigation 
+            selectedCategory={selectedCategory}
+            onCategorySelect={setSelectedCategory}
+          />
+        </div>
       </LiquidGlassCard>
-      <ProductGrid products={sampleProducts} />
+
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-6">
+        <div className="lg:col-span-1">
+          <ProductFilters
+            filters={filters}
+            onFiltersChange={setFilters}
+            availableFacets={availableFacets}
+            facetCounts={facetCounts}
+            onRemoveFilter={handleRemoveFilter}
+          />
+        </div>
+        
+        <div className="lg:col-span-3">
+          {/* Barra de controles: Ordenar + Vista */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+            {/* Contador a la izquierda */}
+            <div className="text-adaptive-secondary text-sm">
+              {(() => {
+                const startItem = (currentPage - 1) * itemsPerPage + 1;
+                const endItem = Math.min(currentPage * itemsPerPage, filteredAndSortedProducts.length);
+                return (
+                  <>
+                    Mostrando <span className="font-semibold text-adaptive-primary">{startItem}-{endItem}</span> de <span className="font-semibold text-adaptive-primary">{filteredAndSortedProducts.length}</span> producto{filteredAndSortedProducts.length !== 1 ? 's' : ''}
+                    {selectedCategory && (
+                      <> en: <span className="font-semibold text-adaptive-primary">{categories.find(c => c.id === selectedCategory)?.name}</span></>
+                    )}
+                    {searchQuery && (
+                      <> para: <span className="font-semibold text-adaptive-primary">"{searchQuery}"</span></>
+                    )}
+                  </>
+                );
+              })()}
+            </div>
+
+            {/* Controles a la derecha */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+              <ProductSort 
+                sortBy={sortBy} 
+                onSortChange={setSortBy}
+              />
+              
+              <ViewToggle viewMode={viewMode} onViewChange={setViewMode} />
+            </div>
+          </div>
+
+          {/* Vista de productos */}
+          {viewMode === "grid" ? (
+            <ProductGrid products={paginatedProducts} />
+          ) : (
+            <ProductList products={paginatedProducts} />
+          )}
+
+          {/* Paginación */}
+          {totalPages > 1 && (
+            <div className="mt-8">
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+                itemsPerPage={itemsPerPage}
+                totalItems={filteredAndSortedProducts.length}
+              />
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

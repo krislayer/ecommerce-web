@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Phone, Mail, MapPin } from "lucide-react";
 
 export function Footer() {
   return (
@@ -18,17 +19,17 @@ export function Footer() {
             <h4 className="font-semibold text-adaptive-primary mb-4">Enlaces</h4>
             <ul className="space-y-2 text-sm text-adaptive-secondary">
               <li>
-                <Link href="/catalogo" className="hover:text-adaptive-primary transition-colors">
+                <Link href="/catalogo" className="hover:text-adaptive-primary hover-link">
                   Catálogo
                 </Link>
               </li>
               <li>
-                <Link href="/about" className="hover:text-adaptive-primary transition-colors">
+                <Link href="/about" className="hover:text-adaptive-primary hover-link">
                   Sobre Nosotros
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="hover:text-adaptive-primary transition-colors">
+                <Link href="/contact" className="hover:text-adaptive-primary hover-link">
                   Contacto
                 </Link>
               </li>
@@ -38,9 +39,18 @@ export function Footer() {
           <div>
             <h4 className="font-semibold text-adaptive-primary mb-4">Contacto</h4>
             <ul className="space-y-2 text-sm text-adaptive-secondary">
-              <li>📱 WhatsApp: +502 5012-3456</li>
-              <li>📧 Email: info@quechulito.com</li>
-              <li>📍 Ciudad de Guatemala</li>
+              <li className="flex items-center gap-2">
+                <Phone className="w-4 h-4" />
+                WhatsApp: +502 5012-3456
+              </li>
+              <li className="flex items-center gap-2">
+                <Mail className="w-4 h-4" />
+                Email: info@quechulito.com
+              </li>
+              <li className="flex items-center gap-2">
+                <MapPin className="w-4 h-4" />
+                Ciudad de Guatemala
+              </li>
             </ul>
           </div>
         </div>

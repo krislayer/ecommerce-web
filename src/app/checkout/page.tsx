@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/store";
 import { LiquidGlassCard } from "@/components/liquid-glass-card";
+import { ShippingService } from "@/lib/services/shipping.service";
+import { Truck } from "lucide-react";
 
 export default function CheckoutPage() {
   const cartItems = useSelector((state: RootState) => state.cart.items);
@@ -19,6 +21,20 @@ export default function CheckoutPage() {
     (sum, item) => sum + item.variant.price * item.quantity,
     0
   );
+
+  // Calcular envío basado en el método seleccionado
+  const getShippingCost = () => {
+    if (formData.shippingMethod === "pickup") {
+      return 0; // Recoger en tienda es gratis
+    }
+    // Para envío local, usar la lógica de envío gratis
+    const shippingCalc = ShippingService.calculateShipping(subtotal);
+    return shippingCalc.shippingCost;
+  };
+
+  const shippingCost = getShippingCost();
+  const total = subtotal + shippingCost;
+  const shippingCalculation = ShippingService.calculateShipping(subtotal);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,7 +54,7 @@ export default function CheckoutPage() {
       )
       .join("\n\n");
 
-    return `🛍️ *Nuevo Pedido*
+    return `🛒 *Nuevo Pedido*
 
 Cliente:
 ${formData.name}
@@ -49,14 +65,14 @@ ${formData.email}
 ${itemsText}
 
 *Resumen:*
-Subtotal: Q${subtotal.toFixed(2)}
+Subtotal: ${ShippingService.formatPrice(subtotal)}
 Descuento: Q0.00
-Envío: Q${formData.shippingMethod === "pickup" ? "0.00" : "50.00"}
-*Total: Q${(subtotal + (formData.shippingMethod === "local" ? 50 : 0)).toFixed(2)}*
+Envío: ${formData.shippingMethod === "pickup" ? "Gratis (Recoger en tienda)" : shippingCalculation.isFreeShipping ? "Gratis (Envío gratis por compra mayor a Q300)" : ShippingService.formatPrice(shippingCost)}
+*Total: ${ShippingService.formatPrice(total)}*
 
 *Método de envío:* ${formData.shippingMethod === "pickup" ? "Recoger en tienda" : `Envío local${formData.address ? ` - ${formData.address}` : ""}`}
 
-Gracias por tu compra en ¡Qué Chulito! 💖`;
+Gracias por tu compra en ¡Qué Chulito! ❤️`;
   };
 
   return (
@@ -149,11 +165,23 @@ Gracias por tu compra en ¡Qué Chulito! 💖`;
                   className="w-5 h-5"
                 />
                 <div className="flex-1">
-                  <div className="font-medium text-adaptive-primary">
+                  <div className="font-medium text-adaptive-primary flex items-center gap-2">
+                    <Truck className="w-4 h-4" />
                     Envío local
                   </div>
                   <div className="text-sm text-adaptive-secondary">
-                    Q50.00 GTQ
+                    {shippingCalculation.isFreeShipping ? (
+                      <span className="text-green-400 font-medium">Gratis (Compra mayor a Q300)</span>
+                    ) : (
+                      <>
+                        {ShippingService.formatPrice(shippingCalculation.shippingCost)} GTQ
+                        {shippingCalculation.remainingForFreeShipping && (
+                          <div className="text-xs text-green-400 mt-1">
+                            Agrega {ShippingService.formatPrice(shippingCalculation.remainingForFreeShipping)} más para envío gratis
+                          </div>
+                        )}
+                      </>
+                    )}
                   </div>
                 </div>
               </label>
@@ -185,20 +213,40 @@ Gracias por tu compra en ¡Qué Chulito! 💖`;
             <div className="space-y-2">
               <div className="flex justify-between text-adaptive-secondary">
                 <span>Subtotal</span>
-                <span>Q{subtotal.toFixed(2)}</span>
+                <span>{ShippingService.formatPrice(subtotal)}</span>
               </div>
               <div className="flex justify-between text-adaptive-secondary">
                 <span>Descuento</span>
                 <span>Q0.00</span>
               </div>
               <div className="flex justify-between text-adaptive-secondary">
-                <span>Envío</span>
-                <span>Q{formData.shippingMethod === "pickup" ? "0.00" : "50.00"}</span>
+                <span className="flex items-center gap-1">
+                  <Truck className="w-4 h-4" />
+                  Envío
+                </span>
+                <span className={shippingCost === 0 ? "text-green-400" : ""}>
+                  {formData.shippingMethod === "pickup" 
+                    ? "Gratis (Recoger en tienda)" 
+                    : shippingCalculation.isFreeShipping 
+                      ? "Gratis (Compra mayor a Q300)" 
+                      : ShippingService.formatPrice(shippingCost)
+                  }
+                </span>
               </div>
+              
+              {/* Información adicional de envío gratis */}
+              {formData.shippingMethod === "local" && !shippingCalculation.isFreeShipping && shippingCalculation.remainingForFreeShipping && (
+                <div className="glass-secondary p-2 rounded text-xs text-adaptive-primary">
+                  <span className="text-green-400 font-medium">
+                    Agrega {ShippingService.formatPrice(shippingCalculation.remainingForFreeShipping)} más para envío gratis
+                  </span>
+                </div>
+              )}
+              
               <div className="border-t border-white/20 pt-2">
                 <div className="flex justify-between text-lg font-bold text-adaptive-primary">
                   <span>Total</span>
-                  <span>Q{(subtotal + (formData.shippingMethod === "local" ? 50 : 0)).toFixed(2)}</span>
+                  <span>{ShippingService.formatPrice(total)}</span>
                 </div>
               </div>
             </div>

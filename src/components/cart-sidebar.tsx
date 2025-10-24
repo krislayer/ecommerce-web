@@ -2,18 +2,22 @@
 
 import Link from "next/link";
 import { useSelector, useDispatch } from "react-redux";
+import { X, Trash2, Truck } from "lucide-react";
 import { setCartOpen, removeItem, updateQuantity } from "@/store/slice/cartSlice";
 import type { RootState } from "@/store";
 import Image from "next/image";
+import { ShippingService } from "@/lib/services/shipping.service";
 
 export function CartSidebar() {
   const { items, isOpen } = useSelector((state: RootState) => state.cart);
   const dispatch = useDispatch();
 
-  const total = items.reduce(
+  const subtotal = items.reduce(
     (sum, item) => sum + item.variant.price * item.quantity,
     0
   );
+
+  const shippingCalculation = ShippingService.calculateShipping(subtotal);
 
   if (!isOpen) return null;
 
@@ -34,7 +38,7 @@ export function CartSidebar() {
             className="text-adaptive-tertiary hover:text-adaptive-primary transition-colors"
             aria-label="Cerrar carrito"
           >
-            ✕
+            <X className="w-6 h-6" />
           </button>
         </div>
 
@@ -100,7 +104,7 @@ export function CartSidebar() {
                   className="glass-button w-8 h-8 flex items-center justify-center"
                   aria-label="Eliminar item"
                 >
-                  <span className="text-adaptive-primary">🗑️</span>
+                  <Trash2 className="w-4 h-4" />
                 </button>
               </div>
             ))
@@ -109,10 +113,44 @@ export function CartSidebar() {
 
         {items.length > 0 && (
           <div className="border-t border-white/20 p-4 space-y-4">
-            <div className="flex justify-between text-lg font-bold text-adaptive-primary">
-              <span>Total:</span>
-              <span>Q{total.toFixed(2)}</span>
+            {/* Desglose de precios */}
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm text-adaptive-secondary">
+                <span>Subtotal:</span>
+                <span>{ShippingService.formatPrice(shippingCalculation.subtotal)}</span>
+              </div>
+              
+              <div className="flex justify-between text-sm text-adaptive-secondary">
+                <span className="flex items-center gap-1">
+                  <Truck className="w-4 h-4" />
+                  Envío:
+                </span>
+                <span className={shippingCalculation.isFreeShipping ? "text-green-400" : ""}>
+                  {shippingCalculation.isFreeShipping ? "Gratis" : ShippingService.formatPrice(shippingCalculation.shippingCost)}
+                </span>
+              </div>
+              
+              {/* Información de envío gratis */}
+              {!shippingCalculation.isFreeShipping && shippingCalculation.remainingForFreeShipping && (
+                <div className="glass-secondary p-2 rounded text-xs text-adaptive-primary">
+                  <span className="text-green-400 font-medium">
+                    Agrega {ShippingService.formatPrice(shippingCalculation.remainingForFreeShipping)} más para envío gratis
+                  </span>
+                </div>
+              )}
+              
+              {shippingCalculation.isFreeShipping && (
+                <div className="glass-secondary p-2 rounded text-xs text-green-400 font-medium">
+                  ¡Felicitaciones! Tienes envío gratis
+                </div>
+              )}
             </div>
+
+            <div className="flex justify-between text-lg font-bold text-adaptive-primary border-t border-white/20 pt-2">
+              <span>Total:</span>
+              <span>{ShippingService.formatPrice(shippingCalculation.total)}</span>
+            </div>
+            
             <Link
               href="/checkout"
               className="block w-full glass-button-primary py-3 px-6 text-center"

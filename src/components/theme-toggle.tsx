@@ -1,5 +1,6 @@
 "use client";
 
+import { Sun, Moon } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 
@@ -18,7 +19,11 @@ export function ThemeToggle() {
       onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
       className="glass-button-round"
     >
-      <span className="text-adaptive-primary">{theme === "dark" ? "☀️" : "🌙"}</span>
+      {theme === "dark" ? (
+        <Sun className="w-5 h-5 text-adaptive-primary" />
+      ) : (
+        <Moon className="w-5 h-5 text-adaptive-primary" />
+      )}
     </button>
   );
 }

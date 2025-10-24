@@ -17,7 +17,7 @@ export class WhatsAppMessageFactory implements IWhatsAppMessageFactory {
       ? `Cliente registrado`
       : `Cliente:\n${order.guestInfo.name}\n${order.guestInfo.phone}${order.guestInfo.email ? `\n${order.guestInfo.email}` : ""}`;
 
-    return `🛍️ *Nuevo Pedido #${order.id.slice(-6)}*
+    return `🛒 *Nuevo Pedido #${order.id.slice(-6)}*
 
 ${clientInfo}
 
@@ -32,7 +32,7 @@ Envío: Q${order.shipping.toFixed(2)}
 
 *Método de envío:* ${order.shippingMethod.type === "pickup" ? "Recoger en tienda" : `Envío local${order.shippingMethod.address ? ` - ${order.shippingMethod.address}` : ""}`}
 
-Gracias por tu compra en ¡Qué Chulito! 💖`;
+Gracias por tu compra en ¡Qué Chulito! ❤️`;
   }
 }
 

@@ -1,3 +1,4 @@
+import { Phone, Mail, MapPin } from "lucide-react";
 import { LiquidGlassCard } from "@/components/liquid-glass-card";
 
 export default function AboutPage() {
@@ -30,9 +31,18 @@ export default function AboutPage() {
               Contáctanos
             </h2>
             <ul className="space-y-2 text-adaptive-secondary">
-              <li>📱 WhatsApp: +502 5012-3456</li>
-              <li>📧 Email: info@quechulito.com</li>
-              <li>📍 Ciudad de Guatemala, Zona 10</li>
+              <li className="flex items-center gap-2">
+                <Phone className="w-4 h-4" />
+                WhatsApp: +502 5012-3456
+              </li>
+              <li className="flex items-center gap-2">
+                <Mail className="w-4 h-4" />
+                Email: info@quechulito.com
+              </li>
+              <li className="flex items-center gap-2">
+                <MapPin className="w-4 h-4" />
+                Ciudad de Guatemala, Zona 10
+              </li>
             </ul>
           </div>
         </div>

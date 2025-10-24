@@ -12,8 +12,16 @@ import type { IUserRepository } from "../domain/repositories/user.repository";
 import type { AppUser, Address } from "../domain/entities/user";
 
 export class FirestoreUserRepository implements IUserRepository {
+  private checkDb() {
+    if (!db) {
+      throw new Error("Firebase is not initialized");
+    }
+    return db;
+  }
+
   async findById(uid: string): Promise<AppUser | null> {
-    const docRef = doc(db, "users", uid);
+    const firestore = this.checkDb();
+    const docRef = doc(firestore, "users", uid);
     const docSnap = await getDoc(docRef);
 
     if (!docSnap.exists()) return null;
@@ -22,7 +30,8 @@ export class FirestoreUserRepository implements IUserRepository {
   }
 
   async create(user: Omit<AppUser, "createdAt" | "updatedAt">): Promise<AppUser> {
-    const docRef = doc(db, "users", user.uid);
+    const firestore = this.checkDb();
+    const docRef = doc(firestore, "users", user.uid);
     await setDoc(docRef, {
       ...user,
       createdAt: serverTimestamp(),
@@ -33,7 +42,8 @@ export class FirestoreUserRepository implements IUserRepository {
   }
 
   async update(uid: string, data: Partial<AppUser>): Promise<void> {
-    const docRef = doc(db, "users", uid);
+    const firestore = this.checkDb();
+    const docRef = doc(firestore, "users", uid);
     await updateDoc(docRef, {
       ...data,
       updatedAt: serverTimestamp(),
@@ -41,7 +51,8 @@ export class FirestoreUserRepository implements IUserRepository {
   }
 
   async addToWishlist(uid: string, productId: string): Promise<void> {
-    const docRef = doc(db, "users", uid);
+    const firestore = this.checkDb();
+    const docRef = doc(firestore, "users", uid);
     await updateDoc(docRef, {
       wishlist: arrayUnion(productId),
       updatedAt: serverTimestamp(),
@@ -49,7 +60,8 @@ export class FirestoreUserRepository implements IUserRepository {
   }
 
   async removeFromWishlist(uid: string, productId: string): Promise<void> {
-    const docRef = doc(db, "users", uid);
+    const firestore = this.checkDb();
+    const docRef = doc(firestore, "users", uid);
     await updateDoc(docRef, {
       wishlist: arrayRemove(productId),
       updatedAt: serverTimestamp(),
@@ -57,7 +69,8 @@ export class FirestoreUserRepository implements IUserRepository {
   }
 
   async addAddress(uid: string, address: Address): Promise<void> {
-    const docRef = doc(db, "users", uid);
+    const firestore = this.checkDb();
+    const docRef = doc(firestore, "users", uid);
     const user = await this.findById(uid);
     
     if (!user) throw new Error("User not found");
@@ -76,7 +89,8 @@ export class FirestoreUserRepository implements IUserRepository {
     addressId: string,
     address: Partial<Address>
   ): Promise<void> {
-    const docRef = doc(db, "users", uid);
+    const firestore = this.checkDb();
+    const docRef = doc(firestore, "users", uid);
     const user = await this.findById(uid);
 
     if (!user) throw new Error("User not found");

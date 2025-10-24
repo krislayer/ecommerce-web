@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useSelector, useDispatch } from "react-redux";
+import { ShoppingCart } from "lucide-react";
 import { toggleCart } from "@/store/slice/cartSlice";
 import { ThemeToggle } from "./theme-toggle";
 import { AuthButton } from "./auth-button";
@@ -30,7 +31,7 @@ export function Navbar() {
               onClick={() => dispatch(toggleCart())}
               className="glass-button-round relative"
             >
-              <span className="text-adaptive-primary">🛒</span>
+              <ShoppingCart className="w-6 h-6 text-adaptive-primary" />
               {itemCount > 0 && (
                 <span className="absolute -top-1 -right-1 glass-button-round w-5 h-5 flex items-center justify-center text-xs shadow-lg">
                   {itemCount}
