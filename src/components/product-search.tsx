@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Search, X } from "lucide-react";
+import { AdvancedLiquidGlassCard } from "./advanced-liquid-glass-card";
 import { useDebounce } from "@/lib/hooks/useDebounce";
 
 interface ProductSearchProps {
@@ -37,7 +38,7 @@ export function ProductSearch({ onSearch, placeholder = "Buscar productos..." }:
         <div className="relative flex-1 glass-secondary">
           <div className="flex items-center gap-2 px-4 py-3">
             {/* Icono de búsqueda a la izquierda */}
-            <Search className="w-5 h-5 text-adaptive-tertiary shrink-0" />
+            <Search className="w-5 h-5 text-white/70 shrink-0" />
             
             {/* Input */}
             <input
@@ -45,7 +46,7 @@ export function ProductSearch({ onSearch, placeholder = "Buscar productos..." }:
               value={searchQuery}
               onChange={handleChange}
               placeholder={placeholder}
-              className="flex-1 bg-transparent border-none outline-none text-adaptive-primary placeholder:text-adaptive-tertiary text-sm sm:text-base"
+              className="flex-1 bg-transparent border-none outline-none text-white placeholder:text-white/70 text-sm sm:text-base"
             />
             
             {/* Botón limpiar */}
@@ -53,7 +54,7 @@ export function ProductSearch({ onSearch, placeholder = "Buscar productos..." }:
               <button
                 type="button"
                 onClick={handleClear}
-                className="shrink-0 text-adaptive-tertiary hover:text-adaptive-primary transition-colors"
+                className="shrink-0 text-white/70 hover:text-white transition-colors"
                 aria-label="Limpiar búsqueda"
               >
                 <X className="w-5 h-5" />
@@ -67,7 +68,7 @@ export function ProductSearch({ onSearch, placeholder = "Buscar productos..." }:
           type="submit"
           className="glass-button px-6 py-3 font-semibold text-sm sm:text-base shrink-0 hover-button"
         >
-          Buscar
+          <span className="relative z-10">Buscar</span>
         </button>
       </div>
     </form>

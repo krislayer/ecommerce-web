@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ChevronDown, X } from "lucide-react";
+import { AdvancedLiquidGlassCard } from "./advanced-liquid-glass-card";
 import type { FacetDefinition } from "@/lib/domain/entities/product";
 
 export interface FilterState {
@@ -108,13 +109,13 @@ export function ProductFilters({ filters, onFiltersChange, availableFacets, face
   }
 
   return (
-    <div className="glass-card p-4 sm:p-6">
+    <AdvancedLiquidGlassCard variant="hero">
       {/* Header */}
       <div className="flex items-center justify-between mb-4 pb-3 border-b border-white/20">
         <div className="flex items-center gap-2">
-          <h2 className="text-xl font-bold text-adaptive-primary">Filtros</h2>
+          <h2 className="text-xl font-bold text-white">Filtros</h2>
           {hasActiveFilters && (
-            <span className="glass-secondary text-adaptive-primary text-xs px-2 py-1 rounded-full font-medium">
+            <span className="glass-secondary text-white text-xs px-2 py-1 rounded-full font-medium">
               {activeFilters.length}
             </span>
           )}
@@ -122,7 +123,7 @@ export function ProductFilters({ filters, onFiltersChange, availableFacets, face
         {hasActiveFilters && (
               <button
                 onClick={clearFilters} 
-                className="text-sm text-adaptive-secondary hover:underline font-medium hover-link"
+                className="text-sm text-white/90 hover:underline font-medium hover-link"
               >
             Limpiar todo
           </button>
@@ -137,7 +138,7 @@ export function ProductFilters({ filters, onFiltersChange, availableFacets, face
               <button
                 key={index}
                 onClick={() => onRemoveFilter(filter.type, filter.value)}
-                className="flex items-center gap-1 px-2.5 py-1 glass-secondary text-adaptive-primary rounded-full text-xs hover-button"
+                className="flex items-center gap-1 px-2.5 py-1 glass-secondary text-white rounded-full text-xs hover-button"
               >
                 <span>{filter.label}</span>
                 <span className="text-xs ml-0.5">
@@ -156,11 +157,11 @@ export function ProductFilters({ filters, onFiltersChange, availableFacets, face
             onClick={() => toggleSection("precio")}
             className="w-full flex items-center justify-between py-2 hover:bg-white/5 rounded-lg px-2 transition-colors"
           >
-            <h3 className="font-semibold text-adaptive-primary text-sm uppercase tracking-wide">
+            <h3 className="font-semibold text-white text-sm uppercase tracking-wide">
               Precio
             </h3>
             <ChevronDown
-              className={`w-5 h-5 text-adaptive-secondary transition-transform ${
+              className={`w-5 h-5 text-white/90 transition-transform ${
                 expandedSections.precio ? "rotate-180" : ""
               }`}
             />
@@ -179,9 +180,9 @@ export function ProductFilters({ filters, onFiltersChange, availableFacets, face
                       name="priceRange"
                       checked={filters.priceRange === range.value}
                       onChange={() => handlePriceChange(range.value)}
-                      className="w-4 h-4 border-2 border-white/30 glass-secondary text-adaptive-primary focus:ring-white/20 focus:ring-2 cursor-pointer"
+                      className="w-4 h-4 border-2 border-white/30 glass-secondary text-white focus:ring-white/20 focus:ring-2 cursor-pointer"
                     />
-                    <span className="text-adaptive-secondary text-sm group-hover:text-adaptive-primary transition-colors">
+                    <span className="text-white/90 text-sm group-hover:text-white transition-colors">
                       {range.label}
                     </span>
                   </div>
@@ -210,11 +211,11 @@ export function ProductFilters({ filters, onFiltersChange, availableFacets, face
                 onClick={() => toggleSection(sectionKey)}
                 className="w-full flex items-center justify-between py-2 hover:bg-white/5 rounded-lg px-2 transition-colors"
               >
-                <h3 className="font-semibold text-adaptive-primary text-sm uppercase tracking-wide">
+                <h3 className="font-semibold text-white text-sm uppercase tracking-wide">
                   {facet.key.replace(/_/g, " ")}
                 </h3>
                 <ChevronDown
-                  className={`w-5 h-5 text-adaptive-secondary transition-transform ${
+                  className={`w-5 h-5 text-white/90 transition-transform ${
                     isExpanded ? "rotate-180" : ""
                   }`}
                 />
@@ -278,7 +279,7 @@ export function ProductFilters({ filters, onFiltersChange, availableFacets, face
                                 onChange={() => toggleFacet(facet.key, value)}
                                 className="w-4 h-4 border-2 border-white/30 rounded glass-secondary text-adaptive-primary focus:ring-white/20 focus:ring-2 cursor-pointer"
                               />
-                              <span className="text-adaptive-secondary text-sm group-hover:text-adaptive-primary transition-colors">
+                              <span className="text-white/90 text-sm group-hover:text-white transition-colors">
                                 {value}
                               </span>
                             </div>
@@ -314,6 +315,6 @@ export function ProductFilters({ filters, onFiltersChange, availableFacets, face
           );
         })}
       </div>
-    </div>
+    </AdvancedLiquidGlassCard>
   );
 }

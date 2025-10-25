@@ -4,6 +4,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { Star } from "lucide-react";
 import type { Product } from "@/lib/domain/entities/product";
+import { LiquidGlassCard } from "@/components/liquid-glass-card";
+import { AdvancedLiquidGlassCard } from "@/components/advanced-liquid-glass-card";
 
 interface ProductListProps {
   products: Product[];
@@ -28,17 +30,17 @@ export function ProductList({ products }: ProductListProps) {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {products.map((product) => (
         <Link key={product.id} href={`/${product.id}`} className="block group">
-          <div className="glass-secondary overflow-hidden hover-lift flex gap-4 sm:gap-6 p-4">
+          <AdvancedLiquidGlassCard variant="hero" className="overflow-hidden hover-lift flex gap-4 sm:gap-6">
             {/* Imagen */}
             <div className="w-24 h-24 sm:w-32 sm:h-32 relative overflow-hidden bg-gray-100 shrink-0 rounded-lg">
               <Image
                 src={product.images[0]}
                 alt={product.name}
                 fill
-                className="object-cover group-hover:scale-110 transition-transform duration-300"
+                className="object-cover group-hover:scale-105 transition-transform duration-200"
                 sizes="(max-width: 640px) 96px, 128px"
               />
             </div>
@@ -84,7 +86,7 @@ export function ProductList({ products }: ProductListProps) {
                 </div>
               </div>
             </div>
-          </div>
+          </AdvancedLiquidGlassCard>
         </Link>
       ))}
     </div>

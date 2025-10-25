@@ -4,7 +4,7 @@ export { Footer } from "./footer";
 export { Navbar } from "./navbar";
 export { ThemeToggle } from "./theme-toggle";
 export { LiquidGlassCard } from "./liquid-glass-card";
-export { AnimatedBackground } from "./animated-background";
+export { AdvancedLiquidGlassCard, LiquidGlassButton, StatusIndicator, AudioVisualizer } from "./advanced-liquid-glass-card";
 export { ProductSearch } from "./product-search";
 export { ProductFilters } from "./product-filters";
 export { ProductSort } from "./product-sort";

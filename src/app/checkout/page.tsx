@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/store";
 import { LiquidGlassCard } from "@/components/liquid-glass-card";
+import { AdvancedLiquidGlassCard } from "@/components/advanced-liquid-glass-card";
 import { ShippingService } from "@/lib/services/shipping.service";
 import { Truck } from "lucide-react";
 
@@ -77,10 +78,21 @@ Gracias por tu compra en ¡Qué Chulito! ❤️`;
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-12 relative z-10 fade-in">
-      <LiquidGlassCard className="p-8">
-        <h1 className="text-3xl sm:text-4xl font-bold mb-8 text-adaptive-primary">
-          Finalizar Compra
-        </h1>
+      <AdvancedLiquidGlassCard 
+        variant="hero"
+        className="mb-4"
+      >
+        <div className="text-center">
+          <h1 className="text-3xl sm:text-4xl font-bold mb-4 text-white">
+            Finalizar Compra
+          </h1>
+          <p className="text-white/90">
+            Completa tu información para procesar tu pedido
+          </p>
+        </div>
+      </AdvancedLiquidGlassCard>
+
+      <AdvancedLiquidGlassCard variant="hero">
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Guest Info */}
@@ -254,14 +266,14 @@ Gracias por tu compra en ¡Qué Chulito! ❤️`;
 
           {/* Submit Button */}
           <button type="submit" className="w-full glass-button-primary py-4 px-6">
-            <span className="text-adaptive-primary text-lg font-medium">Enviar Pedido por WhatsApp</span>
+            <span className="text-adaptive-primary text-lg font-medium relative z-10">Enviar Pedido por WhatsApp</span>
           </button>
 
           <p className="text-sm text-adaptive-tertiary text-center">
             Al hacer clic, se abrirá WhatsApp con tu pedido listo para enviar.
           </p>
         </form>
-      </LiquidGlassCard>
+      </AdvancedLiquidGlassCard>
     </div>
   );
 }

@@ -7,6 +7,7 @@ import { setCartOpen } from "@/store/slice/cartSlice";
 import Image from "next/image";
 import type { Product, ProductVariant } from "@/lib/domain/entities/product";
 import { LiquidGlassCard } from "@/components/liquid-glass-card";
+import { AdvancedLiquidGlassCard } from "@/components/advanced-liquid-glass-card";
 
 interface ProductClientProps {
   product: Product;
@@ -41,7 +42,21 @@ export function ProductClient({ product }: ProductClientProps) {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-12 relative z-10 fade-in">
-      <LiquidGlassCard className="p-8">
+      <AdvancedLiquidGlassCard 
+        variant="hero"
+        className="mb-4"
+      >
+        <div className="text-center">
+          <h1 className="text-3xl sm:text-4xl font-bold mb-4 text-white">
+            {product.name}
+          </h1>
+          <p className="text-2xl font-semibold text-white/90">
+            Q{product.price.toFixed(2)}
+          </p>
+        </div>
+      </AdvancedLiquidGlassCard>
+
+      <AdvancedLiquidGlassCard variant="hero">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Images */}
           <div className="space-y-4">
@@ -61,15 +76,6 @@ export function ProductClient({ product }: ProductClientProps) {
 
           {/* Product Info */}
           <div className="space-y-6">
-            <div>
-              <h1 className="text-3xl font-bold mb-2 text-adaptive-primary">
-                {product.name}
-              </h1>
-              <p className="text-2xl font-semibold text-adaptive-primary">
-                Q{product.price.toFixed(2)}
-              </p>
-            </div>
-
             <div>
               <p className="text-adaptive-secondary">{product.description}</p>
             </div>
@@ -93,7 +99,7 @@ export function ProductClient({ product }: ProductClientProps) {
                           : ""
                       }`}
                     >
-                      <span className="text-adaptive-primary">{size}</span>
+                      <span className="text-adaptive-primary relative z-10">{size}</span>
                     </button>
                   ))}
                 </div>
@@ -110,7 +116,7 @@ export function ProductClient({ product }: ProductClientProps) {
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
                   className="glass-button w-12 h-12 flex items-center justify-center"
                 >
-                  <span className="text-adaptive-primary">-</span>
+                  <span className="text-adaptive-primary relative z-10">-</span>
                 </button>
                 <span className="text-lg font-medium text-adaptive-primary">
                   {quantity}
@@ -119,7 +125,7 @@ export function ProductClient({ product }: ProductClientProps) {
                   onClick={() => setQuantity(quantity + 1)}
                   className="glass-button w-12 h-12 flex items-center justify-center"
                 >
-                  <span className="text-adaptive-primary">+</span>
+                  <span className="text-adaptive-primary relative z-10">+</span>
                 </button>
               </div>
             </div>
@@ -129,11 +135,11 @@ export function ProductClient({ product }: ProductClientProps) {
               onClick={handleAddToCart}
               className="w-full glass-button-primary py-4 px-6"
             >
-              <span className="text-adaptive-primary text-lg font-medium">Agregar al Carrito</span>
+              <span className="text-adaptive-primary text-lg font-medium relative z-10">Agregar al Carrito</span>
             </button>
           </div>
         </div>
-      </LiquidGlassCard>
+      </AdvancedLiquidGlassCard>
     </div>
   );
 }

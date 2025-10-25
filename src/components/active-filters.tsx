@@ -1,6 +1,7 @@
 "use client";
 
 import { X } from "lucide-react";
+import { AdvancedLiquidGlassCard } from "./advanced-liquid-glass-card";
 import { FilterState } from "./product-filters";
 
 interface ActiveFiltersProps {
@@ -39,26 +40,26 @@ export function ActiveFilters({ filters, onRemoveFilter, onClearAll }: ActiveFil
   if (activeFilters.length === 0) return null;
 
   return (
-    <div className="glass-secondary p-4 mb-6">
+    <AdvancedLiquidGlassCard variant="hero" className="mb-3">
       <div className="flex items-center gap-2 flex-wrap">
-        <span className="text-sm font-semibold text-adaptive-primary">Filtros activos:</span>
+        <span className="text-sm font-semibold text-white">Filtros activos:</span>
         {activeFilters.map((filter, index) => (
           <button
             key={index}
             onClick={() => onRemoveFilter(filter.type, filter.value)}
-            className="flex items-center gap-1 px-3 py-1 bg-purple-600 text-white rounded-full text-sm hover:bg-purple-700 transition-colors"
+            className="flex items-center gap-1 px-3 py-1 glass-button text-white rounded-full text-sm hover-button"
           >
-            <span>{filter.label}</span>
-            <X className="w-3 h-3" />
+            <span className="relative z-10">{filter.label}</span>
+            <X className="w-3 h-3 relative z-10" />
           </button>
         ))}
         <button
           onClick={onClearAll}
-          className="text-sm text-purple-600 dark:text-purple-400 hover:underline font-medium ml-auto"
+          className="text-sm text-white/90 hover:text-white hover:underline font-medium ml-auto hover-link"
         >
           Limpiar todo
         </button>
       </div>
-    </div>
+    </AdvancedLiquidGlassCard>
   );
 }

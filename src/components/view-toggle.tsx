@@ -12,32 +12,32 @@ interface ViewToggleProps {
 export function ViewToggle({ viewMode, onViewChange }: ViewToggleProps) {
   return (
     <div className="flex items-center gap-2">
-      <span className="text-adaptive-secondary text-sm font-medium">Vista:</span>
-      <div className="flex items-center glass-input p-0 overflow-hidden">
+      <span className="text-white/90 text-sm font-medium">Vista:</span>
+      <div className="glass-button">
         {/* Botón Vista Grid */}
         <button
           onClick={() => onViewChange("grid")}
-          className={`p-2 transition-colors border-r border-white/20 ${
+          className={`px-3 py-2 ${
             viewMode === "grid"
-              ? "bg-white/10 backdrop-blur-sm text-adaptive-primary"
-              : "text-adaptive-secondary hover:text-adaptive-primary hover:bg-white/5"
+              ? "glass-button bg-white/20 text-white"
+              : "text-white/70 hover:text-white hover:bg-white/10"
           }`}
           aria-label="Vista de cuadrícula"
         >
-          <Grid3X3 className="w-5 h-5" />
+          <Grid3X3 className="w-5 h-5 relative z-10" />
         </button>
 
         {/* Botón Vista Lista */}
         <button
           onClick={() => onViewChange("list")}
-          className={`p-2 transition-colors ${
+          className={`px-3 py-2 ${
             viewMode === "list"
-              ? "bg-white/10 backdrop-blur-sm text-adaptive-primary"
-              : "text-adaptive-secondary hover:text-adaptive-primary hover:bg-white/5"
+              ? "glass-button bg-white/20 text-white"
+              : "text-white/70 hover:text-white hover:bg-white/10"
           }`}
           aria-label="Vista de lista"
         >
-          <List className="w-5 h-5" />
+          <List className="w-5 h-5 relative z-10" />
         </button>
       </div>
     </div>

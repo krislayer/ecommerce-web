@@ -8,6 +8,8 @@ import type { Product } from "@/lib/domain/entities/product";
 import type { RootState } from "@/store";
 import { toggleFavorite } from "@/store/slice/favoritesSlice";
 import { addItem, toggleCart } from "@/store/slice/cartSlice";
+import { LiquidGlassCard } from "@/components/liquid-glass-card";
+import { AdvancedLiquidGlassCard } from "@/components/advanced-liquid-glass-card";
 
 interface ProductGridProps {
   products: Product[];
@@ -66,17 +68,17 @@ export function ProductGrid({ products }: ProductGridProps) {
   };
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
       {products.map((product) => (
         <Link key={product.id} href={`/${product.id}`} className="h-full group">
-          <div className="glass-secondary overflow-hidden h-full flex flex-col hover-lift">
+          <AdvancedLiquidGlassCard variant="hero" className="overflow-hidden h-full flex flex-col hover-lift">
             {/* Imagen - Aspecto cuadrado como en ecommerce */}
             <div className="aspect-square relative overflow-hidden bg-gray-100 shrink-0">
               <Image
                 src={product.images[0]}
                 alt={product.name}
                 fill
-                className="object-cover group-hover:scale-110 transition-transform duration-300"
+                className="object-cover group-hover:scale-105 transition-transform duration-200"
                 sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                 unoptimized
               />
@@ -132,15 +134,15 @@ export function ProductGrid({ products }: ProductGridProps) {
                 {/* Botón Favoritos */}
                 <button
                   onClick={(e) => handleToggleFavorite(product.id, e)}
-                  className={`p-2 rounded-full transition-colors hover-button ${
+                  className={`glass-button-round ${
                     favorites.includes(product.id)
-                      ? "glass-button-primary text-white"
-                      : "glass-button-primary text-white"
+                      ? "bg-white/20"
+                      : ""
                   }`}
                   aria-label={favorites.includes(product.id) ? "Quitar de favoritos" : "Agregar a favoritos"}
                 >
                   <Heart 
-                    className="w-4 h-4" 
+                    className="w-4 h-4 text-adaptive-primary relative z-10" 
                     fill={favorites.includes(product.id) ? "currentColor" : "none"} 
                     stroke="currentColor" 
                   />
@@ -149,14 +151,14 @@ export function ProductGrid({ products }: ProductGridProps) {
                 {/* Botón Agregar al Carrito */}
                 <button
                   onClick={(e) => handleAddToCart(product, e)}
-                  className="p-2 rounded-full glass-button-primary text-white hover-button"
+                  className="glass-button-round"
                   aria-label="Agregar al carrito"
                 >
-                  <ShoppingCart className="w-4 h-4" />
+                  <ShoppingCart className="w-4 h-4 text-adaptive-primary relative z-10" />
                 </button>
               </div>
             </div>
-          </div>
+          </AdvancedLiquidGlassCard>
         </Link>
       ))}
     </div>

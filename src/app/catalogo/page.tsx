@@ -9,6 +9,7 @@ import { ProductSort, SortOption } from "@/components/product-sort";
 import { ViewToggle } from "@/components/view-toggle";
 import { Pagination } from "@/components/pagination";
 import { LiquidGlassCard } from "@/components/liquid-glass-card";
+import { AdvancedLiquidGlassCard } from "@/components/advanced-liquid-glass-card";
 import { CategoryNavigation } from "@/components/category-navigation";
 import { sampleProducts } from "@/lib/data/products";
 import { categories, getCategoriesForIds } from "@/lib/data/categories";
@@ -292,29 +293,34 @@ export default function CatalogoPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-12 fade-in">
-      <LiquidGlassCard className="p-8 mb-8">
-        <h1 className="text-4xl sm:text-5xl font-bold mb-2 text-adaptive-primary">
-          Catálogo
-        </h1>
-        <p className="text-lg text-adaptive-secondary mb-6">
-          Descubre moda, belleza, hogar, tecnología y más. Encuentra todo lo que necesitas en un solo lugar.
-        </p>
-        
-        <ProductSearch 
-          onSearch={setSearchQuery}
-          placeholder="Buscar por nombre, descripción o categoría..."
-        />
-        
-        {/* Navegación de categorías */}
-        <div className="mt-4">
-          <CategoryNavigation 
-            selectedCategory={selectedCategory}
-            onCategorySelect={setSelectedCategory}
+      <AdvancedLiquidGlassCard 
+        className="mb-4"
+        variant="hero"
+      >
+        <div className="text-center">
+          <h1 className="text-4xl sm:text-5xl font-bold mb-2 text-white">
+            Catálogo
+          </h1>
+          <p className="text-lg text-white/90 mb-6">
+            Descubre moda, belleza, hogar, tecnología y más. Encuentra todo lo que necesitas en un solo lugar.
+          </p>
+          
+          <ProductSearch 
+            onSearch={setSearchQuery}
+            placeholder="Buscar por nombre, descripción o categoría..."
           />
+          
+          {/* Navegación de categorías */}
+          <div className="mt-4">
+            <CategoryNavigation 
+              selectedCategory={selectedCategory}
+              onCategorySelect={setSelectedCategory}
+            />
+          </div>
         </div>
-      </LiquidGlassCard>
+      </AdvancedLiquidGlassCard>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-6">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-4">
         <div className="lg:col-span-1">
           <ProductFilters
             filters={filters}

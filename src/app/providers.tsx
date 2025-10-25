@@ -18,7 +18,7 @@ function ThemeWrapper({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <div className={`animated-background ${mounted && theme === 'dark' ? 'dark' : 'light'}`}>
+    <div>
       {/* Contenido */}
       <div className="relative z-10">
         {children}

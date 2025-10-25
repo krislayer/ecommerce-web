@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { signInWithPopup, signOut, onAuthStateChanged, GoogleAuthProvider } from "firebase/auth";
 import { auth, isFirebaseConfigured } from "@/lib/firebase/client";
 import { setUser, setLoading } from "@/store/slice/authSlice";
+import { User, LogOut } from "lucide-react";
 import type { RootState } from "@/store";
 import Link from "next/link";
 
@@ -53,20 +54,15 @@ export function AuthButton() {
 
   if (user) {
     return (
-      <div className="flex items-center gap-3">
-        <span className="text-sm hidden sm:inline text-adaptive-secondary">
-          {user.displayName || user.email}
-        </span>
-        <button onClick={handleSignOut} className="glass-button px-4 py-2">
-          <span className="text-adaptive-primary">Salir</span>
-        </button>
-      </div>
+      <button onClick={handleSignOut} className="glass-button-round relative" aria-label="Cerrar sesión">
+        <LogOut className="w-6 h-6 text-white relative z-10" />
+      </button>
     );
   }
 
   return (
-    <Link href="/login" className="glass-button px-4 py-2">
-      <span className="text-adaptive-primary">Iniciar Sesión</span>
+    <Link href="/login" className="glass-button-round relative" aria-label="Iniciar sesión">
+      <User className="w-6 h-6 text-white relative z-10" />
     </Link>
   );
 }
