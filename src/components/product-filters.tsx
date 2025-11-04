@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { ChevronDown, X } from "lucide-react";
-import { AdvancedLiquidGlassCard } from "./advanced-liquid-glass-card";
 import type { FacetDefinition } from "@/lib/domain/entities/product";
 
 export interface FilterState {
@@ -37,13 +36,11 @@ const PRICE_LABELS: Record<string, string> = {
 };
 
 export function ProductFilters({ filters, onFiltersChange, availableFacets, facetCounts, onRemoveFilter }: ProductFiltersProps) {
-  // Solo precio y categoría expandidos por defecto (mejores prácticas)
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     precio: true,
     categoria: true,
   });
 
-  // Estado para mostrar todas las opciones en cada filtro
   const [showAllOptions, setShowAllOptions] = useState<Record<string, boolean>>({});
 
   const toggleSection = (sectionKey: string) => {
@@ -87,7 +84,6 @@ export function ProductFilters({ filters, onFiltersChange, availableFacets, face
     Object.keys(filters.facets).length > 0 ||
     filters.priceRange !== "all";
 
-  // Construir lista de filtros activos
   const activeFilters: Array<{ type: keyof FilterState; value: string; label: string }> = [];
   
   Object.entries(filters.facets).forEach(([facetKey, values]) => {
@@ -109,22 +105,22 @@ export function ProductFilters({ filters, onFiltersChange, availableFacets, face
   }
 
   return (
-    <AdvancedLiquidGlassCard variant="hero">
+    <div className="mac-card">
       {/* Header */}
-      <div className="flex items-center justify-between mb-4 pb-3 border-b border-white/20">
-        <div className="flex items-center gap-2">
-          <h2 className="text-xl font-bold text-white">Filtros</h2>
+      <div className="flex items-center justify-between mb-mac-md pb-mac-sm border-b border-mac-separator">
+        <div className="flex items-center gap-mac-sm">
+          <h2 className="mac-text-title-2 mac-text-primary">Filtros</h2>
           {hasActiveFilters && (
-            <span className="glass-secondary text-white text-xs px-2 py-1 rounded-full font-medium">
+            <span className="mac-badge">
               {activeFilters.length}
             </span>
           )}
         </div>
         {hasActiveFilters && (
-              <button
-                onClick={clearFilters} 
-                className="text-sm text-white/90 hover:underline font-medium hover-link"
-              >
+          <button
+            onClick={clearFilters} 
+            className="mac-text-caption-1 mac-text-secondary hover:mac-text-primary mac-transition-colors font-medium"
+          >
             Limpiar todo
           </button>
         )}
@@ -132,57 +128,55 @@ export function ProductFilters({ filters, onFiltersChange, availableFacets, face
 
       {/* Filtros activos */}
       {activeFilters.length > 0 && onRemoveFilter && (
-        <div className="mb-4 pb-4 border-b border-white/10">
-          <div className="flex items-center gap-2 flex-wrap">
+        <div className="mb-mac-md pb-mac-md border-b border-mac-separator">
+          <div className="flex items-center gap-mac-sm flex-wrap">
             {activeFilters.map((filter, index) => (
               <button
                 key={index}
                 onClick={() => onRemoveFilter(filter.type, filter.value)}
-                className="flex items-center gap-1 px-2.5 py-1 glass-secondary text-white rounded-full text-xs hover-button"
+                className="mac-chip flex items-center gap-mac-xs"
               >
                 <span>{filter.label}</span>
-                <span className="text-xs ml-0.5">
-                  <X className="w-3 h-3" />
-                </span>
+                <X className="w-3 h-3 currentColor" />
               </button>
             ))}
           </div>
         </div>
       )}
 
-      <div className="space-y-1">
-        {/* Filtro de Precio con acordeón */}
-        <div className="border-b border-white/10 pb-4 mb-4">
+      <div className="space-y-mac-sm">
+        {/* Filtro de Precio */}
+        <div className="border-b border-mac-separator pb-mac-md mb-mac-md">
           <button
             onClick={() => toggleSection("precio")}
-            className="w-full flex items-center justify-between py-2 hover:bg-white/5 rounded-lg px-2 transition-colors"
+            className="w-full flex items-center justify-between py-mac-sm hover:bg-mac-gray-2 dark:hover:bg-mac-gray-6 rounded-mac-sm px-mac-sm mac-transition-colors"
           >
-            <h3 className="font-semibold text-white text-sm uppercase tracking-wide">
+            <h3 className="mac-text-headline mac-text-primary uppercase tracking-wide">
               Precio
             </h3>
             <ChevronDown
-              className={`w-5 h-5 text-white/90 transition-transform ${
+              className={`w-5 h-5 mac-text-secondary mac-transition-transform ${
                 expandedSections.precio ? "rotate-180" : ""
               }`}
             />
           </button>
           
           {expandedSections.precio && (
-            <div className="mt-3 space-y-1">
+            <div className="mt-mac-md space-y-mac-xs">
               {PRICE_RANGES.map((range) => (
                 <label
                   key={range.value}
-                  className="flex items-center justify-between cursor-pointer hover:bg-white/5 p-2 rounded-lg transition-colors group"
+                  className="flex items-center justify-between cursor-pointer hover:bg-mac-gray-2 dark:hover:bg-mac-gray-6 p-mac-sm rounded-mac-sm mac-transition-colors group"
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-mac-md">
                     <input
                       type="radio"
                       name="priceRange"
                       checked={filters.priceRange === range.value}
                       onChange={() => handlePriceChange(range.value)}
-                      className="w-4 h-4 border-2 border-white/30 glass-secondary text-white focus:ring-white/20 focus:ring-2 cursor-pointer"
+                      className="w-4 h-4 border-2 border-mac-separator mac-text-primary focus:ring-mac-blue focus:ring-2 cursor-pointer"
                     />
-                    <span className="text-white/90 text-sm group-hover:text-white transition-colors">
+                    <span className="mac-text-body mac-text-secondary group-hover:mac-text-primary mac-transition-colors">
                       {range.label}
                     </span>
                   </div>
@@ -192,10 +186,9 @@ export function ProductFilters({ filters, onFiltersChange, availableFacets, face
           )}
         </div>
 
-        {/* Filtros dinámicos con jerarquía optimizada */}
+        {/* Filtros dinámicos */}
         {availableFacets
           .sort((a, b) => {
-            // Jerarquía: categoría/marca primero, luego características específicas
             const priority = { categoria: 1, marca: 2, talla: 3, color: 4, material: 5 };
             const aPriority = priority[a.key as keyof typeof priority] || 10;
             const bPriority = priority[b.key as keyof typeof priority] || 10;
@@ -206,41 +199,40 @@ export function ProductFilters({ filters, onFiltersChange, availableFacets, face
           const isExpanded = expandedSections[sectionKey] ?? (sectionKey === 'categoria' || sectionKey === 'marca');
           
           return (
-            <div key={facet.key} className="border-b border-white/10 pb-4 mb-4 last:border-0">
+            <div key={facet.key} className="border-b border-mac-separator pb-mac-md mb-mac-md last:border-0">
               <button
                 onClick={() => toggleSection(sectionKey)}
-                className="w-full flex items-center justify-between py-2 hover:bg-white/5 rounded-lg px-2 transition-colors"
+                className="w-full flex items-center justify-between py-mac-sm hover:bg-mac-gray-2 dark:hover:bg-mac-gray-6 rounded-mac-sm px-mac-sm mac-transition-colors"
               >
-                <h3 className="font-semibold text-white text-sm uppercase tracking-wide">
+                <h3 className="mac-text-headline mac-text-primary uppercase tracking-wide">
                   {facet.key.replace(/_/g, " ")}
                 </h3>
                 <ChevronDown
-                  className={`w-5 h-5 text-white/90 transition-transform ${
+                  className={`w-5 h-5 mac-text-secondary mac-transition-transform ${
                     isExpanded ? "rotate-180" : ""
                   }`}
                 />
               </button>
               
               {isExpanded && (
-                <div className="mt-3">
+                <div className="mt-mac-md">
                   {facet.widget === "swatch" ? (
-                    // Widget de botones para colores (máximo 4-5 visibles)
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-mac-sm">
                       {(showAllOptions[facet.key] ? facet.values : facet.values?.slice(0, 5))?.map((value) => {
                         const count = facetCounts?.[facet.key]?.[value] || 0;
                         return (
                           <button
                             key={value}
                             onClick={() => toggleFacet(facet.key, value)}
-                            className={`px-3 py-1.5 rounded-md border-2 text-sm font-medium relative ${
+                            className={`mac-chip ${
                               filters.facets[facet.key]?.includes(value)
-                                ? "glass-secondary text-adaptive-primary border-white/30 shadow-md"
-                                : "glass-button border-transparent hover:border-white/30 hover-button"
+                                ? "selected"
+                                : ""
                             }`}
                           >
                             {value}
                             {count > 0 && (
-                              <span className="ml-1.5 text-xs opacity-75">({count})</span>
+                              <span className="mac-text-caption-1 opacity-75">({count})</span>
                             )}
                           </button>
                         );
@@ -248,7 +240,7 @@ export function ProductFilters({ filters, onFiltersChange, availableFacets, face
                       {facet.values && facet.values.length > 5 && !showAllOptions[facet.key] && (
                         <button 
                           onClick={() => toggleShowAll(facet.key)}
-                          className="px-3 py-1.5 text-sm text-adaptive-secondary hover:underline"
+                          className="mac-button-tertiary mac-text-caption-1"
                         >
                           +{facet.values.length - 5} más
                         </button>
@@ -256,35 +248,34 @@ export function ProductFilters({ filters, onFiltersChange, availableFacets, face
                       {facet.values && facet.values.length > 5 && showAllOptions[facet.key] && (
                         <button 
                           onClick={() => toggleShowAll(facet.key)}
-                          className="px-3 py-1.5 text-sm text-adaptive-secondary hover:underline"
+                          className="mac-button-tertiary mac-text-caption-1"
                         >
                           Ver menos
                         </button>
                       )}
                     </div>
                   ) : (
-                    // Widget de checkboxes mejorados con contadores (máximo 4-5 visibles)
-                    <div className="space-y-1">
+                    <div className="space-y-mac-xs">
                       {(showAllOptions[facet.key] ? facet.values : facet.values?.slice(0, 5))?.map((value) => {
                         const count = facetCounts?.[facet.key]?.[value] || 0;
                         return (
                           <label
                             key={value}
-                            className="flex items-center justify-between cursor-pointer hover:bg-white/5 p-2 rounded-lg transition-colors group"
+                            className="flex items-center justify-between cursor-pointer hover:bg-mac-gray-2 dark:hover:bg-mac-gray-6 p-mac-sm rounded-mac-sm mac-transition-colors group"
                           >
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-mac-md">
                               <input
                                 type="checkbox"
                                 checked={filters.facets[facet.key]?.includes(value) || false}
                                 onChange={() => toggleFacet(facet.key, value)}
-                                className="w-4 h-4 border-2 border-white/30 rounded glass-secondary text-adaptive-primary focus:ring-white/20 focus:ring-2 cursor-pointer"
+                                className="w-4 h-4 border-2 border-mac-separator rounded-mac-sm mac-text-primary focus:ring-mac-blue focus:ring-2 cursor-pointer"
                               />
-                              <span className="text-white/90 text-sm group-hover:text-white transition-colors">
+                              <span className="mac-text-body mac-text-secondary group-hover:mac-text-primary mac-transition-colors">
                                 {value}
                               </span>
                             </div>
                             {count > 0 && (
-                              <span className="text-xs text-adaptive-tertiary font-medium">
+                              <span className="mac-text-caption-1 mac-text-tertiary font-medium">
                                 {count}
                               </span>
                             )}
@@ -294,7 +285,7 @@ export function ProductFilters({ filters, onFiltersChange, availableFacets, face
                       {facet.values && facet.values.length > 5 && !showAllOptions[facet.key] && (
                         <button 
                           onClick={() => toggleShowAll(facet.key)}
-                          className="w-full text-left px-2 py-1 text-sm text-adaptive-secondary hover:underline"
+                          className="w-full text-left px-mac-sm py-mac-xs mac-text-caption-1 mac-text-secondary hover:mac-text-primary mac-transition-colors"
                         >
                           Ver {facet.values.length - 5} opciones más
                         </button>
@@ -302,7 +293,7 @@ export function ProductFilters({ filters, onFiltersChange, availableFacets, face
                       {facet.values && facet.values.length > 5 && showAllOptions[facet.key] && (
                         <button 
                           onClick={() => toggleShowAll(facet.key)}
-                          className="w-full text-left px-2 py-1 text-sm text-adaptive-secondary hover:underline"
+                          className="w-full text-left px-mac-sm py-mac-xs mac-text-caption-1 mac-text-secondary hover:mac-text-primary mac-transition-colors"
                         >
                           Ver menos
                         </button>
@@ -315,6 +306,6 @@ export function ProductFilters({ filters, onFiltersChange, availableFacets, face
           );
         })}
       </div>
-    </AdvancedLiquidGlassCard>
+    </div>
   );
 }

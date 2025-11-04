@@ -26,13 +26,13 @@ export default function Error({
         <div className="flex gap-4 justify-center flex-wrap">
           <button
             onClick={reset}
-            className="px-8 py-4 rounded-full backdrop-blur-md bg-white/20 dark:bg-black/20 border border-white/30 dark:border-white/10 font-semibold transition-all hover:scale-105 hover:bg-white/30 dark:hover:bg-black/30 shadow-xl"
+            className="px-8 py-4 rounded-full backdrop-blur-md bg-white/20 dark:bg-black/20 border border-white/30 dark:border-white/10 font-semibold mac-transition-all hover:scale-[1.02] hover:bg-white/30 dark:hover:bg-black/30 shadow-xl"
           >
             Intentar de nuevo
           </button>
           <Link
             href="/"
-            className="px-8 py-4 rounded-full backdrop-blur-xl bg-white/30 dark:bg-black/30 border border-white/20 dark:border-white/10 font-semibold transition-all hover:scale-105 hover:bg-white/40 dark:hover:bg-black/40 shadow-2xl"
+            className="px-8 py-4 rounded-full backdrop-blur-xl bg-white/30 dark:bg-black/30 border border-white/20 dark:border-white/10 font-semibold mac-transition-all hover:scale-[1.02] hover:bg-white/40 dark:hover:bg-black/40 shadow-2xl"
           >
             Volver al inicio
           </Link>

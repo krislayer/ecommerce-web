@@ -7,16 +7,19 @@ import { store, persistor } from "@/store";
 import { Navbar } from "@/components/navbar";
 import { CartSidebar } from "@/components/cart-sidebar";
 import { Footer } from "@/components/footer";
+import { ScrollRestoration } from "@/components/scroll-restoration";
 import { useEffect, useState } from "react";
 
 function ThemeWrapper({ children }: { children: React.ReactNode }) {
-  const { theme } = useTheme();
+  const { theme: _theme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
+  // Variables theme y mounted se usan para prevenir hydration issues
+  // aunque no se usen directamente en el render
   return (
     <div>
       {/* Contenido */}
@@ -38,6 +41,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
           storageKey="theme"
         >
           <ThemeWrapper>
+            <ScrollRestoration />
             <Navbar />
             <main>{children}</main>
             <Footer />

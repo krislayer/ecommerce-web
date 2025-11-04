@@ -1,416 +1,667 @@
 @import "tailwindcss";
 
 /* ========================================
-   LIQUID GLASS UI - Configuración Base
+   APPLE HUMAN INTERFACE GUIDELINES
+   Sistema de Diseño macOS Nativo
    ======================================== */
 
 @layer base {
-  /* Variables CSS para temas */
-:root {
-    /* Tema claro */
-    --glass-bg: rgba(255, 255, 255, 0.5);
-    --glass-border: rgba(255, 255, 255, 0.6);
-    --glass-hover: rgba(255, 255, 255, 0.6);
-    --text-primary: rgb(17, 24, 39);
-    --text-secondary: rgb(75, 85, 99);
-    --text-tertiary: rgb(107, 114, 128);
-    --backdrop-blur: 40px;
-}
+  /* Variables CSS basadas en colores del sistema macOS */
+  :root {
+    /* Colores del sistema macOS */
+    --mac-blue: #007AFF;
+    --mac-blue-dark: #0051D5;
+    --mac-green: #34C759;
+    --mac-indigo: #5856D6;
+    --mac-orange: #FF9500;
+    --mac-pink: #FF2D55;
+    --mac-purple: #AF52DE;
+    --mac-red: #FF3B30;
+    --mac-teal: #5AC8FA;
+    --mac-yellow: #FFCC00;
+    
+    /* Sistema de grises macOS */
+    --mac-gray-1: #F5F5F7;
+    --mac-gray-2: #E8E8ED;
+    --mac-gray-3: #D2D2D7;
+    --mac-gray-4: #C7C7CC;
+    --mac-gray-5: #AEAEB2;
+    --mac-gray-6: #8E8E93;
+    
+    /* Colores de texto macOS */
+    --mac-label: #000000;
+    --mac-secondary-label: rgba(0, 0, 0, 0.65);
+    --mac-tertiary-label: rgba(0, 0, 0, 0.45);
+    --mac-quaternary-label: rgba(0, 0, 0, 0.25);
+    
+    /* Colores de fondo macOS */
+    --mac-primary-background: #FFFFFF;
+    --mac-secondary-background: #F5F5F7;
+    --mac-tertiary-background: #FFFFFF;
+    --mac-grouped-background: #F5F5F7;
+    --mac-secondary-grouped-background: #FFFFFF;
+    
+    /* Colores de separadores macOS */
+    --mac-separator: rgba(60, 60, 67, 0.36);
+    --mac-opaque-separator: #C6C6C8;
+    
+    /* Materiales macOS */
+    --mac-material-light: rgba(255, 255, 255, 0.8);
+    --mac-material-dark: rgba(0, 0, 0, 0.5);
+    --mac-blur-intensity: 40px;
+    
+    /* Espaciado macOS */
+    --mac-spacing-xs: 4px;
+    --mac-spacing-sm: 8px;
+    --mac-spacing-md: 16px;
+    --mac-spacing-lg: 24px;
+    --mac-spacing-xl: 32px;
+    --mac-spacing-2xl: 48px;
+    --mac-spacing-3xl: 64px;
+    
+    /* Radio de esquinas macOS */
+    --mac-corner-radius-sm: 6px;
+    --mac-corner-radius-md: 8px;
+    --mac-corner-radius-lg: 10px;
+    --mac-corner-radius-xl: 12px;
+    
+    /* Sombras macOS */
+    --mac-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04), 0 1px 4px rgba(0, 0, 0, 0.06);
+    --mac-shadow-md: 0 2px 4px rgba(0, 0, 0, 0.06), 0 4px 8px rgba(0, 0, 0, 0.08);
+    --mac-shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.08), 0 8px 16px rgba(0, 0, 0, 0.1);
+    
+    /* Transiciones macOS */
+    --mac-transition-fast: 0.1s cubic-bezier(0.4, 0.0, 0.2, 1);
+    --mac-transition-base: 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+    --mac-transition-slow: 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+  }
 
-.dark {
-    /* Tema oscuro */
-    --glass-bg: rgba(255, 255, 255, 0.1);
-    --glass-border: rgba(255, 255, 255, 0.2);
-    --glass-hover: rgba(255, 255, 255, 0.15);
-    --text-primary: rgb(255, 255, 255);
-    --text-secondary: rgba(255, 255, 255, 0.8);
-    --text-tertiary: rgba(255, 255, 255, 0.6);
-    --backdrop-blur: 40px;
+  /* Tema oscuro macOS */
+  .dark {
+    --mac-label: #FFFFFF;
+    --mac-secondary-label: rgba(255, 255, 255, 0.65);
+    --mac-tertiary-label: rgba(255, 255, 255, 0.45);
+    --mac-quaternary-label: rgba(255, 255, 255, 0.25);
+    
+    --mac-primary-background: #1D1D1F;
+    --mac-secondary-background: #2C2C2E;
+    --mac-tertiary-background: #3A3A3C;
+    --mac-grouped-background: #1D1D1F;
+    --mac-secondary-grouped-background: #2C2C2E;
+    
+    --mac-separator: rgba(84, 84, 88, 0.65);
+    --mac-opaque-separator: #38383A;
+    
+    --mac-material-light: rgba(255, 255, 255, 0.15);
+    --mac-material-dark: rgba(0, 0, 0, 0.7);
   }
 
   /* Configuración global del body */
-body {
-    transition: colors 700ms;
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background-color: var(--mac-grouped-background);
+    color: var(--mac-label);
     margin: 0;
     padding: 0;
-    background-image: url('https://images.unsplash.com/photo-1701278773098-9cfd25e8cde3?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1974');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    min-height: 100vh;
-  }
-
-  /* Asegurar que el fondo no cambie con el tema */
-  body.dark,
-  .dark body {
-    background-image: url('https://images.unsplash.com/photo-1701278773098-9cfd25e8cde3?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1974');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-  }
-
-  /* Smooth scrolling */
-  html {
-    scroll-behavior: smooth;
-  }
-
-  /* Mejoras de rendimiento para animaciones */
-  * {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    transition: background-color var(--mac-transition-base), color var(--mac-transition-base);
+    font-size: 13px;
+    line-height: 1.47059;
+  }
+
+  /* Scroll behavior - deshabilitado para evitar scroll automático al refrescar */
+  html {
+    scroll-behavior: auto;
+  }
+
+  /* Reset de estilos para elementos interactivos */
+  button {
+    font-family: inherit;
+    cursor: pointer;
+  }
+
+  input, textarea, select {
+    font-family: inherit;
   }
 }
 
 @layer components {
   /* ========================================
-     COMPONENTES REUTILIZABLES GLASS
+     COMPONENTES macOS NATIVOS
      ======================================== */
 
-  /* Card principal con efecto glass avanzado */
-  .glass-card {
-    backdrop-filter: blur(40px);
-    -webkit-backdrop-filter: blur(40px);
-    border-radius: 1.5rem;
-    box-shadow: inset 0 1px 0px rgba(255,255,255,0.75), 0 0 9px rgba(0,0,0,0.2), 0 3px 8px rgba(0,0,0,0.15);
-    border: 1px solid;
-    transition: all 300ms;
-    background: var(--glass-bg);
-    border-color: var(--glass-border);
-    position: relative;
-    overflow: hidden;
+  /* Card estilo macOS */
+  .mac-card {
+    background-color: var(--mac-secondary-grouped-background);
+    border-radius: var(--mac-corner-radius-lg);
+    padding: var(--mac-spacing-lg);
+    box-shadow: var(--mac-shadow-sm);
+    transition: all var(--mac-transition-fast);
+    border: 0.5px solid var(--mac-separator);
   }
 
-  .glass-card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 1.5rem;
-    background: linear-gradient(to bottom right, rgba(255,255,255,0.6), transparent, transparent);
-    opacity: 0.7;
-    pointer-events: none;
+  .mac-card:hover {
+    box-shadow: var(--mac-shadow-md);
   }
 
-  .glass-card::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 1.5rem;
-    background: linear-gradient(to top left, rgba(255,255,255,0.3), transparent, transparent);
-    opacity: 0.5;
-    pointer-events: none;
+  /* Material con blur estilo macOS */
+  .mac-material {
+    background-color: var(--mac-material-light);
+    backdrop-filter: blur(var(--mac-blur-intensity)) saturate(180%);
+    -webkit-backdrop-filter: blur(var(--mac-blur-intensity)) saturate(180%);
+    border-radius: var(--mac-corner-radius-lg);
+    border: 0.5px solid rgba(255, 255, 255, 0.3);
+    transition: all var(--mac-transition-fast);
   }
 
-  .glass-card:hover {
-    background: var(--glass-hover);
-    transform: translateY(-2px);
-    box-shadow: inset 0 1px 0px rgba(255,255,255,0.75), 0 0 15px rgba(0,0,0,0.3), 0 6px 16px rgba(0,0,0,0.2);
+  .dark .mac-material {
+    background-color: var(--mac-material-dark);
+    border-color: rgba(255, 255, 255, 0.15);
   }
 
-  /* Glass secundario (menos prominente) */
-  .glass-secondary {
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    border-radius: 1rem;
-    border: 1px solid;
-    transition: all 300ms;
-    background: var(--glass-bg);
-    border-color: var(--glass-border);
-  }
-
-  /* Botones con efecto glass avanzado */
-  .glass-button {
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    border-radius: 9999px;
-    border: 1px solid;
-    transition: all 300ms;
-    background: var(--glass-bg);
-    border-color: var(--glass-border);
+  /* Botón primario macOS */
+  .mac-button-primary {
+    background-color: var(--mac-blue);
+    color: #FFFFFF;
+    border: none;
+    border-radius: var(--mac-corner-radius-md);
+    padding: 6px 20px;
+    font-weight: 500;
+    font-size: 13px;
+    line-height: 18px;
+    letter-spacing: -0.08px;
+    transition: all var(--mac-transition-fast);
+    cursor: pointer;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    position: relative;
-    overflow: hidden;
-    box-shadow: inset 0 1px 0px rgba(255,255,255,0.75), 0 0 9px rgba(0,0,0,0.2), 0 3px 8px rgba(0,0,0,0.15);
+    gap: 6px;
+    min-height: 28px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   }
 
-  .glass-button::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 9999px;
-    background: linear-gradient(to bottom right, rgba(255,255,255,0.6), transparent, transparent);
-    opacity: 0.7;
-    pointer-events: none;
+  .mac-button-primary:hover {
+    background-color: var(--mac-blue-dark);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
   }
 
-  .glass-button::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 9999px;
-    background: linear-gradient(to top left, rgba(255,255,255,0.3), transparent, transparent);
-    opacity: 0.5;
-    pointer-events: none;
+  .mac-button-primary:active {
+    transform: scale(0.98);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   }
 
-  /* Botón redondo específico con efecto avanzado */
-  .glass-button-round {
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    border-radius: 50%;
-    border: 1px solid;
-    transition: all 300ms;
-    background: var(--glass-bg);
-    border-color: var(--glass-border);
+  /* Botón secundario macOS */
+  .mac-button-secondary {
+    background-color: var(--mac-secondary-background);
+    color: var(--mac-label);
+    border: 0.5px solid var(--mac-separator);
+    border-radius: var(--mac-corner-radius-md);
+    padding: 6px 20px;
+    font-weight: 400;
+    font-size: 13px;
+    line-height: 18px;
+    letter-spacing: -0.08px;
+    transition: all var(--mac-transition-fast);
+    cursor: pointer;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 2.5rem;
-    height: 2.5rem;
-    position: relative;
-    overflow: hidden;
-    box-shadow: inset 0 1px 0px rgba(255,255,255,0.75), 0 0 9px rgba(0,0,0,0.2), 0 3px 8px rgba(0,0,0,0.15);
+    gap: 6px;
+    min-height: 28px;
   }
 
-  .glass-button-round::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    background: linear-gradient(to bottom right, rgba(255,255,255,0.6), transparent, transparent);
+  .mac-button-secondary:hover {
+    background-color: var(--mac-gray-2);
+  }
+
+  .dark .mac-button-secondary:hover {
+    background-color: var(--mac-tertiary-background);
+  }
+
+  /* Botón terciario macOS (texto) */
+  .mac-button-tertiary {
+    background-color: transparent;
+    color: var(--mac-blue);
+    border: none;
+    padding: 6px 12px;
+    font-weight: 400;
+    font-size: 13px;
+    line-height: 18px;
+    transition: all var(--mac-transition-fast);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 28px;
+  }
+
+  .mac-button-tertiary:hover {
     opacity: 0.7;
-    pointer-events: none;
   }
 
-  .glass-button-round::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    background: linear-gradient(to top left, rgba(255,255,255,0.3), transparent, transparent);
-    opacity: 0.5;
-    pointer-events: none;
+  /* Input estilo macOS */
+  .mac-input {
+    background-color: var(--mac-secondary-grouped-background);
+    border: 0.5px solid var(--mac-separator);
+    border-radius: var(--mac-corner-radius-md);
+    padding: 5px 10px;
+    font-size: 13px;
+    line-height: 18px;
+    color: var(--mac-label);
+    transition: all var(--mac-transition-fast);
+    width: 100%;
+    min-height: 28px;
   }
 
-  .glass-button-round:hover {
-    background: var(--glass-hover);
-    transform: scale(1.1);
-    box-shadow: inset 0 1px 0px rgba(255,255,255,0.75), 0 0 15px rgba(0,0,0,0.3), 0 6px 16px rgba(0,0,0,0.2);
-  }
-
-  .glass-button-round:active {
-    transform: scale(0.95);
-  }
-
-  .glass-button:hover {
-    background: var(--glass-hover);
-    transform: scale(1.05);
-    box-shadow: inset 0 1px 0px rgba(255,255,255,0.75), 0 0 15px rgba(0,0,0,0.3), 0 6px 16px rgba(0,0,0,0.2);
-  }
-
-  .glass-button:active {
-    transform: scale(0.95);
-  }
-
-  .glass-button-primary {
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-    background: rgba(255, 255, 255, 0.25);
-  }
-
-  .dark .glass-button-primary {
-    background: rgba(255, 255, 255, 0.25);
-  }
-
-  /* Input con efecto glass avanzado */
-  .glass-input {
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    border-radius: 0.75rem;
-    border: 1px solid;
-    padding: 0.75rem 1rem;
-    transition: all 300ms;
-    background: var(--glass-bg);
-    border-color: var(--glass-border);
-    color: var(--text-primary);
-    position: relative;
-    overflow: hidden;
-    box-shadow: inset 0 1px 0px rgba(255,255,255,0.75), 0 0 9px rgba(0,0,0,0.2), 0 3px 8px rgba(0,0,0,0.15);
-  }
-
-  .glass-input::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 0.75rem;
-    background: linear-gradient(to bottom right, rgba(255,255,255,0.6), transparent, transparent);
-    opacity: 0.7;
-    pointer-events: none;
-  }
-
-  .glass-input:focus {
+  .mac-input:focus {
     outline: none;
-    box-shadow: inset 0 1px 0px rgba(255,255,255,0.75), 0 0 15px rgba(0,0,0,0.3), 0 6px 16px rgba(0,0,0,0.2), 0 0 0 2px rgba(196, 181, 253, 1);
-    background: var(--glass-hover);
+    border-color: var(--mac-blue);
+    background-color: var(--mac-tertiary-background);
+    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
   }
 
-  .glass-input::placeholder {
-    color: var(--text-tertiary);
+  .mac-input::placeholder {
+    color: var(--mac-tertiary-label);
   }
 
-  /* Panel con efecto glass avanzado */
-  .glass-panel {
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    border-radius: 1rem;
-    padding: 1rem;
-    border: 1px solid;
-    background: rgba(255, 255, 255, 0.05);
-    border-color: var(--glass-border);
+  /* Campo de búsqueda macOS (Search Field) */
+  .mac-search-field {
     position: relative;
-    overflow: hidden;
-    box-shadow: inset 0 1px 0px rgba(255,255,255,0.75), 0 0 9px rgba(0,0,0,0.2), 0 3px 8px rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+    background-color: var(--mac-secondary-grouped-background);
+    border: 0.5px solid var(--mac-separator);
+    border-radius: var(--mac-corner-radius-md);
+    transition: all var(--mac-transition-fast);
+    width: 100%;
+    min-height: 32px;
   }
 
-  .glass-panel::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 1rem;
-    background: linear-gradient(to bottom right, rgba(255,255,255,0.6), transparent, transparent);
-    opacity: 0.7;
+  .mac-search-field:focus-within {
+    border-color: var(--mac-blue);
+    background-color: var(--mac-tertiary-background);
+    box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+  }
+
+  .mac-search-field-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-left: var(--mac-spacing-md);
+    color: var(--mac-tertiary-label);
+    flex-shrink: 0;
     pointer-events: none;
   }
 
-  .glass-panel::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 1rem;
-    background: linear-gradient(to top left, rgba(255,255,255,0.3), transparent, transparent);
-    opacity: 0.5;
-    pointer-events: none;
+  .mac-search-field:focus-within .mac-search-field-icon {
+    color: var(--mac-blue);
   }
 
-  .dark .glass-panel {
-    background: rgba(255, 255, 255, 0.05);
+  .mac-search-field-input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    outline: none;
+    padding: 6px var(--mac-spacing-sm);
+    font-size: 13px;
+    line-height: 18px;
+    color: var(--mac-label);
+    font-family: inherit;
   }
 
-  /* Efectos especiales para elementos interactivos */
-  .glass-interactive {
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    border-radius: 0.75rem;
-    border: 1px solid;
-    transition: all 300ms;
-    background: var(--glass-bg);
-    border-color: var(--glass-border);
-    position: relative;
+  .mac-search-field-input::placeholder {
+    color: var(--mac-tertiary-label);
+  }
+
+  .mac-search-field-clear {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 var(--mac-spacing-md);
+    color: var(--mac-secondary-label);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all var(--mac-transition-fast);
+    flex-shrink: 0;
+    border-radius: var(--mac-corner-radius-sm);
+    min-width: 28px;
+    min-height: 28px;
+  }
+
+  .mac-search-field-clear:hover {
+    color: var(--mac-label);
+    background-color: var(--mac-gray-2);
+  }
+
+  .dark .mac-search-field-clear:hover {
+    background-color: var(--mac-tertiary-background);
+  }
+
+  /* Separador macOS */
+  .mac-separator {
+    height: 0.5px;
+    background-color: var(--mac-separator);
+    margin: var(--mac-spacing-md) 0;
+  }
+
+  /* Lista estilo macOS */
+  .mac-list {
+    background-color: var(--mac-secondary-grouped-background);
+    border-radius: var(--mac-corner-radius-lg);
     overflow: hidden;
-    box-shadow: inset 0 1px 0px rgba(255,255,255,0.75), 0 0 9px rgba(0,0,0,0.2), 0 3px 8px rgba(0,0,0,0.15);
+    border: 0.5px solid var(--mac-separator);
+  }
+
+  .mac-list-item {
+    padding: var(--mac-spacing-md);
+    border-bottom: 0.5px solid var(--mac-separator);
+    transition: background-color var(--mac-transition-fast);
     cursor: pointer;
   }
 
-  .glass-interactive::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 0.75rem;
-    background: linear-gradient(to bottom right, rgba(255,255,255,0.6), transparent, transparent);
-    opacity: 0.7;
-    pointer-events: none;
+  .mac-list-item:last-child {
+    border-bottom: none;
   }
 
-  .glass-interactive:hover {
-    background: var(--glass-hover);
+  .mac-list-item:hover {
+    background-color: var(--mac-secondary-background);
+  }
+
+  /* Navbar estilo macOS */
+  .mac-navbar {
+    background-color: var(--mac-material-light);
+    backdrop-filter: blur(var(--mac-blur-intensity)) saturate(180%);
+    -webkit-backdrop-filter: blur(var(--mac-blur-intensity)) saturate(180%);
+    border-bottom: 0.5px solid var(--mac-separator);
+    padding: var(--mac-spacing-md);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .dark .mac-navbar {
+    background-color: var(--mac-material-dark);
+  }
+
+  /* Badge macOS */
+  .mac-badge {
+    background-color: var(--mac-red);
+    color: #FFFFFF;
+    border-radius: 10px;
+    padding: 2px 6px;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 16px;
+    min-width: 18px;
+    text-align: center;
+  }
+
+  /* Chip macOS */
+  .mac-chip {
+    background-color: var(--mac-secondary-background);
+    color: var(--mac-label);
+    border: 0.5px solid var(--mac-separator);
+    border-radius: 14px;
+    padding: 4px 12px;
+    font-size: 12px;
+    font-weight: 400;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all var(--mac-transition-fast);
+    cursor: pointer;
+  }
+
+  .mac-chip:hover {
+    background-color: var(--mac-gray-2);
+  }
+
+  .mac-chip.selected {
+    background-color: var(--mac-blue);
+    color: #FFFFFF;
+    border-color: var(--mac-blue);
+  }
+
+  .mac-chip.selected:hover {
+    background-color: var(--mac-blue-dark);
+  }
+
+  .mac-chip.selected * {
+    color: inherit;
+  }
+
+  /* Control segmentado macOS (Segmented Control) */
+  .mac-segmented-control {
+    display: inline-flex;
+    align-items: center;
+    background-color: var(--mac-secondary-background);
+    border-radius: var(--mac-corner-radius-md);
+    padding: 2px;
+    gap: 2px;
+  }
+
+  .mac-segmented-control-button {
+    background-color: transparent;
+    color: var(--mac-secondary-label);
+    border: none;
+    border-radius: var(--mac-corner-radius-sm);
+    padding: 4px 12px;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 18px;
+    transition: all var(--mac-transition-fast);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 28px;
+    min-width: 32px;
+  }
+
+  .mac-segmented-control-button:hover {
+    background-color: var(--mac-gray-2);
+    color: var(--mac-label);
+  }
+
+  .dark .mac-segmented-control-button:hover {
+    background-color: var(--mac-tertiary-background);
+  }
+
+  .mac-segmented-control-button.active {
+    background-color: var(--mac-blue);
+    color: #FFFFFF;
+  }
+
+  .mac-segmented-control-button.active:hover {
+    background-color: var(--mac-blue-dark);
+  }
+
+  .mac-segmented-control-button.active * {
+    color: #FFFFFF !important;
+  }
+
+  .mac-segmented-control-button:not(.active) * {
+    color: inherit;
+  }
+
+  /* Card de producto macOS */
+  .mac-product-card {
+    background-color: var(--mac-secondary-grouped-background);
+    border-radius: var(--mac-corner-radius-lg);
+    overflow: hidden;
+    transition: all var(--mac-transition-fast);
+    cursor: pointer;
+    border: 0.5px solid var(--mac-separator);
+  }
+
+  .mac-product-card:hover {
     transform: translateY(-2px);
-    box-shadow: inset 0 1px 0px rgba(255,255,255,0.75), 0 0 15px rgba(0,0,0,0.3), 0 6px 16px rgba(0,0,0,0.2);
+    box-shadow: var(--mac-shadow-md);
+    border-color: var(--mac-separator);
   }
 
-  .glass-interactive:active {
-    transform: translateY(0);
+  .mac-product-card-image {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    background-color: var(--mac-gray-2);
   }
 
-  /* ========================================
-     FONDOS ANIMADOS - ELIMINADOS
-     Ahora usamos imagen de fondo global
-     ======================================== */
+  .mac-product-card-content {
+    padding: var(--mac-spacing-md);
+  }
+
+  .mac-product-card-title {
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 18px;
+    color: var(--mac-label);
+    margin-bottom: var(--mac-spacing-xs);
+  }
+
+  .mac-product-card-price {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--mac-blue);
+    margin-top: var(--mac-spacing-sm);
+  }
 }
 
 @layer utilities {
   /* ========================================
-     UTILIDADES PERSONALIZADAS
+     UTILIDADES PERSONALIZADAS macOS
      ======================================== */
 
-  /* Texto con colores adaptativos */
-  .text-adaptive-primary {
-    color: var(--text-primary);
+  /* Tipografía macOS */
+  .mac-text-large-title {
+    font-size: 34px;
+    font-weight: 700;
+    line-height: 41px;
+    letter-spacing: 0.37px;
   }
 
-  .text-adaptive-secondary {
-    color: var(--text-secondary);
+  .mac-text-title-1 {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 34px;
+    letter-spacing: 0.36px;
   }
 
-  .text-adaptive-tertiary {
-    color: var(--text-tertiary);
+  .mac-text-title-2 {
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 28px;
+    letter-spacing: 0.35px;
   }
 
-  /* Backdrop blur mejorado */
-  .backdrop-blur-strong {
-    backdrop-filter: blur(var(--backdrop-blur));
-    -webkit-backdrop-filter: blur(var(--backdrop-blur));
+  .mac-text-title-3 {
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 25px;
+    letter-spacing: 0.38px;
   }
 
-  /* Efectos hover para ecommerce */
-  
-  /* Cards de productos - Elevación sutil */
-  .hover-lift {
-    transition: transform 200ms ease-out, box-shadow 200ms ease-out;
+  .mac-text-headline {
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 22px;
+    letter-spacing: -0.41px;
   }
 
-  .hover-lift:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.1);
+  .mac-text-body {
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 18px;
+    letter-spacing: -0.08px;
   }
 
-  /* Buttons - Feedback visual claro */
-  .hover-button {
-    transition: background-color 150ms ease-out, transform 150ms ease-out;
+  .mac-text-callout {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 21px;
+    letter-spacing: -0.32px;
   }
 
-  .hover-button:hover {
-    transform: translateY(-1px);
+  .mac-text-subhead {
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 16px;
+    letter-spacing: 0px;
   }
 
-  .hover-button:active {
-    transform: translateY(0);
+  .mac-text-footnote {
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 16px;
+    letter-spacing: 0px;
   }
 
-  /* Links - Cambio de color sutil */
-  .hover-link {
-    transition: color 200ms ease-out;
+  .mac-text-caption-1 {
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 13px;
+    letter-spacing: 0.07px;
   }
 
-  /* Interactive elements - Opacidad */
-  .hover-interactive {
-    transition: opacity 200ms ease-out, background-color 200ms ease-out;
+  .mac-text-caption-2 {
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 13px;
+    letter-spacing: 0.07px;
   }
 
-  .hover-interactive:hover {
-    opacity: 0.9;
+  /* Colores de texto macOS */
+  .mac-text-primary {
+    color: var(--mac-label);
   }
 
-  /* Animación de aparición suave */
-  .fade-in {
-    animation: fadeIn 0.5s ease-in-out;
+  .mac-text-secondary {
+    color: var(--mac-secondary-label);
   }
 
-  @keyframes fadeIn {
+  .mac-text-tertiary {
+    color: var(--mac-tertiary-label);
+  }
+
+  .mac-text-quaternary {
+    color: var(--mac-quaternary-label);
+  }
+
+  /* Fondos macOS */
+  .mac-bg-primary {
+    background-color: var(--mac-primary-background);
+  }
+
+  .mac-bg-secondary {
+    background-color: var(--mac-secondary-background);
+  }
+
+  .mac-bg-tertiary {
+    background-color: var(--mac-tertiary-background);
+  }
+
+  .mac-bg-grouped {
+    background-color: var(--mac-grouped-background);
+  }
+
+  /* Bordes macOS */
+  .border-mac-separator {
+    border-color: var(--mac-separator);
+  }
+
+  /* Animaciones macOS */
+  .mac-fade-in {
+    animation: macFadeIn var(--mac-transition-base);
+  }
+
+  @keyframes macFadeIn {
     from {
       opacity: 0;
-      transform: translateY(20px);
+      transform: translateY(8px);
     }
     to {
       opacity: 1;
@@ -418,31 +669,249 @@ body {
     }
   }
 
-  /* Gradientes personalizados - ELIMINADOS
-     Ahora usamos imagen de fondo global */
-
-  /* Scrollbar personalizado */
-  .custom-scrollbar::-webkit-scrollbar {
-    width: 8px;
+  .mac-scale-in {
+    animation: macScaleIn var(--mac-transition-base);
   }
 
-  .custom-scrollbar::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
+  @keyframes macScaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
   }
 
-  .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.3);
-    border-radius: 10px;
+  /* Padding macOS */
+  .p-mac-xs { padding: var(--mac-spacing-xs); }
+  .p-mac-sm { padding: var(--mac-spacing-sm); }
+  .p-mac-md { padding: var(--mac-spacing-md); }
+  .p-mac-lg { padding: var(--mac-spacing-lg); }
+  .p-mac-xl { padding: var(--mac-spacing-xl); }
+  .p-mac-2xl { padding: var(--mac-spacing-2xl); }
+  .p-mac-3xl { padding: var(--mac-spacing-3xl); }
+
+  .px-mac-xs { padding-left: var(--mac-spacing-xs); padding-right: var(--mac-spacing-xs); }
+  .px-mac-sm { padding-left: var(--mac-spacing-sm); padding-right: var(--mac-spacing-sm); }
+  .px-mac-md { padding-left: var(--mac-spacing-md); padding-right: var(--mac-spacing-md); }
+  .px-mac-lg { padding-left: var(--mac-spacing-lg); padding-right: var(--mac-spacing-lg); }
+  .px-mac-xl { padding-left: var(--mac-spacing-xl); padding-right: var(--mac-spacing-xl); }
+  .px-mac-2xl { padding-left: var(--mac-spacing-2xl); padding-right: var(--mac-spacing-2xl); }
+
+  .py-mac-xs { padding-top: var(--mac-spacing-xs); padding-bottom: var(--mac-spacing-xs); }
+  .py-mac-sm { padding-top: var(--mac-spacing-sm); padding-bottom: var(--mac-spacing-sm); }
+  .py-mac-md { padding-top: var(--mac-spacing-md); padding-bottom: var(--mac-spacing-md); }
+  .py-mac-lg { padding-top: var(--mac-spacing-lg); padding-bottom: var(--mac-spacing-lg); }
+  .py-mac-xl { padding-top: var(--mac-spacing-xl); padding-bottom: var(--mac-spacing-xl); }
+  .py-mac-2xl { padding-top: var(--mac-spacing-2xl); padding-bottom: var(--mac-spacing-2xl); }
+
+  /* Margin macOS */
+  .m-mac-xs { margin: var(--mac-spacing-xs); }
+  .m-mac-sm { margin: var(--mac-spacing-sm); }
+  .m-mac-md { margin: var(--mac-spacing-md); }
+  .m-mac-lg { margin: var(--mac-spacing-lg); }
+  .m-mac-xl { margin: var(--mac-spacing-xl); }
+  .m-mac-2xl { margin: var(--mac-spacing-2xl); }
+
+  .mx-mac-xs { margin-left: var(--mac-spacing-xs); margin-right: var(--mac-spacing-xs); }
+  .mx-mac-sm { margin-left: var(--mac-spacing-sm); margin-right: var(--mac-spacing-sm); }
+  .mx-mac-md { margin-left: var(--mac-spacing-md); margin-right: var(--mac-spacing-md); }
+  .mx-mac-lg { margin-left: var(--mac-spacing-lg); margin-right: var(--mac-spacing-lg); }
+  .mx-mac-xl { margin-left: var(--mac-spacing-xl); margin-right: var(--mac-spacing-xl); }
+  .mx-mac-2xl { margin-left: var(--mac-spacing-2xl); margin-right: var(--mac-spacing-2xl); }
+
+  .my-mac-xs { margin-top: var(--mac-spacing-xs); margin-bottom: var(--mac-spacing-xs); }
+  .my-mac-sm { margin-top: var(--mac-spacing-sm); margin-bottom: var(--mac-spacing-sm); }
+  .my-mac-md { margin-top: var(--mac-spacing-md); margin-bottom: var(--mac-spacing-md); }
+  .my-mac-lg { margin-top: var(--mac-spacing-lg); margin-bottom: var(--mac-spacing-lg); }
+  .my-mac-xl { margin-top: var(--mac-spacing-xl); margin-bottom: var(--mac-spacing-xl); }
+  .my-mac-2xl { margin-top: var(--mac-spacing-2xl); margin-bottom: var(--mac-spacing-2xl); }
+
+  .mt-mac-xs { margin-top: var(--mac-spacing-xs); }
+  .mt-mac-sm { margin-top: var(--mac-spacing-sm); }
+  .mt-mac-md { margin-top: var(--mac-spacing-md); }
+  .mt-mac-lg { margin-top: var(--mac-spacing-lg); }
+  .mt-mac-xl { margin-top: var(--mac-spacing-xl); }
+  .mt-mac-2xl { margin-top: var(--mac-spacing-2xl); }
+
+  .mb-mac-xs { margin-bottom: var(--mac-spacing-xs); }
+  .mb-mac-sm { margin-bottom: var(--mac-spacing-sm); }
+  .mb-mac-md { margin-bottom: var(--mac-spacing-md); }
+  .mb-mac-lg { margin-bottom: var(--mac-spacing-lg); }
+  .mb-mac-xl { margin-bottom: var(--mac-spacing-xl); }
+  .mb-mac-2xl { margin-bottom: var(--mac-spacing-2xl); }
+
+  /* Gap macOS */
+  .gap-mac-xs { gap: var(--mac-spacing-xs); }
+  .gap-mac-sm { gap: var(--mac-spacing-sm); }
+  .gap-mac-md { gap: var(--mac-spacing-md); }
+  .gap-mac-lg { gap: var(--mac-spacing-lg); }
+  .gap-mac-xl { gap: var(--mac-spacing-xl); }
+  .gap-mac-2xl { gap: var(--mac-spacing-2xl); }
+
+  /* Border radius macOS */
+  .rounded-mac-sm { border-radius: var(--mac-corner-radius-sm); }
+  .rounded-mac-md { border-radius: var(--mac-corner-radius-md); }
+  .rounded-mac-lg { border-radius: var(--mac-corner-radius-lg); }
+  .rounded-mac-xl { border-radius: var(--mac-corner-radius-xl); }
+
+  /* Space-y macOS */
+  .space-y-mac-xs > * + * { margin-top: var(--mac-spacing-xs); }
+  .space-y-mac-sm > * + * { margin-top: var(--mac-spacing-sm); }
+  .space-y-mac-md > * + * { margin-top: var(--mac-spacing-md); }
+  .space-y-mac-lg > * + * { margin-top: var(--mac-spacing-lg); }
+  .space-y-mac-xl > * + * { margin-top: var(--mac-spacing-xl); }
+  .space-y-mac-2xl > * + * { margin-top: var(--mac-spacing-2xl); }
+
+  /* Sombras macOS */
+  .shadow-mac-sm {
+    box-shadow: var(--mac-shadow-sm);
   }
 
-  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.5);
+  .shadow-mac-md {
+    box-shadow: var(--mac-shadow-md);
+  }
+
+  .shadow-mac-lg {
+    box-shadow: var(--mac-shadow-lg);
+  }
+
+  /* Touch targets mínimos macOS */
+  .mac-touch-target {
+    min-height: 28px;
+    min-width: 28px;
+  }
+
+  /* Utilidades de transición macOS para hover */
+  .mac-transition-colors {
+    transition: color var(--mac-transition-fast), background-color var(--mac-transition-fast), border-color var(--mac-transition-fast);
+    transition-timing-function: cubic-bezier(0.4, 0.0, 0.2, 1);
+  }
+
+  .mac-transition-opacity {
+    transition: opacity var(--mac-transition-fast);
+    transition-timing-function: cubic-bezier(0.4, 0.0, 0.2, 1);
+  }
+
+  .mac-transition-shadow {
+    transition: box-shadow var(--mac-transition-fast);
+    transition-timing-function: cubic-bezier(0.4, 0.0, 0.2, 1);
+  }
+
+  .mac-transition-transform {
+    transition: transform var(--mac-transition-fast);
+    transition-timing-function: cubic-bezier(0.4, 0.0, 0.2, 1);
+  }
+
+  .mac-transition-all {
+    transition: all var(--mac-transition-fast);
+    transition-timing-function: cubic-bezier(0.4, 0.0, 0.2, 1);
+  }
+
+  /* Activity Indicator (Spinner) estilo macOS - Basado en UIActivityIndicatorView de Apple */
+  /* Diseño fiel a las especificaciones de Apple HIG: círculo con segmentos rotatorios */
+  .mac-activity-indicator {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    position: relative;
+  }
+
+  /* Círculo principal con segmento visible - similar a UIActivityIndicatorView */
+  .mac-activity-indicator::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    border-top-color: var(--mac-blue);
+    border-right-color: transparent;
+    border-bottom-color: transparent;
+    border-left-color: transparent;
+    animation: macSpinnerRotate 0.75s linear infinite;
+  }
+
+  /* Segundo segmento con opacidad reducida para efecto de seguimiento */
+  .mac-activity-indicator::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    border-top-color: var(--mac-blue);
+    border-right-color: transparent;
+    border-bottom-color: transparent;
+    border-left-color: transparent;
+    opacity: 0.3;
+    animation: macSpinnerRotate 0.75s linear infinite;
+    animation-delay: -0.25s;
+  }
+
+  /* Animación continua y suave - velocidad estándar de Apple (0.75s) */
+  @keyframes macSpinnerRotate {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* Variante pequeña - 16px (iOS pequeño) */
+  .mac-activity-indicator-sm {
+    width: 16px;
+    height: 16px;
+  }
+
+  .mac-activity-indicator-sm::before,
+  .mac-activity-indicator-sm::after {
+    border-width: 1.5px;
+  }
+
+  /* Variante mediana - 24px (iOS mediano) */
+  .mac-activity-indicator-md {
+    width: 24px;
+    height: 24px;
+  }
+
+  .mac-activity-indicator-md::before,
+  .mac-activity-indicator-md::after {
+    border-width: 2.5px;
+  }
+
+  /* Variante grande - 32px (macOS estándar) */
+  .mac-activity-indicator-lg {
+    width: 32px;
+    height: 32px;
+  }
+
+  .mac-activity-indicator-lg::before,
+  .mac-activity-indicator-lg::after {
+    border-width: 3px;
+  }
+
+  /* Variante extra grande - 48px (macOS grande) */
+  .mac-activity-indicator-xl {
+    width: 48px;
+    height: 48px;
+  }
+
+  .mac-activity-indicator-xl::before,
+  .mac-activity-indicator-xl::after {
+    border-width: 4px;
   }
 }
 
 /* ========================================
-   MEJORAS DE ACCESIBILIDAD
+   ACCESIBILIDAD macOS
    ======================================== */
 
 @media (prefers-reduced-motion: reduce) {
@@ -453,60 +922,30 @@ body {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+
+  /* Para Activity Indicators, mostrar un estado estático cuando se reduce movimiento */
+  .mac-activity-indicator::before,
+  .mac-activity-indicator::after {
+    animation: none !important;
+    border-top-color: var(--mac-blue);
+    opacity: 0.6;
+  }
 }
 
 /* ========================================
-   RESPONSIVE AJUSTES
+   RESPONSIVE macOS
    ======================================== */
 
-@media (max-width: 640px) {
-  .glass-card {
-    border-radius: 1rem;
-    padding: 1.5rem;
+@media (max-width: 768px) {
+  .mac-card {
+    border-radius: var(--mac-corner-radius-md);
+    padding: var(--mac-spacing-md);
   }
 
-  .background-orb {
-    width: 16rem;
-    height: 16rem;
-  }
-
-  /* Ajustes para botones en móvil */
-  .glass-button {
-    padding: 0.75rem 1rem;
-    font-size: 0.875rem;
-  }
-
-  .glass-button-round {
-    width: 2rem;
-    height: 2rem;
-  }
-
-  /* Ajustes para inputs en móvil */
-  .glass-input {
-    padding: 0.5rem 0.75rem;
-    font-size: 0.875rem;
-  }
-
-  /* Ajustes para paneles en móvil */
-  .glass-panel {
-    padding: 0.75rem;
-  }
-}
-
-@media (max-width: 480px) {
-  /* Ajustes adicionales para pantallas muy pequeñas */
-  .glass-card {
-    margin: 0.5rem;
-    padding: 1rem;
-  }
-
-  .glass-button {
-    padding: 0.5rem 0.75rem;
-    font-size: 0.8rem;
-  }
-
-  .glass-button-round {
-    width: 1.75rem;
-    height: 1.75rem;
+  .mac-button-primary,
+  .mac-button-secondary,
+  .mac-button-tertiary {
+    font-size: 12px;
+    padding: 5px 16px;
   }
 }

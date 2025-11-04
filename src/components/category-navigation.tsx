@@ -12,30 +12,29 @@ interface CategoryNavigationProps {
 export function CategoryNavigation({ selectedCategory, onCategorySelect }: CategoryNavigationProps) {
   const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
 
-  // Mapeo de iconos para cada categoría
   const categoryIcons: Record<string, React.ReactNode> = {
-    "ropa-mujer": <User className="w-4 h-4" />,
-    "ropa-hombre": <Users className="w-4 h-4" />,
-    "ropa-niño": <Baby className="w-4 h-4" />,
-    "belleza": <Sparkles className="w-4 h-4" />,
-    "hogar": <Home className="w-4 h-4" />,
-    "tecnologia": <Smartphone className="w-4 h-4" />,
+    "ropa-mujer": <User className="w-4 h-4 currentColor" />,
+    "ropa-hombre": <Users className="w-4 h-4 currentColor" />,
+    "ropa-niño": <Baby className="w-4 h-4 currentColor" />,
+    "belleza": <Sparkles className="w-4 h-4 currentColor" />,
+    "hogar": <Home className="w-4 h-4 currentColor" />,
+    "tecnologia": <Smartphone className="w-4 h-4 currentColor" />,
   };
 
   return (
-    <div className="flex flex-wrap gap-2 sm:gap-3">
+    <div className="flex flex-wrap gap-mac-sm">
       {/* Botón "Todas las categorías" */}
-        <button
-          onClick={() => onCategorySelect(null)}
-          className={`px-3 py-2 flex items-center gap-2 glass-button transition-colors ${
-            !selectedCategory
-              ? "bg-white/10 backdrop-blur-sm text-adaptive-primary"
-              : "text-adaptive-secondary hover:text-adaptive-primary hover:bg-white/5"
-          }`}
-        >
-          <Grid3X3 className="w-4 h-4" />
-          <span className="text-sm font-medium">Todas las categorías</span>
-        </button>
+      <button
+        onClick={() => onCategorySelect(null)}
+        className={`mac-chip flex items-center gap-mac-sm ${
+          !selectedCategory
+            ? "selected"
+            : ""
+        }`}
+      >
+        <Grid3X3 className="w-4 h-4 currentColor" />
+        <span className="mac-text-subhead font-medium">Todas las categorías</span>
+      </button>
 
       {/* Categorías */}
       {categories.map((category) => {
@@ -46,14 +45,14 @@ export function CategoryNavigation({ selectedCategory, onCategorySelect }: Categ
             onClick={() => onCategorySelect(category.id)}
             onMouseEnter={() => setHoveredCategory(category.id)}
             onMouseLeave={() => setHoveredCategory(null)}
-            className={`px-3 py-2 flex items-center gap-2 glass-button transition-colors ${
+            className={`mac-chip flex items-center gap-mac-sm ${
               selectedCategory === category.id
-                ? "bg-white/10 backdrop-blur-sm text-adaptive-primary"
-                : "text-adaptive-secondary hover:text-adaptive-primary hover:bg-white/5"
+                ? "selected"
+                : ""
             }`}
           >
             {icon}
-            <span className="text-sm font-medium">{category.name}</span>
+            <span className="mac-text-subhead font-medium">{category.name}</span>
           </button>
         );
       })}

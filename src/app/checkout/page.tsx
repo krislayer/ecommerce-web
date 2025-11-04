@@ -3,8 +3,6 @@
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/store";
-import { LiquidGlassCard } from "@/components/liquid-glass-card";
-import { AdvancedLiquidGlassCard } from "@/components/advanced-liquid-glass-card";
 import { ShippingService } from "@/lib/services/shipping.service";
 import { Truck } from "lucide-react";
 
@@ -77,203 +75,204 @@ Gracias por tu compra en ¡Qué Chulito! ❤️`;
   };
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-12 relative z-10 fade-in">
-      <AdvancedLiquidGlassCard 
-        variant="hero"
-        className="mb-4"
-      >
-        <div className="text-center">
-          <h1 className="text-3xl sm:text-4xl font-bold mb-4 text-white">
+    <div className="min-h-screen mac-bg-grouped">
+      <div className="max-w-3xl mx-auto px-mac-md py-mac-xl mac-fade-in">
+        {/* Header */}
+        <div className="mac-card text-center mb-mac-lg">
+          <h1 className="mac-text-large-title mac-text-primary mb-mac-md">
             Finalizar Compra
           </h1>
-          <p className="text-white/90">
+          <p className="mac-text-title-3 mac-text-secondary">
             Completa tu información para procesar tu pedido
           </p>
         </div>
-      </AdvancedLiquidGlassCard>
 
-      <AdvancedLiquidGlassCard variant="hero">
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Guest Info */}
-          <div className="glass-secondary p-6 space-y-4">
-            <h2 className="text-xl font-semibold text-adaptive-primary">
-              Información de Contacto
-            </h2>
-            
-            <div>
-              <label className="block text-sm font-medium text-adaptive-primary mb-2">
-                Nombre completo *
-              </label>
-              <input
-                type="text"
-                required
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="glass-input w-full"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-adaptive-primary mb-2">
-                Teléfono *
-              </label>
-              <input
-                type="tel"
-                required
-                value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                className="glass-input w-full"
-                placeholder="50212345678"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-adaptive-primary mb-2">
-                Email (opcional)
-              </label>
-              <input
-                type="email"
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="glass-input w-full"
-              />
-            </div>
-          </div>
-
-          {/* Shipping Method */}
-          <div className="glass-secondary p-6 space-y-4">
-            <h2 className="text-xl font-semibold text-adaptive-primary">
-              Método de Envío
-            </h2>
-
-            <div className="space-y-3">
-              <label className="flex items-center gap-3 p-4 glass-secondary cursor-pointer">
-                <input
-                  type="radio"
-                  name="shipping"
-                  value="pickup"
-                  checked={formData.shippingMethod === "pickup"}
-                  onChange={(e) => setFormData({ ...formData, shippingMethod: e.target.value as "pickup" | "local" })}
-                  className="w-5 h-5"
-                />
-                <div className="flex-1">
-                  <div className="font-medium text-adaptive-primary">
-                    Recoger en tienda
-                  </div>
-                  <div className="text-sm text-adaptive-secondary">
-                    Gratis - Dirección: [Tu dirección]
-                  </div>
-                </div>
-              </label>
-
-              <label className="flex items-center gap-3 p-4 glass-secondary cursor-pointer">
-                <input
-                  type="radio"
-                  name="shipping"
-                  value="local"
-                  checked={formData.shippingMethod === "local"}
-                  onChange={(e) => setFormData({ ...formData, shippingMethod: e.target.value as "pickup" | "local" })}
-                  className="w-5 h-5"
-                />
-                <div className="flex-1">
-                  <div className="font-medium text-adaptive-primary flex items-center gap-2">
-                    <Truck className="w-4 h-4" />
-                    Envío local
-                  </div>
-                  <div className="text-sm text-adaptive-secondary">
-                    {shippingCalculation.isFreeShipping ? (
-                      <span className="text-green-400 font-medium">Gratis (Compra mayor a Q300)</span>
-                    ) : (
-                      <>
-                        {ShippingService.formatPrice(shippingCalculation.shippingCost)} GTQ
-                        {shippingCalculation.remainingForFreeShipping && (
-                          <div className="text-xs text-green-400 mt-1">
-                            Agrega {ShippingService.formatPrice(shippingCalculation.remainingForFreeShipping)} más para envío gratis
-                          </div>
-                        )}
-                      </>
-                    )}
-                  </div>
-                </div>
-              </label>
-            </div>
-
-            {formData.shippingMethod === "local" && (
-              <div>
-                <label className="block text-sm font-medium text-adaptive-primary mb-2">
-                  Dirección de envío *
-                </label>
-                <textarea
-                  required={formData.shippingMethod === "local"}
-                  value={formData.address}
-                  onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                  className="glass-input w-full"
-                  rows={3}
-                  placeholder="Calle, número, zona..."
-                />
-              </div>
-            )}
-          </div>
-
-          {/* Order Summary */}
-          <div className="glass-secondary p-6 space-y-4">
-            <h2 className="text-xl font-semibold text-adaptive-primary">
-              Resumen del Pedido
-            </h2>
-
-            <div className="space-y-2">
-              <div className="flex justify-between text-adaptive-secondary">
-                <span>Subtotal</span>
-                <span>{ShippingService.formatPrice(subtotal)}</span>
-              </div>
-              <div className="flex justify-between text-adaptive-secondary">
-                <span>Descuento</span>
-                <span>Q0.00</span>
-              </div>
-              <div className="flex justify-between text-adaptive-secondary">
-                <span className="flex items-center gap-1">
-                  <Truck className="w-4 h-4" />
-                  Envío
-                </span>
-                <span className={shippingCost === 0 ? "text-green-400" : ""}>
-                  {formData.shippingMethod === "pickup" 
-                    ? "Gratis (Recoger en tienda)" 
-                    : shippingCalculation.isFreeShipping 
-                      ? "Gratis (Compra mayor a Q300)" 
-                      : ShippingService.formatPrice(shippingCost)
-                  }
-                </span>
-              </div>
+        {/* Form */}
+        <div className="mac-card">
+          <form onSubmit={handleSubmit} className="space-y-mac-lg">
+            {/* Guest Info */}
+            <div className="space-y-mac-md">
+              <h2 className="mac-text-title-2 mac-text-primary">
+                Información de Contacto
+              </h2>
               
-              {/* Información adicional de envío gratis */}
-              {formData.shippingMethod === "local" && !shippingCalculation.isFreeShipping && shippingCalculation.remainingForFreeShipping && (
-                <div className="glass-secondary p-2 rounded text-xs text-adaptive-primary">
-                  <span className="text-green-400 font-medium">
-                    Agrega {ShippingService.formatPrice(shippingCalculation.remainingForFreeShipping)} más para envío gratis
-                  </span>
+              <div>
+                <label className="mac-text-subhead mac-text-primary mb-mac-sm block">
+                  Nombre completo *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  className="mac-input w-full"
+                />
+              </div>
+
+              <div>
+                <label className="mac-text-subhead mac-text-primary mb-mac-sm block">
+                  Teléfono *
+                </label>
+                <input
+                  type="tel"
+                  required
+                  value={formData.phone}
+                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  className="mac-input w-full"
+                  placeholder="50212345678"
+                />
+              </div>
+
+              <div>
+                <label className="mac-text-subhead mac-text-primary mb-mac-sm block">
+                  Email (opcional)
+                </label>
+                <input
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  className="mac-input w-full"
+                />
+              </div>
+            </div>
+
+            <div className="mac-separator"></div>
+
+            {/* Shipping Method */}
+            <div className="space-y-mac-md">
+              <h2 className="mac-text-title-2 mac-text-primary">
+                Método de Envío
+              </h2>
+
+              <div className="space-y-mac-sm">
+                <label className="flex items-start gap-mac-md p-mac-md mac-card cursor-pointer hover:bg-mac-gray-2 dark:hover:bg-mac-gray-6 mac-transition-colors">
+                  <input
+                    type="radio"
+                    name="shipping"
+                    value="pickup"
+                    checked={formData.shippingMethod === "pickup"}
+                    onChange={(e) => setFormData({ ...formData, shippingMethod: e.target.value as "pickup" | "local" })}
+                    className="mt-1 w-5 h-5"
+                  />
+                  <div className="flex-1">
+                    <div className="mac-text-headline mac-text-primary mb-mac-xs">
+                      Recoger en tienda
+                    </div>
+                    <div className="mac-text-subhead mac-text-secondary">
+                      Gratis - Dirección: [Tu dirección]
+                    </div>
+                  </div>
+                </label>
+
+                <label className="flex items-start gap-mac-md p-mac-md mac-card cursor-pointer hover:bg-mac-gray-2 dark:hover:bg-mac-gray-6 mac-transition-colors">
+                  <input
+                    type="radio"
+                    name="shipping"
+                    value="local"
+                    checked={formData.shippingMethod === "local"}
+                    onChange={(e) => setFormData({ ...formData, shippingMethod: e.target.value as "pickup" | "local" })}
+                    className="mt-1 w-5 h-5"
+                  />
+                  <div className="flex-1">
+                    <div className="mac-text-headline mac-text-primary mb-mac-xs flex items-center gap-mac-sm">
+                      <Truck className="w-5 h-5" />
+                      Envío local
+                    </div>
+                    <div className="mac-text-subhead mac-text-secondary">
+                      {shippingCalculation.isFreeShipping ? (
+                        <span style={{ color: 'var(--mac-green)' }} className="font-medium">Gratis (Compra mayor a Q300)</span>
+                      ) : (
+                        <>
+                          {ShippingService.formatPrice(shippingCalculation.shippingCost)} GTQ
+                          {shippingCalculation.remainingForFreeShipping && (
+                            <div className="mac-text-caption-1 mt-mac-xs" style={{ color: 'var(--mac-green)' }}>
+                              Agrega {ShippingService.formatPrice(shippingCalculation.remainingForFreeShipping)} más para envío gratis
+                            </div>
+                          )}
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </label>
+              </div>
+
+              {formData.shippingMethod === "local" && (
+                <div>
+                  <label className="mac-text-subhead mac-text-primary mb-mac-sm block">
+                    Dirección de envío *
+                  </label>
+                  <textarea
+                    required={formData.shippingMethod === "local"}
+                    value={formData.address}
+                    onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                    className="mac-input w-full"
+                    rows={3}
+                    placeholder="Calle, número, zona..."
+                  />
                 </div>
               )}
-              
-              <div className="border-t border-white/20 pt-2">
-                <div className="flex justify-between text-lg font-bold text-adaptive-primary">
+            </div>
+
+            <div className="mac-separator"></div>
+
+            {/* Order Summary */}
+            <div className="space-y-mac-md">
+              <h2 className="mac-text-title-2 mac-text-primary">
+                Resumen del Pedido
+              </h2>
+
+              <div className="space-y-mac-sm">
+                <div className="flex justify-between mac-text-body mac-text-secondary">
+                  <span>Subtotal</span>
+                  <span>{ShippingService.formatPrice(subtotal)}</span>
+                </div>
+                <div className="flex justify-between mac-text-body mac-text-secondary">
+                  <span>Descuento</span>
+                  <span>Q0.00</span>
+                </div>
+                <div className="flex justify-between mac-text-body mac-text-secondary">
+                  <span className="flex items-center gap-mac-xs">
+                    <Truck className="w-4 h-4" />
+                    Envío
+                  </span>
+                  <span style={shippingCost === 0 ? { color: 'var(--mac-green)' } : {}}>
+                    {formData.shippingMethod === "pickup" 
+                      ? "Gratis (Recoger en tienda)" 
+                      : shippingCalculation.isFreeShipping 
+                        ? "Gratis (Compra mayor a Q300)" 
+                        : ShippingService.formatPrice(shippingCost)
+                    }
+                  </span>
+                </div>
+                
+                {/* Información adicional de envío gratis */}
+                {formData.shippingMethod === "local" && !shippingCalculation.isFreeShipping && shippingCalculation.remainingForFreeShipping && (
+                  <div className="mac-card p-mac-sm mac-text-caption-1 mac-text-primary">
+                    <span style={{ color: 'var(--mac-green)' }} className="font-medium">
+                      Agrega {ShippingService.formatPrice(shippingCalculation.remainingForFreeShipping)} más para envío gratis
+                    </span>
+                  </div>
+                )}
+                
+                <div className="mac-separator"></div>
+                <div className="flex justify-between mac-text-title-2 mac-text-primary">
                   <span>Total</span>
                   <span>{ShippingService.formatPrice(total)}</span>
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* Submit Button */}
-          <button type="submit" className="w-full glass-button-primary py-4 px-6">
-            <span className="text-adaptive-primary text-lg font-medium relative z-10">Enviar Pedido por WhatsApp</span>
-          </button>
+            {/* Submit Button */}
+            <button type="submit" className="mac-button-primary w-full">
+              Enviar Pedido por WhatsApp
+            </button>
 
-          <p className="text-sm text-adaptive-tertiary text-center">
-            Al hacer clic, se abrirá WhatsApp con tu pedido listo para enviar.
-          </p>
-        </form>
-      </AdvancedLiquidGlassCard>
+            <p className="mac-text-caption-1 mac-text-tertiary text-center">
+              Al hacer clic, se abrirá WhatsApp con tu pedido listo para enviar.
+            </p>
+          </form>
+        </div>
+      </div>
     </div>
   );
 }

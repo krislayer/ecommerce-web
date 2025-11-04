@@ -54,15 +54,23 @@ export function AuthButton() {
 
   if (user) {
     return (
-      <button onClick={handleSignOut} className="glass-button-round relative" aria-label="Cerrar sesión">
-        <LogOut className="w-6 h-6 text-white relative z-10" />
+      <button 
+        onClick={handleSignOut} 
+        className="mac-touch-target flex items-center justify-center rounded-full hover:bg-mac-gray-2 dark:hover:bg-mac-gray-6 mac-transition-colors"
+        aria-label="Cerrar sesión"
+      >
+        <LogOut className="w-6 h-6 mac-text-primary" />
       </button>
     );
   }
 
   return (
-    <Link href="/login" className="glass-button-round relative" aria-label="Iniciar sesión">
-      <User className="w-6 h-6 text-white relative z-10" />
+    <Link 
+      href="/login" 
+      className="mac-touch-target flex items-center justify-center rounded-full hover:bg-mac-gray-2 dark:hover:bg-mac-gray-6 mac-transition-colors"
+      aria-label="Iniciar sesión"
+    >
+      <User className="w-6 h-6 mac-text-primary" />
     </Link>
   );
 }

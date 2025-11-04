@@ -10,7 +10,6 @@ export function ThemeToggle() {
 
   useEffect(() => {
     setMounted(true);
-    // Forzar tema dark siempre
     setTheme("dark");
   }, [setTheme]);
 
@@ -19,9 +18,9 @@ export function ThemeToggle() {
   return (
     <button 
       onClick={() => setTheme("dark")}
-      className="glass-button-round"
+      className="mac-touch-target flex items-center justify-center rounded-full hover:bg-mac-gray-2 dark:hover:bg-mac-gray-6 mac-transition-colors"
     >
-      <Moon className="w-5 h-5 text-white" />
+      <Moon className="w-5 h-5 mac-text-primary" />
     </button>
   );
 }

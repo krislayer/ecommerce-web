@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { ProductGrid } from "./product-grid";
 import { ProductList } from "./product-list";
 import { ProductSearch } from "@/components/product-search";
@@ -8,13 +8,19 @@ import { ProductFilters, FilterState } from "@/components/product-filters";
 import { ProductSort, SortOption } from "@/components/product-sort";
 import { ViewToggle } from "@/components/view-toggle";
 import { Pagination } from "@/components/pagination";
-import { LiquidGlassCard } from "@/components/liquid-glass-card";
-import { AdvancedLiquidGlassCard } from "@/components/advanced-liquid-glass-card";
 import { CategoryNavigation } from "@/components/category-navigation";
 import { sampleProducts } from "@/lib/data/products";
-import { categories, getCategoriesForIds } from "@/lib/data/categories";
+import { categories } from "@/lib/data/categories";
 
 type ViewMode = "grid" | "list";
+
+// Función para normalizar texto eliminando acentos
+const normalizeText = (text: string): string => {
+  return text
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+};
 
 export default function CatalogoPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -26,7 +32,11 @@ export default function CatalogoPage() {
   const [sortBy, setSortBy] = useState<SortOption>("relevance");
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 12; // Mostrar 6 productos por página para demostrar paginación
+  const itemsPerPage = 12;
+
+  const handleSearch = useCallback((query: string) => {
+    setSearchQuery(query);
+  }, []);
 
   // Extraer facetas disponibles de los productos según sus categorías (sin incluir categorías)
   const availableFacets = useMemo(() => {
@@ -92,13 +102,6 @@ export default function CatalogoPage() {
     setFilters(newFilters);
   };
 
-  const handleClearAllFilters = () => {
-    setFilters({
-      facets: {},
-      priceRange: "all",
-    });
-  };
-
   // Calcular contadores de facetas (cuántos productos coinciden con cada valor)
   const facetCounts = useMemo(() => {
     const counts: Record<string, Record<string, number>> = {};
@@ -107,20 +110,20 @@ export default function CatalogoPage() {
     let baseProducts = sampleProducts;
     
     if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
+      const normalizedQuery = normalizeText(searchQuery);
       baseProducts = baseProducts.filter((product) => {
-        if (product.name.toLowerCase().includes(query)) return true;
-        if (product.description.toLowerCase().includes(query)) return true;
+        if (normalizeText(product.name).includes(normalizedQuery)) return true;
+        if (normalizeText(product.description).includes(normalizedQuery)) return true;
         
         const categoryMatches = product.categoryIds.some(catId => {
-          if (catId.toLowerCase().includes(query)) return true;
+          if (normalizeText(catId).includes(normalizedQuery)) return true;
           const mappedTerms = categoryMap[catId] || [];
-          return mappedTerms.some(term => term.includes(query));
+          return mappedTerms.some(term => normalizeText(term).includes(normalizedQuery));
         });
         if (categoryMatches) return true;
         
         const attrsMatch = Object.values(product.attrs).some(
-          value => value.toLowerCase().includes(query)
+          value => normalizeText(value).includes(normalizedQuery)
         );
         if (attrsMatch) return true;
         
@@ -198,20 +201,20 @@ export default function CatalogoPage() {
 
     // Aplicar búsqueda
     if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
+      const normalizedQuery = normalizeText(searchQuery);
       products = products.filter((product) => {
-        if (product.name.toLowerCase().includes(query)) return true;
-        if (product.description.toLowerCase().includes(query)) return true;
+        if (normalizeText(product.name).includes(normalizedQuery)) return true;
+        if (normalizeText(product.description).includes(normalizedQuery)) return true;
         
         const categoryMatches = product.categoryIds.some(catId => {
-          if (catId.toLowerCase().includes(query)) return true;
+          if (normalizeText(catId).includes(normalizedQuery)) return true;
           const mappedTerms = categoryMap[catId] || [];
-          return mappedTerms.some(term => term.includes(query));
+          return mappedTerms.some(term => normalizeText(term).includes(normalizedQuery));
         });
         if (categoryMatches) return true;
         
         const attrsMatch = Object.values(product.attrs).some(
-          value => value.toLowerCase().includes(query)
+          value => normalizeText(value).includes(normalizedQuery)
         );
         if (attrsMatch) return true;
         
@@ -292,35 +295,32 @@ export default function CatalogoPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-12 fade-in">
-      <AdvancedLiquidGlassCard 
-        className="mb-4"
-        variant="hero"
-      >
-        <div className="text-center">
-          <h1 className="text-4xl sm:text-5xl font-bold mb-2 text-white">
+    <div className="min-h-screen mac-bg-grouped">
+      <div className="max-w-7xl mx-auto px-mac-md py-mac-xl mac-fade-in">
+        {/* Header */}
+        <div className="mac-card text-center mb-mac-lg">
+          <h1 className="mac-text-large-title mac-text-primary mb-mac-md">
             Catálogo
           </h1>
-          <p className="text-lg text-white/90 mb-6">
+          <p className="mac-text-title-3 mac-text-secondary mb-mac-lg">
             Descubre moda, belleza, hogar, tecnología y más. Encuentra todo lo que necesitas en un solo lugar.
           </p>
           
           <ProductSearch 
-            onSearch={setSearchQuery}
+            onSearch={handleSearch}
             placeholder="Buscar por nombre, descripción o categoría..."
           />
           
           {/* Navegación de categorías */}
-          <div className="mt-4">
+          <div className="mt-mac-md">
             <CategoryNavigation 
               selectedCategory={selectedCategory}
               onCategorySelect={setSelectedCategory}
             />
           </div>
         </div>
-      </AdvancedLiquidGlassCard>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-4">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-mac-md mb-mac-md">
         <div className="lg:col-span-1">
           <ProductFilters
             filters={filters}
@@ -333,20 +333,20 @@ export default function CatalogoPage() {
         
         <div className="lg:col-span-3">
           {/* Barra de controles: Ordenar + Vista */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-mac-md mb-mac-lg">
             {/* Contador a la izquierda */}
-            <div className="text-adaptive-secondary text-sm">
+            <div className="mac-text-subhead mac-text-secondary">
               {(() => {
                 const startItem = (currentPage - 1) * itemsPerPage + 1;
                 const endItem = Math.min(currentPage * itemsPerPage, filteredAndSortedProducts.length);
                 return (
                   <>
-                    Mostrando <span className="font-semibold text-adaptive-primary">{startItem}-{endItem}</span> de <span className="font-semibold text-adaptive-primary">{filteredAndSortedProducts.length}</span> producto{filteredAndSortedProducts.length !== 1 ? 's' : ''}
+                    Mostrando <span className="font-semibold mac-text-primary">{startItem}-{endItem}</span> de <span className="font-semibold mac-text-primary">{filteredAndSortedProducts.length}</span> producto{filteredAndSortedProducts.length !== 1 ? 's' : ''}
                     {selectedCategory && (
-                      <> en: <span className="font-semibold text-adaptive-primary">{categories.find(c => c.id === selectedCategory)?.name}</span></>
+                      <> en: <span className="font-semibold mac-text-primary">{categories.find(c => c.id === selectedCategory)?.name}</span></>
                     )}
                     {searchQuery && (
-                      <> para: <span className="font-semibold text-adaptive-primary">"{searchQuery}"</span></>
+                      <> para: <span className="font-semibold mac-text-primary">&quot;{searchQuery}&quot;</span></>
                     )}
                   </>
                 );
@@ -354,7 +354,7 @@ export default function CatalogoPage() {
             </div>
 
             {/* Controles a la derecha */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-mac-md">
               <ProductSort 
                 sortBy={sortBy} 
                 onSortChange={setSortBy}
@@ -373,7 +373,7 @@ export default function CatalogoPage() {
 
           {/* Paginación */}
           {totalPages > 1 && (
-            <div className="mt-8">
+            <div className="mt-mac-lg">
               <Pagination
                 currentPage={currentPage}
                 totalPages={totalPages}
@@ -384,6 +384,7 @@ export default function CatalogoPage() {
             </div>
           )}
         </div>
+      </div>
       </div>
     </div>
   );

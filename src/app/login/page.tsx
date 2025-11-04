@@ -7,8 +7,6 @@ import { auth, isFirebaseConfigured } from "@/lib/firebase/client";
 import { setUser, setLoading } from "@/store/slice/authSlice";
 import type { RootState } from "@/store";
 import { useRouter } from "next/navigation";
-import { LiquidGlassCard } from "@/components/liquid-glass-card";
-import { AdvancedLiquidGlassCard } from "@/components/advanced-liquid-glass-card";
 
 export default function LoginPage() {
   const dispatch = useDispatch();
@@ -51,10 +49,13 @@ export default function LoginPage() {
 
   if (loading) {
     return (
-      <div className="max-w-md mx-auto px-4 py-20 fade-in">
-        <AdvancedLiquidGlassCard variant="hero" className="text-center">
-          <p className="text-white/90">Cargando...</p>
-        </AdvancedLiquidGlassCard>
+      <div className="min-h-screen mac-bg-grouped flex items-center justify-center">
+        <div className="mac-card text-center p-mac-xl">
+          <div className="flex flex-col items-center gap-mac-md">
+            <div className="mac-activity-indicator-lg"></div>
+            <p className="mac-text-body mac-text-secondary">Cargando...</p>
+          </div>
+        </div>
       </div>
     );
   }
@@ -64,41 +65,37 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="max-w-md mx-auto px-4 py-20 fade-in">
-      <AdvancedLiquidGlassCard 
-        variant="hero"
-        className="mb-4"
-      >
-        <div className="text-center">
-          <h1 className="text-3xl sm:text-4xl font-bold mb-4 text-white">
+    <div className="min-h-screen mac-bg-grouped flex items-center justify-center px-mac-md py-mac-xl">
+      <div className="max-w-md w-full mac-fade-in">
+        <div className="mac-card text-center">
+          <h1 className="mac-text-large-title mac-text-primary mb-mac-md">
             Iniciar Sesión
           </h1>
           
-          <p className="text-white/90 mb-8">
+          <p className="mac-text-body mac-text-secondary mb-mac-xl">
             Ingresa con tu cuenta de Google para continuar
           </p>
 
           {error && (
-            <div className="mb-6 p-4 glass-secondary text-white text-sm">
-              {error}
+            <div className="mb-mac-lg p-mac-md mac-card bg-mac-red/10 border border-mac-red/20">
+              <p className="mac-text-body" style={{ color: 'var(--mac-red)' }}>
+                {error}
+              </p>
             </div>
           )}
 
           <button
             onClick={handleGoogleSignIn}
-            className="w-full glass-button-primary py-4 px-6 mb-4"
+            className="mac-button-primary w-full mb-mac-md"
           >
-            <span className="text-white font-semibold text-lg relative z-10">
-              Continuar con Google
-            </span>
+            Continuar con Google
           </button>
 
-          <p className="text-center text-sm text-white/70">
+          <p className="mac-text-caption-1 mac-text-tertiary">
             Al continuar, aceptas nuestros términos y condiciones
           </p>
         </div>
-      </AdvancedLiquidGlassCard>
+      </div>
     </div>
   );
 }
-

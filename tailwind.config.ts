@@ -6,102 +6,84 @@ const config: Config = {
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
-  // Habilitar modo oscuro basado en clase
   darkMode: 'class',
   theme: {
     extend: {
-      // Colores personalizados para liquid glass
+      // Colores del sistema macOS
       colors: {
-        glass: {
-          light: 'rgba(255, 255, 255, 0.5)',
-          dark: 'rgba(255, 255, 255, 0.1)',
-          border: {
-            light: 'rgba(255, 255, 255, 0.6)',
-            dark: 'rgba(255, 255, 255, 0.2)',
-          }
-        }
-      },
-      // Blur personalizados
-      backdropBlur: {
-        'xs': '2px',
-        'strong': '40px',
-        'ultra': '60px',
-      },
-      // Animaciones personalizadas
-      animation: {
-        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-        'float': 'float 6s ease-in-out infinite',
-        'glow': 'glow 2s ease-in-out infinite alternate',
-      },
-      keyframes: {
-        float: {
-          '0%, 100%': { transform: 'translateY(0px)' },
-          '50%': { transform: 'translateY(-20px)' },
-        },
-        glow: {
-          '0%': { 
-            boxShadow: '0 0 20px rgba(168, 85, 247, 0.4)',
-          },
-          '100%': { 
-            boxShadow: '0 0 40px rgba(168, 85, 247, 0.8)',
+        mac: {
+          blue: '#007AFF',
+          'blue-dark': '#0051D5',
+          green: '#34C759',
+          indigo: '#5856D6',
+          orange: '#FF9500',
+          pink: '#FF2D55',
+          purple: '#AF52DE',
+          red: '#FF3B30',
+          teal: '#5AC8FA',
+          yellow: '#FFCC00',
+          gray: {
+            1: '#F5F5F7',
+            2: '#E8E8ED',
+            3: '#D2D2D7',
+            4: '#C7C7CC',
+            5: '#AEAEB2',
+            6: '#8E8E93',
           },
         },
       },
-      // Tamaños de blur aumentados
-      blur: {
-        '4xl': '72px',
-        '5xl': '96px',
+      // Tipografía macOS
+      fontFamily: {
+        sans: [
+          '-apple-system',
+          'BlinkMacSystemFont',
+          '"SF Pro Display"',
+          '"SF Pro Text"',
+          '"Helvetica Neue"',
+          'Helvetica',
+          'Arial',
+          'sans-serif',
+        ],
       },
-      // Sombras personalizadas para glass
-      boxShadow: {
-        'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.37)',
-        'glass-lg': '0 20px 60px 0 rgba(31, 38, 135, 0.5)',
-        'inner-glass': 'inset 0 2px 4px 0 rgba(255, 255, 255, 0.1)',
+      // Espaciado macOS
+      spacing: {
+        'mac-xs': '4px',
+        'mac-sm': '8px',
+        'mac-md': '16px',
+        'mac-lg': '24px',
+        'mac-xl': '32px',
+        'mac-2xl': '48px',
+        'mac-3xl': '64px',
       },
-      // Border radius adicionales
+      // Border radius macOS
       borderRadius: {
-        '4xl': '2rem',
-        '5xl': '2.5rem',
+        'mac-sm': '6px',
+        'mac-md': '8px',
+        'mac-lg': '10px',
+        'mac-xl': '12px',
       },
-      // Transiciones personalizadas
+      // Sombras macOS
+      boxShadow: {
+        'mac-sm': '0 1px 2px rgba(0, 0, 0, 0.04), 0 1px 4px rgba(0, 0, 0, 0.06)',
+        'mac-md': '0 2px 4px rgba(0, 0, 0, 0.06), 0 4px 8px rgba(0, 0, 0, 0.08)',
+        'mac-lg': '0 4px 8px rgba(0, 0, 0, 0.08), 0 8px 16px rgba(0, 0, 0, 0.1)',
+      },
+      // Backdrop blur macOS
+      backdropBlur: {
+        'mac': '40px',
+      },
+      // Transiciones macOS
+      transitionTimingFunction: {
+        'mac': 'cubic-bezier(0.4, 0.0, 0.2, 1)',
+      },
       transitionDuration: {
-        '400': '400ms',
-        '600': '600ms',
-      },
-      // Backdrop filter adicional
-      backdropBrightness: {
-        25: '.25',
-        175: '1.75',
+        'mac-fast': '100ms',
+        'mac-base': '200ms',
+        'mac-slow': '300ms',
       },
     },
   },
-  plugins: [
-    // Plugin personalizado para utilidades glass
-    function({ addUtilities }: any) {
-      const newUtilities = {
-        '.glass-morphism': {
-          'background': 'rgba(255, 255, 255, 0.1)',
-          'backdrop-filter': 'blur(40px)',
-          '-webkit-backdrop-filter': 'blur(40px)',
-          'border': '1px solid rgba(255, 255, 255, 0.2)',
-        },
-        '.text-shadow-sm': {
-          'text-shadow': '0 1px 2px rgba(0, 0, 0, 0.1)',
-        },
-        '.text-shadow': {
-          'text-shadow': '0 2px 4px rgba(0, 0, 0, 0.2)',
-        },
-        '.no-scrollbar': {
-          '-ms-overflow-style': 'none',
-          'scrollbar-width': 'none',
-          '&::-webkit-scrollbar': {
-            display: 'none',
-          },
-        },
-      }
-      addUtilities(newUtilities)
-    },
-  ],
+  plugins: [],
 };
 
 export default config;

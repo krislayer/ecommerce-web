@@ -11,33 +11,27 @@ interface ViewToggleProps {
 
 export function ViewToggle({ viewMode, onViewChange }: ViewToggleProps) {
   return (
-    <div className="flex items-center gap-2">
-      <span className="text-white/90 text-sm font-medium">Vista:</span>
-      <div className="glass-button">
+    <div className="flex items-center gap-mac-sm">
+      <span className="mac-text-subhead mac-text-secondary font-medium">Vista:</span>
+      <div className="mac-segmented-control">
         {/* Botón Vista Grid */}
         <button
           onClick={() => onViewChange("grid")}
-          className={`px-3 py-2 ${
-            viewMode === "grid"
-              ? "glass-button bg-white/20 text-white"
-              : "text-white/70 hover:text-white hover:bg-white/10"
-          }`}
+          className={`mac-segmented-control-button ${viewMode === "grid" ? "active" : ""}`}
           aria-label="Vista de cuadrícula"
+          aria-pressed={viewMode === "grid"}
         >
-          <Grid3X3 className="w-5 h-5 relative z-10" />
+          <Grid3X3 className="w-5 h-5" />
         </button>
 
         {/* Botón Vista Lista */}
         <button
           onClick={() => onViewChange("list")}
-          className={`px-3 py-2 ${
-            viewMode === "list"
-              ? "glass-button bg-white/20 text-white"
-              : "text-white/70 hover:text-white hover:bg-white/10"
-          }`}
+          className={`mac-segmented-control-button ${viewMode === "list" ? "active" : ""}`}
           aria-label="Vista de lista"
+          aria-pressed={viewMode === "list"}
         >
-          <List className="w-5 h-5 relative z-10" />
+          <List className="w-5 h-5" />
         </button>
       </div>
     </div>

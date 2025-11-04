@@ -20,16 +20,16 @@ export function ProductSort({ sortBy, onSortChange, currentCount, totalCount, se
   ];
 
   return (
-    <div className="flex items-center gap-2">
-      <span className="text-white/90 text-sm font-medium">Ordenar:</span>
-      <div className="glass-button px-4 py-2">
+    <div className="flex items-center gap-mac-sm">
+      <span className="mac-text-subhead mac-text-secondary font-medium">Ordenar:</span>
+      <div className="mac-card p-mac-xs">
         <select
           value={sortBy}
           onChange={(e) => onSortChange(e.target.value as SortOption)}
-          className="bg-transparent border-none outline-none text-white cursor-pointer text-sm font-medium relative z-10"
+          className="bg-transparent border-none outline-none mac-text-primary cursor-pointer mac-text-body font-medium"
         >
           {sortOptions.map((option) => (
-            <option key={option.value} value={option.value} className="bg-black text-white">
+            <option key={option.value} value={option.value} className="bg-mac-secondary-grouped-background mac-text-primary">
               {option.label}
             </option>
           ))}
