@@ -59,7 +59,7 @@ export function AuthButton() {
         className="mac-touch-target flex items-center justify-center rounded-full hover:bg-mac-gray-2 dark:hover:bg-mac-gray-6 mac-transition-colors"
         aria-label="Cerrar sesión"
       >
-        <LogOut className="w-6 h-6 mac-text-primary" />
+        <LogOut className="mac-icon-large mac-text-primary" />
       </button>
     );
   }
@@ -70,7 +70,7 @@ export function AuthButton() {
       className="mac-touch-target flex items-center justify-center rounded-full hover:bg-mac-gray-2 dark:hover:bg-mac-gray-6 mac-transition-colors"
       aria-label="Iniciar sesión"
     >
-      <User className="w-6 h-6 mac-text-primary" />
+      <User className="mac-icon-large mac-text-primary" />
     </Link>
   );
 }

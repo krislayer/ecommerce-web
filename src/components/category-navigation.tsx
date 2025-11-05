@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { categories } from "@/lib/data/categories";
-import { Shirt, Baby, Sparkles, Home, Smartphone, User, Users, Grid3X3 } from "lucide-react";
+import { Shirt, Home, Smartphone, Grid3X3, Handbag, ToyBrick, Smile } from "lucide-react";
 
 interface CategoryNavigationProps {
   selectedCategory?: string | null;
@@ -12,13 +12,32 @@ interface CategoryNavigationProps {
 export function CategoryNavigation({ selectedCategory, onCategorySelect }: CategoryNavigationProps) {
   const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
 
+  // Íconos mejorados según Apple HIG - Más representativos y claros
+  // Según SF Symbols y Apple HIG, los íconos deben ser:
+  // - Claros y reconocibles
+  // - Simples (sin detalles excesivos)
+  // - Consistentes en peso visual
+  // - Diferenciados entre categorías
   const categoryIcons: Record<string, React.ReactNode> = {
-    "ropa-mujer": <User className="w-4 h-4 currentColor" />,
-    "ropa-hombre": <Users className="w-4 h-4 currentColor" />,
-    "ropa-niño": <Baby className="w-4 h-4 currentColor" />,
-    "belleza": <Sparkles className="w-4 h-4 currentColor" />,
-    "hogar": <Home className="w-4 h-4 currentColor" />,
-    "tecnologia": <Smartphone className="w-4 h-4 currentColor" />,
+    // Mujer: Handbag representa moda femenina de manera distintiva
+    // Más específico y reconocible para categoría femenina, no se confunde con favoritos
+    "woman": <Handbag className="mac-icon-small currentColor" />,
+    
+    // Hombre: Shirt es más asociado con ropa masculina/formal
+    // Claramente diferenciado de Handbag para mujer según SF Symbols
+    "men": <Shirt className="mac-icon-small currentColor" />,
+    
+    // Niño: ToyBrick representa "kids" (juguetes/niños)
+    // Más apropiado para categoría de ropa infantil según Apple HIG
+    "kids": <ToyBrick className="mac-icon-small currentColor" />,
+    
+    // Belleza: Smile representa labios/lips para make up y cosméticos
+    // Más directo y reconocible para productos de belleza según Apple HIG
+    "beauty": <Smile className="mac-icon-small currentColor" />,
+    
+    // Hogar y Tecnología: Ya están bien según Apple HIG
+    "home": <Home className="mac-icon-small currentColor" />,
+    "technology": <Smartphone className="mac-icon-small currentColor" />,
   };
 
   return (
@@ -32,7 +51,7 @@ export function CategoryNavigation({ selectedCategory, onCategorySelect }: Categ
             : ""
         }`}
       >
-        <Grid3X3 className="w-4 h-4 currentColor" />
+        <Grid3X3 className="mac-icon-small currentColor" />
         <span className="mac-text-subhead font-medium">Todas las categorías</span>
       </button>
 

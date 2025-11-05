@@ -40,7 +40,7 @@ export function CartSidebar() {
               className="mac-touch-target flex items-center justify-center rounded-full hover:bg-mac-gray-2 dark:hover:bg-mac-gray-6 mac-transition-colors"
               aria-label="Cerrar carrito"
             >
-              <X className="w-5 h-5 mac-text-secondary" />
+              <X className="mac-icon-medium mac-text-secondary" />
             </button>
           </div>
 
@@ -87,7 +87,7 @@ export function CartSidebar() {
                           }
                           className="mac-touch-target flex items-center justify-center rounded-mac-sm bg-mac-gray-2 dark:bg-mac-gray-6 hover:bg-mac-gray-3 dark:hover:bg-mac-gray-5 mac-transition-colors"
                         >
-                          <Minus className="w-4 h-4 mac-text-primary" />
+                          <Minus className="mac-icon-small mac-text-primary" />
                         </button>
                         <span className="mac-text-body mac-text-primary min-w-[24px] text-center">
                           {item.quantity}
@@ -103,7 +103,7 @@ export function CartSidebar() {
                           }
                           className="mac-touch-target flex items-center justify-center rounded-mac-sm bg-mac-gray-2 dark:bg-mac-gray-6 hover:bg-mac-gray-3 dark:hover:bg-mac-gray-5 mac-transition-colors"
                         >
-                          <Plus className="w-4 h-4 mac-text-primary" />
+                          <Plus className="mac-icon-small mac-text-primary" />
                         </button>
                       </div>
                     </div>
@@ -112,7 +112,7 @@ export function CartSidebar() {
                       className="mac-touch-target flex items-center justify-center rounded-full hover:bg-mac-red/10 mac-transition-colors self-start"
                       aria-label="Eliminar item"
                     >
-                      <Trash2 className="w-5 h-5 mac-text-secondary hover:text-mac-red mac-transition-colors" />
+                      <Trash2 className="mac-icon-medium mac-text-secondary hover:text-mac-red mac-transition-colors" />
                     </button>
                   </div>
                 </div>

@@ -232,7 +232,7 @@ Gracias por tu compra en ¡Qué Chulito! ❤️`;
                 </div>
                 <div className="flex justify-between mac-text-body mac-text-secondary">
                   <span className="flex items-center gap-mac-xs">
-                    <Truck className="w-4 h-4" />
+                    <Truck className="mac-icon-small" />
                     Envío
                   </span>
                   <span style={shippingCost === 0 ? { color: 'var(--mac-green)' } : {}}>

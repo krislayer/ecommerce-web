@@ -23,13 +23,13 @@ async function seedCategories() {
   
   const categories = [
     {
-      id: "ropa-mujer",
-      name: "Ropa mujer",
-      slug: "ropa-mujer",
+      id: "woman",
+      name: "Mujer",
+      slug: "mujer",
       description: "Moda femenina para todos los días",
       facetDefs: [
         {
-          key: "talla",
+          key: "size",
           type: "enum",
           values: ["XS", "S", "M", "L", "XL"],
           widget: "swatch",
@@ -64,17 +64,17 @@ async function seedProducts() {
       name: "Camiseta Básica Negra",
       description: "Camiseta básica de algodón, perfecta para combinar",
       price: 150,
-      categoryIds: ["ropa-mujer"],
+      categoryIds: ["woman"],
       images: [
         "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800",
       ],
       attrs: {
-        talla: "M",
+        size: "M",
         color: "Negro",
         material: "Algodón",
       },
       facets: [
-        "talla:M",
+        "size:M",
         "color:Negro",
         "material:Algodón",
         "precio:100-199",
@@ -88,17 +88,17 @@ async function seedProducts() {
       name: "Vestido Festonero Blanco",
       description: "Vestido elegante con detalles festoneros",
       price: 350,
-      categoryIds: ["ropa-mujer"],
+      categoryIds: ["woman"],
       images: [
         "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800",
       ],
       attrs: {
-        talla: "M",
+        size: "M",
         color: "Blanco",
         material: "Algodón",
       },
       facets: [
-        "talla:M",
+        "size:M",
         "color:Blanco",
         "material:Algodón",
         "precio:300-399",
@@ -126,7 +126,7 @@ async function seedVariants() {
         {
           id: "var-1",
           productId: "camiseta-basica-negra",
-          attributes: { talla: "S", color: "Negro" },
+          attributes: { size: "S", color: "Negro" },
           price: 150,
           stock: 10,
           sku: "TSH-BLK-S",
@@ -134,7 +134,7 @@ async function seedVariants() {
         {
           id: "var-2",
           productId: "camiseta-basica-negra",
-          attributes: { talla: "M", color: "Negro" },
+          attributes: { size: "M", color: "Negro" },
           price: 150,
           stock: 15,
           sku: "TSH-BLK-M",
@@ -142,7 +142,7 @@ async function seedVariants() {
         {
           id: "var-3",
           productId: "camiseta-basica-negra",
-          attributes: { talla: "L", color: "Negro" },
+          attributes: { size: "L", color: "Negro" },
           price: 150,
           stock: 8,
           sku: "TSH-BLK-L",

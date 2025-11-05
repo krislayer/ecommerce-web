@@ -49,19 +49,19 @@ export function Footer() {
             <h4 className="mac-text-headline mac-text-primary mb-mac-md">Contacto</h4>
             <ul className="space-y-mac-sm">
               <li className="flex items-center gap-mac-sm">
-                <Phone className="w-4 h-4 mac-text-secondary" />
+                <Phone className="mac-icon-small mac-text-secondary" />
                 <span className="mac-text-body mac-text-secondary">
                   WhatsApp: +502 5012-3456
                 </span>
                 </li>
               <li className="flex items-center gap-mac-sm">
-                <Mail className="w-4 h-4 mac-text-secondary" />
+                <Mail className="mac-icon-small mac-text-secondary" />
                 <span className="mac-text-body mac-text-secondary">
                   Email: info@quechulito.com
                 </span>
                 </li>
               <li className="flex items-center gap-mac-sm">
-                <MapPin className="w-4 h-4 mac-text-secondary" />
+                <MapPin className="mac-icon-small mac-text-secondary" />
                 <span className="mac-text-body mac-text-secondary">
                   Ciudad de Guatemala
                 </span>

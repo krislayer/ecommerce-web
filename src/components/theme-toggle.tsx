@@ -20,7 +20,7 @@ export function ThemeToggle() {
       onClick={() => setTheme("dark")}
       className="mac-touch-target flex items-center justify-center rounded-full hover:bg-mac-gray-2 dark:hover:bg-mac-gray-6 mac-transition-colors"
     >
-      <Moon className="w-5 h-5 mac-text-primary" />
+      <Moon className="mac-icon-medium mac-text-primary" />
     </button>
   );
 }

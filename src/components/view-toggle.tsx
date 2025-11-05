@@ -21,7 +21,7 @@ export function ViewToggle({ viewMode, onViewChange }: ViewToggleProps) {
           aria-label="Vista de cuadrícula"
           aria-pressed={viewMode === "grid"}
         >
-          <Grid3X3 className="w-5 h-5" />
+          <Grid3X3 className="mac-icon-medium" />
         </button>
 
         {/* Botón Vista Lista */}
@@ -31,7 +31,7 @@ export function ViewToggle({ viewMode, onViewChange }: ViewToggleProps) {
           aria-label="Vista de lista"
           aria-pressed={viewMode === "list"}
         >
-          <List className="w-5 h-5" />
+          <List className="mac-icon-medium" />
         </button>
       </div>
     </div>

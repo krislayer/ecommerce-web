@@ -37,7 +37,7 @@ export default function Home() {
           <div className="mac-card mac-scale-in">
             <div className="flex flex-col items-center text-center">
               <div className="w-16 h-16 rounded-full bg-mac-blue/10 flex items-center justify-center mb-mac-md">
-                <Truck className="w-8 h-8" style={{ color: 'var(--mac-blue)' }} />
+                <Truck className="mac-icon-xlarge" style={{ color: 'var(--mac-blue)' }} />
               </div>
               <h3 className="mac-text-headline mac-text-primary mb-mac-sm">
                 Envío Rápido
@@ -51,7 +51,7 @@ export default function Home() {
           <div className="mac-card mac-scale-in" style={{ animationDelay: '0.1s' }}>
             <div className="flex flex-col items-center text-center">
               <div className="w-16 h-16 rounded-full bg-mac-green/10 flex items-center justify-center mb-mac-md">
-                <Heart className="w-8 h-8" style={{ color: 'var(--mac-green)' }} />
+                <Heart className="mac-icon-xlarge" style={{ color: 'var(--mac-green)' }} />
               </div>
               <h3 className="mac-text-headline mac-text-primary mb-mac-sm">
                 Calidad Premium
@@ -65,7 +65,7 @@ export default function Home() {
           <div className="mac-card mac-scale-in" style={{ animationDelay: '0.2s' }}>
             <div className="flex flex-col items-center text-center">
               <div className="w-16 h-16 rounded-full bg-mac-purple/10 flex items-center justify-center mb-mac-md">
-                <HeadphonesIcon className="w-8 h-8" style={{ color: 'var(--mac-purple)' }} />
+                <HeadphonesIcon className="mac-icon-xlarge" style={{ color: 'var(--mac-purple)' }} />
               </div>
               <h3 className="mac-text-headline mac-text-primary mb-mac-sm">
                 Soporte 24/7

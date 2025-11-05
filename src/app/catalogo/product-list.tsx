@@ -55,7 +55,7 @@ export function ProductList({ products }: ProductListProps) {
                 <div className="flex items-center gap-mac-xs mb-mac-sm">
                   <div className="flex text-yellow-400">
                     {Array.from({ length: 5 }, (_, i) => (
-                      <Star key={i} className="w-4 h-4 fill-current" />
+                      <Star key={i} className="mac-icon-small fill-current" />
                     ))}
                   </div>
                 </div>

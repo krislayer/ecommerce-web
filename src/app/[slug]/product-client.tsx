@@ -88,10 +88,10 @@ export function ProductClient({ product }: ProductClientProps) {
                       <button
                         key={size}
                         onClick={() =>
-                          setSelectedAttributes({ ...selectedAttributes, talla: size })
+                          setSelectedAttributes({ ...selectedAttributes, size: size })
                         }
                         className={`mac-chip ${
-                          selectedAttributes.talla === size
+                          selectedAttributes.size === size
                             ? "selected"
                             : ""
                         }`}
@@ -113,7 +113,7 @@ export function ProductClient({ product }: ProductClientProps) {
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
                     className="mac-touch-target flex items-center justify-center rounded-mac-sm bg-mac-gray-2 dark:bg-mac-gray-6 hover:bg-mac-gray-3 dark:hover:bg-mac-gray-5 mac-transition-colors"
                   >
-                    <Minus className="w-5 h-5 mac-text-primary" />
+                    <Minus className="mac-icon-medium mac-text-primary" />
                   </button>
                   <span className="mac-text-headline mac-text-primary min-w-[40px] text-center">
                     {quantity}
@@ -122,7 +122,7 @@ export function ProductClient({ product }: ProductClientProps) {
                     onClick={() => setQuantity(quantity + 1)}
                     className="mac-touch-target flex items-center justify-center rounded-mac-sm bg-mac-gray-2 dark:bg-mac-gray-6 hover:bg-mac-gray-3 dark:hover:bg-mac-gray-5 mac-transition-colors"
                   >
-                    <Plus className="w-5 h-5 mac-text-primary" />
+                    <Plus className="mac-icon-medium mac-text-primary" />
                   </button>
                 </div>
               </div>

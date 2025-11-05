@@ -94,7 +94,7 @@ export function ProductGrid({ products }: ProductGridProps) {
               <div className="flex items-center gap-mac-xs mb-mac-sm">
                 <div className="flex text-yellow-400">
                   {Array.from({ length: 5 }, (_, i) => (
-                    <Star key={i} className="w-3 h-3 fill-current" />
+                    <Star key={i} className="mac-icon-small fill-current" />
                   ))}
                 </div>
               </div>
@@ -119,7 +119,7 @@ export function ProductGrid({ products }: ProductGridProps) {
                   aria-label={favorites.includes(product.id) ? "Quitar de favoritos" : "Agregar a favoritos"}
                 >
                   <Heart 
-                    className="w-5 h-5 mac-text-secondary" 
+                    className="mac-icon-medium mac-text-secondary" 
                     fill={favorites.includes(product.id) ? "var(--mac-red)" : "none"} 
                     stroke={favorites.includes(product.id) ? "var(--mac-red)" : "currentColor"}
                     style={favorites.includes(product.id) ? { color: 'var(--mac-red)' } : {}}
@@ -132,7 +132,7 @@ export function ProductGrid({ products }: ProductGridProps) {
                   className="mac-touch-target rounded-full flex items-center justify-center hover:bg-mac-gray-2 dark:hover:bg-mac-gray-6 mac-transition-colors"
                   aria-label="Agregar al carrito"
                 >
-                  <ShoppingCart className="w-5 h-5 mac-text-secondary" />
+                  <ShoppingCart className="mac-icon-medium mac-text-secondary" />
                 </button>
               </div>
             </div>

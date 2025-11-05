@@ -22,15 +22,15 @@ export default function ContactPage() {
             </h2>
             <ul className="space-y-mac-md mac-text-body mac-text-secondary">
               <li className="flex items-center gap-mac-md">
-                <Phone className="w-6 h-6 mac-text-secondary" />
+                <Phone className="mac-icon-large mac-text-secondary" />
                 <span>WhatsApp: +502 5012-3456</span>
               </li>
               <li className="flex items-center gap-mac-md">
-                <Mail className="w-6 h-6 mac-text-secondary" />
+                <Mail className="mac-icon-large mac-text-secondary" />
                 <span>Email: info@quechulito.com</span>
               </li>
               <li className="flex items-center gap-mac-md">
-                <MapPin className="w-6 h-6 mac-text-secondary" />
+                <MapPin className="mac-icon-large mac-text-secondary" />
                 <span>Ciudad de Guatemala, Zona 10</span>
               </li>
             </ul>

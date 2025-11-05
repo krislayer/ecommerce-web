@@ -45,7 +45,7 @@ export function ProductSearch({ onSearch, placeholder = "Buscar productos..." }:
     <div className="w-full mac-search-field">
       {/* Icono de búsqueda */}
       <div className="mac-search-field-icon">
-        <Search className="w-5 h-5" />
+        <Search className="mac-icon-medium" />
       </div>
       
       {/* Input */}
@@ -67,7 +67,7 @@ export function ProductSearch({ onSearch, placeholder = "Buscar productos..." }:
           className="mac-search-field-clear"
           aria-label="Limpiar búsqueda"
         >
-          <X className="w-4 h-4" />
+          <X className="mac-icon-small" />
         </button>
       )}
     </div>

@@ -18,15 +18,31 @@ const PRICE_LABELS: Record<string, string> = {
   "1000+": "Q1000+",
 };
 
+// Mapeo de traducción de keys de facetas a español para el frontend
+const FACET_LABELS: Record<string, string> = {
+  "size": "Talla",
+  "color": "Color",
+  "material": "Material",
+  "type": "Tipo",
+  "brand": "Marca",
+  "skin-type": "Tipo de Piel",
+  "gender": "Género",
+  "connectivity": "Conectividad",
+  "resistance": "Resistencia",
+  "compatibility": "Compatibilidad",
+  "category": "Categoría",
+};
+
 export function ActiveFilters({ filters, onRemoveFilter, onClearAll }: ActiveFiltersProps) {
   const activeFilters: Array<{ type: keyof FilterState; value: string; label: string }> = [];
 
   Object.entries(filters.facets).forEach(([facetKey, values]) => {
     values.forEach(value => {
+      const facetLabel = FACET_LABELS[facetKey] || facetKey.replace(/_/g, " ");
       activeFilters.push({ 
         type: "facets", 
         value: `${facetKey}:${value}`, 
-        label: `${facetKey}: ${value}` 
+        label: `${facetLabel}: ${value}` 
       });
     });
   });
@@ -48,7 +64,7 @@ export function ActiveFilters({ filters, onRemoveFilter, onClearAll }: ActiveFil
             className="mac-chip flex items-center gap-mac-xs"
           >
             <span>{filter.label}</span>
-            <X className="w-3 h-3 currentColor" />
+            <X className="mac-icon-small currentColor" />
           </button>
         ))}
         <button

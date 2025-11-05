@@ -2,13 +2,13 @@ import type { Category, FacetDefinition } from "../domain/entities/product";
 
 export const categories: Category[] = [
   {
-    id: "ropa-mujer",
-    name: "Ropa Mujer",
-    slug: "ropa-mujer",
+    id: "woman",
+    name: "Mujer",
+    slug: "mujer",
     description: "Moda femenina para todas las ocasiones",
     facetDefs: [
       {
-        key: "talla",
+        key: "size",
         type: "enum",
         values: ["XS", "S", "M", "L", "XL", "XXL"],
         widget: "select",
@@ -28,13 +28,13 @@ export const categories: Category[] = [
     ],
   },
   {
-    id: "ropa-hombre",
-    name: "Ropa Hombre",
-    slug: "ropa-hombre",
+    id: "men",
+    name: "Hombre",
+    slug: "hombre",
     description: "Moda masculina moderna",
     facetDefs: [
       {
-        key: "talla",
+        key: "size",
         type: "enum",
         values: ["S", "M", "L", "XL", "XXL"],
         widget: "select",
@@ -54,13 +54,13 @@ export const categories: Category[] = [
     ],
   },
   {
-    id: "ropa-niño",
-    name: "Ropa Niño",
-    slug: "ropa-niño",
+    id: "kids",
+    name: "Niño",
+    slug: "niño",
     description: "Ropa para niños y niñas",
     facetDefs: [
       {
-        key: "talla",
+        key: "size",
         type: "enum",
         values: ["XS", "S", "M", "L"],
         widget: "select",
@@ -80,31 +80,31 @@ export const categories: Category[] = [
     ],
   },
   {
-    id: "belleza",
+    id: "beauty",
     name: "Belleza",
     slug: "belleza",
     description: "Productos de belleza y cuidado personal",
     facetDefs: [
       {
-        key: "tipo",
+        key: "type",
         type: "enum",
         values: ["Cuidado Facial", "Maquillaje", "Fragancia"],
         widget: "select",
       },
       {
-        key: "marca",
+        key: "brand",
         type: "enum",
         values: ["Premium", "Luxury", "Deluxe"],
         widget: "select",
       },
       {
-        key: "piel",
+        key: "skin-type",
         type: "enum",
         values: ["Todos los tipos", "Seca", "Grasa", "Mixta"],
         widget: "select",
       },
       {
-        key: "genero",
+        key: "gender",
         type: "enum",
         values: ["Femenino", "Masculino", "Unisex"],
         widget: "select",
@@ -112,13 +112,13 @@ export const categories: Category[] = [
     ],
   },
   {
-    id: "hogar",
+    id: "home",
     name: "Hogar",
     slug: "hogar",
     description: "Artículos para el hogar",
     facetDefs: [
       {
-        key: "tipo",
+        key: "type",
         type: "enum",
         values: ["Decoración", "Iluminación", "Textiles"],
         widget: "select",
@@ -138,37 +138,37 @@ export const categories: Category[] = [
     ],
   },
   {
-    id: "tecnologia",
+    id: "technology",
     name: "Tecnología",
     slug: "tecnologia",
     description: "Dispositivos y accesorios tecnológicos",
     facetDefs: [
       {
-        key: "tipo",
+        key: "type",
         type: "enum",
         values: ["Audio", "Wearables", "Accesorios"],
         widget: "select",
       },
       {
-        key: "marca",
+        key: "brand",
         type: "enum",
         values: ["TechPro", "PowerTech", "SportTech"],
         widget: "select",
       },
       {
-        key: "conectividad",
+        key: "connectivity",
         type: "enum",
         values: ["Bluetooth", "USB-C", "Wireless"],
         widget: "select",
       },
       {
-        key: "resistencia",
+        key: "resistance",
         type: "enum",
         values: ["Agua", "Polvo", "Golpes"],
         widget: "select",
       },
       {
-        key: "compatibilidad",
+        key: "compatibility",
         type: "enum",
         values: ["Universal", "iOS", "Android"],
         widget: "select",

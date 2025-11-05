@@ -32,15 +32,15 @@ export default function AboutPage() {
             </h2>
             <ul className="space-y-mac-md mac-text-body mac-text-secondary">
               <li className="flex items-center gap-mac-sm">
-                <Phone className="w-5 h-5 mac-text-secondary" />
+                <Phone className="mac-icon-medium mac-text-secondary" />
                 WhatsApp: +502 5012-3456
               </li>
               <li className="flex items-center gap-mac-sm">
-                <Mail className="w-5 h-5 mac-text-secondary" />
+                <Mail className="mac-icon-medium mac-text-secondary" />
                 Email: info@quechulito.com
               </li>
               <li className="flex items-center gap-mac-sm">
-                <MapPin className="w-5 h-5 mac-text-secondary" />
+                <MapPin className="mac-icon-medium mac-text-secondary" />
                 Ciudad de Guatemala, Zona 10
               </li>
             </ul>

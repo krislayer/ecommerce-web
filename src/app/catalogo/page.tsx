@@ -38,7 +38,7 @@ export default function CatalogoPage() {
     setSearchQuery(query);
   }, []);
 
-  // Extraer facetas disponibles de los productos según sus categorías (sin incluir categorías)
+  // Extraer facetas disponibles de los productos reales (solo valores que existen en productos)
   const availableFacets = useMemo(() => {
     const allFacets = new Map<string, Set<string>>();
     
@@ -50,34 +50,46 @@ export default function CatalogoPage() {
       );
     }
     
-    // Agregar facetas desde las categorías de los productos filtrados
+    // Extraer facetas de los productos reales, no de las definiciones de categorías
     productsToProcess.forEach((product) => {
-      product.categoryIds.forEach(catId => {
-        const category = categories.find(c => c.id === catId);
-        if (category) {
-          category.facetDefs.forEach(facet => {
-            if (!allFacets.has(facet.key)) {
-              allFacets.set(facet.key, new Set(facet.values || []));
-            }
-          });
+      // Agregar valores de atributos que existen en los productos
+      Object.entries(product.attrs).forEach(([key, value]) => {
+        if (!allFacets.has(key)) {
+          allFacets.set(key, new Set());
         }
+        allFacets.get(key)?.add(value);
       });
     });
 
-    // Convertir a FacetDefinition con valores únicos
-    return Array.from(allFacets.entries()).map(([key, values]) => ({
-      key,
-      type: "enum" as const,
-      values: Array.from(values),
-      widget: key === "color" ? "swatch" as const : "select" as const,
-    }));
+    // Obtener widget de las categorías para mantener consistencia
+    const getWidget = (key: string): "swatch" | "select" => {
+      // Buscar en todas las categorías para encontrar el widget correcto
+      for (const category of categories) {
+        const facetDef = category.facetDefs.find(f => f.key === key);
+        if (facetDef?.widget) {
+          return facetDef.widget;
+        }
+      }
+      // Default: color es swatch, otros son select
+      return key === "color" ? "swatch" : "select";
+    };
+
+    // Convertir a FacetDefinition solo con valores que existen en productos
+    return Array.from(allFacets.entries())
+      .filter(([key, values]) => values.size > 0) // Solo facetas con valores
+      .map(([key, values]) => ({
+        key,
+        type: "enum" as const,
+        values: Array.from(values).sort(), // Ordenar valores para consistencia
+        widget: getWidget(key),
+      }));
   }, [selectedCategory]);
 
-  // Mapeo de categorías
+  // Mapeo de categorías para búsqueda (mantiene términos en español para UX)
   const categoryMap: Record<string, string[]> = {
-    "ropa-mujer": ["mujer", "femenino", "femenina", "dama", "damas"],
-    "ropa-hombre": ["hombre", "masculino", "masculina", "caballero", "caballeros"],
-    "ropa-niño": ["niño", "niña", "niños", "niñas", "infantil"],
+    "woman": ["mujer", "femenino", "femenina", "dama", "damas"],
+    "men": ["hombre", "masculino", "masculina", "caballero", "caballeros"],
+    "kids": ["niño", "niña", "niños", "niñas", "infantil"],
     "accesorios": ["accesorio", "accesorios", "complemento", "complementos"],
   };
 
@@ -151,7 +163,7 @@ export default function CatalogoPage() {
           // Aplicar filtros de otras facetas excepto la actual
           for (const [otherFacetKey, selectedValues] of Object.entries(filters.facets)) {
             if (otherFacetKey !== facet.key && selectedValues.length > 0) {
-              if (otherFacetKey === "categoria") {
+              if (otherFacetKey === "category") {
                 // Para categorías, verificar si el producto pertenece a alguna de las categorías seleccionadas
                 const productCategoryNames = product.categoryIds.map(catId => {
                   const category = categories.find(c => c.id === catId);
@@ -172,7 +184,7 @@ export default function CatalogoPage() {
           }
           
           // Contar si el producto tiene este valor en la faceta actual
-          if (facet.key === "categoria") {
+          if (facet.key === "category") {
             // Para categorías, verificar si el producto pertenece a esta categoría
             return product.categoryIds.some(catId => {
               const category = categories.find(c => c.id === catId);
@@ -238,7 +250,7 @@ export default function CatalogoPage() {
       // Filtros de facetas dinámicas
       for (const [facetKey, selectedValues] of Object.entries(filters.facets)) {
         if (selectedValues.length > 0) {
-          if (facetKey === "categoria") {
+          if (facetKey === "category") {
             // Para categorías, verificar si el producto pertenece a alguna de las categorías seleccionadas
             const productCategoryNames = product.categoryIds.map(catId => {
               const category = categories.find(c => c.id === catId);
