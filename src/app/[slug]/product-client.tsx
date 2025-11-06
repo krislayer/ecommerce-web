@@ -4,14 +4,18 @@ import { useState, useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addItem } from "@/store/slice/cartSlice";
 import { setCartOpen } from "@/store/slice/cartSlice";
-import { toggleFavorite } from "@/store/slice/favoritesSlice";
+import { useFavorites } from "@/lib/hooks/useFavorites";
 import Image from "next/image";
 import Link from "next/link";
-import { Plus, Minus, Heart, ChevronRight, Share2, Package, RotateCcw, Truck, Sparkles, Copy, Check } from "lucide-react";
+import { Plus, Minus, Heart, ChevronRight, Share2, Package, RotateCcw, Truck, Sparkles, Copy, Check, ShoppingCart } from "lucide-react";
 import type { Product } from "@/lib/domain/entities/product";
 import type { RootState } from "@/store";
 import { categories } from "@/lib/data/categories";
 import { sampleProducts } from "@/lib/data/products";
+
+// Constante para la cantidad de productos relacionados a mostrar
+// Configurado para 4 coincidiendo con el grid lg:grid-cols-4
+const RELATED_PRODUCTS_LIMIT = 4;
 
 interface ProductClientProps {
   product: Product;
@@ -20,7 +24,7 @@ interface ProductClientProps {
 
 export function ProductClient({ product }: ProductClientProps) {
   const dispatch = useDispatch();
-  const favorites = useSelector((state: RootState) => state.favorites.productIds);
+  const { isFavorite, handleToggleFavorite, isAuthenticated } = useFavorites();
   const [selectedAttributes, setSelectedAttributes] = useState<
     Record<string, string>
   >({});
@@ -30,7 +34,7 @@ export function ProductClient({ product }: ProductClientProps) {
   const [linkCopied, setLinkCopied] = useState(false);
   const shareMenuRef = useRef<HTMLDivElement>(null);
 
-  const isFavorite = favorites.includes(product.id);
+  const isProductFavorite = isFavorite(product.id);
 
   // Obtener categorías del producto
   const productCategories = product.categoryIds
@@ -38,13 +42,14 @@ export function ProductClient({ product }: ProductClientProps) {
     .filter((cat): cat is NonNullable<typeof cat> => cat !== undefined);
 
   // Productos relacionados (misma categoría, excluyendo el actual)
+  // Muestra hasta RELATED_PRODUCTS_LIMIT productos relacionados
   const relatedProducts = sampleProducts
     .filter(p => 
       p.id !== product.id && 
       p.active &&
       p.categoryIds.some(catId => product.categoryIds.includes(catId))
     )
-    .slice(0, 4);
+    .slice(0, RELATED_PRODUCTS_LIMIT);
 
   // Cerrar menú de compartir al hacer clic fuera
   useEffect(() => {
@@ -154,9 +159,6 @@ export function ProductClient({ product }: ProductClientProps) {
     return `Q${price.toFixed(2)}`;
   };
 
-  const handleToggleFavorite = () => {
-    dispatch(toggleFavorite(product.id));
-  };
 
   const handleAddToCart = () => {
     // Validar que se haya seleccionado una talla
@@ -181,6 +183,45 @@ export function ProductClient({ product }: ProductClientProps) {
       })
     );
     dispatch(setCartOpen(true));
+  };
+
+  // Función para agregar productos relacionados al carrito
+  const handleRelatedAddToCart = (relatedProduct: Product, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    // Crear un ProductVariant básico para el carrito
+    const variant = {
+      id: `${relatedProduct.id}-default`,
+      productId: relatedProduct.id,
+      sku: relatedProduct.id,
+      name: relatedProduct.name,
+      price: relatedProduct.price,
+      stock: 10, // Stock por defecto
+      attributes: relatedProduct.attrs,
+      image: relatedProduct.images[0],
+    };
+
+    dispatch(addItem({
+      variant,
+      quantity: 1,
+    }));
+    
+    // Abrir el carrito después de agregar
+    dispatch(setCartOpen(true));
+  };
+
+  // Función para manejar favoritos en productos relacionados
+  const handleRelatedFavoriteClick = (productId: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (!isAuthenticated) {
+      window.location.href = "/login";
+      return;
+    }
+    
+    handleToggleFavorite(productId);
   };
 
   // Verificar si el botón de agregar al carrito debe estar deshabilitado
@@ -246,12 +287,6 @@ export function ProductClient({ product }: ProductClientProps) {
                     <span className="mac-text-tertiary">/10</span>
                   </span>
                 )}
-                {/* Badge de disponibilidad */}
-                {product.active && (
-                  <span className="mac-chip mac-text-caption-1" style={{ backgroundColor: 'var(--mac-secondary-background)', color: 'var(--mac-label)', borderColor: 'var(--mac-separator)' }}>
-                    Disponible
-                  </span>
-                )}
               </div>
             </div>
             {/* Botones de acción */}
@@ -273,7 +308,7 @@ export function ProductClient({ product }: ProductClientProps) {
                     <div className="py-mac-xs">
                       <button
                         onClick={shareToWhatsApp}
-                        className="w-full px-mac-md py-mac-sm flex items-center gap-mac-sm hover:bg-mac-gray-2 dark:hover:bg-mac-gray-6 mac-transition-colors text-left mac-text-body mac-text-primary"
+                        className="w-full px-mac-md py-mac-md flex items-center gap-mac-sm hover:bg-mac-gray-2 dark:hover:bg-mac-gray-6 mac-transition-colors text-left mac-text-body mac-text-primary min-h-[44px]"
                       >
                         <Share2 className="mac-icon-medium mac-text-secondary" />
                         WhatsApp
@@ -281,7 +316,7 @@ export function ProductClient({ product }: ProductClientProps) {
                       <div className="mac-separator my-mac-xs"></div>
                       <button
                         onClick={copyLink}
-                        className="w-full px-mac-md py-mac-sm flex items-center gap-mac-sm hover:bg-mac-gray-2 dark:hover:bg-mac-gray-6 mac-transition-colors text-left mac-text-body mac-text-primary"
+                        className="w-full px-mac-md py-mac-md flex items-center gap-mac-sm hover:bg-mac-gray-2 dark:hover:bg-mac-gray-6 mac-transition-colors text-left mac-text-body mac-text-primary min-h-[44px]"
                       >
                         {linkCopied ? (
                           <>
@@ -301,19 +336,26 @@ export function ProductClient({ product }: ProductClientProps) {
               </div>
               {/* Botón Favoritos */}
               <button
-                onClick={handleToggleFavorite}
+                onClick={() => {
+                  if (!isAuthenticated) {
+                    window.location.href = "/login";
+                    return;
+                  }
+                  handleToggleFavorite(product.id);
+                }}
                 className={`mac-touch-target rounded-full flex items-center justify-center mac-transition-colors shrink-0 ${
-                  isFavorite
+                  isProductFavorite
                     ? "bg-mac-red/10"
                     : "hover:bg-mac-gray-2 dark:hover:bg-mac-gray-6"
-                }`}
-                aria-label={isFavorite ? "Quitar de favoritos" : "Agregar a favoritos"}
+                } ${!isAuthenticated ? "opacity-70" : ""}`}
+                aria-label={isProductFavorite ? "Quitar de favoritos" : "Agregar a favoritos"}
+                title={!isAuthenticated ? "Inicia sesión para agregar favoritos" : ""}
               >
                 <Heart 
                   className="mac-icon-large mac-text-secondary" 
-                  fill={isFavorite ? "var(--mac-red)" : "none"} 
-                  stroke={isFavorite ? "var(--mac-red)" : "currentColor"}
-                  style={isFavorite ? { color: 'var(--mac-red)' } : {}}
+                  fill={isProductFavorite ? "var(--mac-red)" : "none"} 
+                  stroke={isProductFavorite ? "var(--mac-red)" : "currentColor"}
+                  style={isProductFavorite ? { color: 'var(--mac-red)' } : {}}
                 />
               </button>
             </div>
@@ -560,6 +602,28 @@ export function ProductClient({ product }: ProductClientProps) {
                     
                     {/* Contenido */}
                     <div className="p-mac-md flex flex-col grow">
+                      {/* Badges de condición y calificación */}
+                      <div className="flex flex-wrap gap-mac-xs mb-mac-sm">
+                        {relatedProduct.condition === "new" ? (
+                          <span className="badge-new mac-chip inline-flex items-center gap-mac-xs" style={{ padding: '2px 8px', fontSize: '11px' }}>
+                            <Sparkles className="mac-icon-small" style={{ width: '10px', height: '10px' }} />
+                            <span className="font-medium">Nuevo</span>
+                          </span>
+                        ) : (
+                          <>
+                            <span className="badge-used mac-chip inline-flex items-center gap-mac-xs" style={{ padding: '2px 8px', fontSize: '11px' }}>
+                              <span className="font-medium">Seminuevo</span>
+                            </span>
+                            {relatedProduct.conditionRating !== undefined && (
+                              <span className="badge-rating mac-chip mac-text-caption-1" style={{ padding: '2px 8px', fontSize: '11px' }}>
+                                <span className="font-semibold">{relatedProduct.conditionRating}</span>
+                                <span className="mac-text-tertiary">/10</span>
+                              </span>
+                            )}
+                          </>
+                        )}
+                      </div>
+
                       {/* Título */}
                       <h3 className="mac-product-card-title line-clamp-2 mb-mac-sm">
                         {relatedProduct.name}
@@ -570,6 +634,37 @@ export function ProductClient({ product }: ProductClientProps) {
                         <p className="mac-product-card-price">
                           {formatPrice(relatedProduct.price)}
                         </p>
+                      </div>
+
+                      {/* Botones de acción */}
+                      <div className="flex gap-mac-sm mt-auto justify-end">
+                        {/* Botón Favoritos */}
+                        <button
+                          onClick={(e) => handleRelatedFavoriteClick(relatedProduct.id, e)}
+                          className={`mac-touch-target rounded-full flex items-center justify-center mac-transition-colors ${
+                            isFavorite(relatedProduct.id)
+                              ? "bg-mac-red/10"
+                              : "hover:bg-mac-gray-2 dark:hover:bg-mac-gray-6"
+                          } ${!isAuthenticated ? "opacity-70" : ""}`}
+                          aria-label={isFavorite(relatedProduct.id) ? "Quitar de favoritos" : "Agregar a favoritos"}
+                          title={!isAuthenticated ? "Inicia sesión para agregar favoritos" : ""}
+                        >
+                          <Heart 
+                            className="mac-icon-medium mac-text-secondary" 
+                            fill={isFavorite(relatedProduct.id) ? "var(--mac-red)" : "none"} 
+                            stroke={isFavorite(relatedProduct.id) ? "var(--mac-red)" : "currentColor"}
+                            style={isFavorite(relatedProduct.id) ? { color: 'var(--mac-red)' } : {}}
+                          />
+                        </button>
+
+                        {/* Botón Agregar al Carrito */}
+                        <button
+                          onClick={(e) => handleRelatedAddToCart(relatedProduct, e)}
+                          className="mac-touch-target rounded-full flex items-center justify-center hover:bg-mac-gray-2 dark:hover:bg-mac-gray-6 mac-transition-colors"
+                          aria-label="Agregar al carrito"
+                        >
+                          <ShoppingCart className="mac-icon-medium mac-text-secondary" />
+                        </button>
                       </div>
                     </div>
                   </div>

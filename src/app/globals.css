@@ -45,7 +45,7 @@
     --mac-separator: rgba(60, 60, 67, 0.36);
     --mac-opaque-separator: #C6C6C8;
     
-    /* Materiales macOS */
+    /* Materiales macOS - Restaurados para mantener el color original */
     --mac-material-light: rgba(255, 255, 255, 0.8);
     --mac-material-dark: rgba(0, 0, 0, 0.5);
     --mac-blur-intensity: 40px;
@@ -74,10 +74,30 @@
     --mac-transition-fast: 0.1s cubic-bezier(0.4, 0.0, 0.2, 1);
     --mac-transition-base: 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
     --mac-transition-slow: 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+    
+    /* Colores con opacidad para badges (modo claro) */
+    --mac-green-bg-light: rgba(52, 199, 89, 0.12);
+    --mac-green-border-light: rgba(52, 199, 89, 0.25);
+    --mac-orange-bg-light: rgba(255, 149, 0, 0.12);
+    --mac-orange-border-light: rgba(255, 149, 0, 0.25);
   }
 
   /* Tema oscuro macOS */
   .dark {
+    /* Colores del sistema macOS adaptados para modo oscuro */
+    /* Apple HIG: Los colores del sistema se ajustan ligeramente en modo oscuro */
+    --mac-blue: #0A84FF;
+    --mac-green: #30D158;
+    --mac-orange: #FF9F0A;
+    
+    /* Verde del sistema con opacidad para badges (modo oscuro) */
+    --mac-green-bg-light: rgba(48, 209, 88, 0.16);
+    --mac-green-border-light: rgba(48, 209, 88, 0.3);
+    
+    /* Naranja del sistema con opacidad para badges (modo oscuro) */
+    --mac-orange-bg-light: rgba(255, 159, 10, 0.16);
+    --mac-orange-border-light: rgba(255, 159, 10, 0.3);
+    
     --mac-label: #FFFFFF;
     --mac-secondary-label: rgba(255, 255, 255, 0.65);
     --mac-tertiary-label: rgba(255, 255, 255, 0.45);
@@ -92,6 +112,7 @@
     --mac-separator: rgba(84, 84, 88, 0.65);
     --mac-opaque-separator: #38383A;
     
+    /* Materiales macOS - Restaurados para mantener el color original en modo oscuro */
     --mac-material-light: rgba(255, 255, 255, 0.15);
     --mac-material-dark: rgba(0, 0, 0, 0.7);
   }
@@ -164,12 +185,13 @@
   }
 
   /* Botón primario macOS */
+  /* Apple HIG: Touch targets mínimos de 44x44px para mejor usabilidad */
   .mac-button-primary {
     background-color: var(--mac-blue);
     color: #FFFFFF;
     border: none;
     border-radius: var(--mac-corner-radius-md);
-    padding: 6px 20px;
+    padding: 8px 20px;
     font-weight: 500;
     font-size: 13px;
     line-height: 18px;
@@ -180,7 +202,7 @@
     align-items: center;
     justify-content: center;
     gap: 6px;
-    min-height: 28px;
+    min-height: 44px;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   }
 
@@ -195,36 +217,40 @@
   }
 
   /* Badges de condición de producto según Apple HIG */
-  .badge-new {
-    background-color: rgba(52, 199, 89, 0.12);
+  /* Apple HIG: Los colores adaptativos deben mantener coherencia visual
+     entre modos con ajustes sutiles para legibilidad */
+  /* Usar mayor especificidad en lugar de !important para evitar problemas de compilación */
+  .mac-chip.badge-new {
+    background-color: var(--mac-green-bg-light);
     color: var(--mac-green);
-    border-color: rgba(52, 199, 89, 0.25);
+    border-color: var(--mac-green-border-light);
+  }
+
+  .mac-chip.badge-new svg {
+    color: var(--mac-green);
+  }
+
+  .mac-chip.badge-used {
+    background-color: var(--mac-orange-bg-light);
+    color: var(--mac-orange);
+    border-color: var(--mac-orange-border-light);
+  }
+
+  /* Versiones sin mac-chip para compatibilidad */
+  .badge-new {
+    background-color: var(--mac-green-bg-light);
+    color: var(--mac-green);
+    border-color: var(--mac-green-border-light);
   }
 
   .badge-new svg {
     color: var(--mac-green);
   }
 
-  .dark .badge-new {
-    background-color: rgba(52, 199, 89, 0.2);
-    color: #4CD964;
-    border-color: rgba(52, 199, 89, 0.35);
-  }
-
-  .dark .badge-new svg {
-    color: #4CD964;
-  }
-
   .badge-used {
-    background-color: rgba(255, 149, 0, 0.12);
+    background-color: var(--mac-orange-bg-light);
     color: var(--mac-orange);
-    border-color: rgba(255, 149, 0, 0.25);
-  }
-
-  .dark .badge-used {
-    background-color: rgba(255, 149, 0, 0.2);
-    color: #FFAD33;
-    border-color: rgba(255, 149, 0, 0.35);
+    border-color: var(--mac-orange-border-light);
   }
 
   /* Badge de calificación según Apple HIG */
@@ -241,12 +267,13 @@
   }
 
   /* Botón secundario macOS */
+  /* Apple HIG: Touch targets mínimos de 44x44px */
   .mac-button-secondary {
     background-color: var(--mac-secondary-background);
     color: var(--mac-label);
     border: 0.5px solid var(--mac-separator);
     border-radius: var(--mac-corner-radius-md);
-    padding: 6px 20px;
+    padding: 8px 20px;
     font-weight: 400;
     font-size: 13px;
     line-height: 18px;
@@ -257,7 +284,7 @@
     align-items: center;
     justify-content: center;
     gap: 6px;
-    min-height: 28px;
+    min-height: 44px;
   }
 
   .mac-button-secondary:hover {
@@ -269,11 +296,12 @@
   }
 
   /* Botón terciario macOS (texto) */
+  /* Apple HIG: Touch targets mínimos de 44x44px */
   .mac-button-tertiary {
     background-color: transparent;
     color: var(--mac-blue);
     border: none;
-    padding: 6px 12px;
+    padding: 8px 12px;
     font-weight: 400;
     font-size: 13px;
     line-height: 18px;
@@ -283,7 +311,7 @@
     align-items: center;
     justify-content: center;
     gap: 6px;
-    min-height: 28px;
+    min-height: 44px;
   }
 
   .mac-button-tertiary:hover {
@@ -291,17 +319,18 @@
   }
 
   /* Input estilo macOS */
+  /* Apple HIG: Touch targets mínimos de 44x44px para inputs */
   .mac-input {
     background-color: var(--mac-secondary-grouped-background);
     border: 0.5px solid var(--mac-separator);
     border-radius: var(--mac-corner-radius-md);
-    padding: 5px 10px;
+    padding: 8px 12px;
     font-size: 13px;
     line-height: 18px;
     color: var(--mac-label);
     transition: all var(--mac-transition-fast);
     width: 100%;
-    min-height: 28px;
+    min-height: 44px;
   }
 
   .mac-input:focus {
@@ -316,6 +345,7 @@
   }
 
   /* Campo de búsqueda macOS (Search Field) */
+  /* Apple HIG: Touch targets mínimos de 44x44px */
   .mac-search-field {
     position: relative;
     display: flex;
@@ -325,7 +355,7 @@
     border-radius: var(--mac-corner-radius-md);
     transition: all var(--mac-transition-fast);
     width: 100%;
-    min-height: 32px;
+    min-height: 44px;
   }
 
   .mac-search-field:focus-within {
@@ -376,8 +406,8 @@
     transition: all var(--mac-transition-fast);
     flex-shrink: 0;
     border-radius: var(--mac-corner-radius-sm);
-    min-width: 28px;
-    min-height: 28px;
+    min-width: 44px;
+    min-height: 44px;
   }
 
   .mac-search-field-clear:hover {
@@ -419,20 +449,12 @@
     background-color: var(--mac-secondary-background);
   }
 
-  /* Navbar estilo macOS */
+  /* Navbar estilo macOS con efecto blur tipo iCloud */
+  /* Apple HIG: Efecto de vidrio esmerilado con backdrop-filter */
+  /* Las clases de Tailwind manejan el backdrop-filter directamente */
   .mac-navbar {
-    background-color: var(--mac-material-light);
-    backdrop-filter: blur(var(--mac-blur-intensity)) saturate(180%);
-    -webkit-backdrop-filter: blur(var(--mac-blur-intensity)) saturate(180%);
-    border-bottom: 0.5px solid var(--mac-separator);
-    padding: var(--mac-spacing-md);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-
-  .dark .mac-navbar {
-    background-color: var(--mac-material-dark);
+    /* El backdrop-filter y el background se manejan con clases de Tailwind */
+    /* Mantenemos solo estilos básicos que no interfieran */
   }
 
   /* Badge macOS - Apple HIG: Caption 1 para badges pequeños */
@@ -449,6 +471,7 @@
   }
 
   /* Chip macOS */
+  /* Apple HIG: Cuando se usa como botón, debe cumplir con touch target mínimo de 44px */
   .mac-chip {
     background-color: var(--mac-secondary-background);
     color: var(--mac-label);
@@ -462,6 +485,13 @@
     gap: 6px;
     transition: all var(--mac-transition-fast);
     cursor: pointer;
+  }
+
+  /* Chips interactivos (botones) - Mínimo 44px de altura según Apple HIG */
+  button.mac-chip,
+  .mac-chip[role="button"] {
+    min-height: 44px;
+    padding: 8px 16px;
   }
 
   .mac-chip:hover {
@@ -496,12 +526,13 @@
     gap: 2px;
   }
 
+  /* Apple HIG: Touch targets mínimos de 44x44px */
   .mac-segmented-control-button {
     background-color: transparent;
     color: var(--mac-secondary-label);
     border: none;
     border-radius: var(--mac-corner-radius-sm);
-    padding: 4px 12px;
+    padding: 6px 12px;
     font-size: 13px;
     font-weight: 400;
     line-height: 18px;
@@ -511,8 +542,8 @@
     align-items: center;
     justify-content: center;
     gap: 6px;
-    min-height: 28px;
-    min-width: 32px;
+    min-height: 44px;
+    min-width: 44px;
   }
 
   .mac-segmented-control-button:hover {
@@ -852,9 +883,14 @@
   }
 
   /* Touch targets mínimos macOS */
+  /* Apple HIG: Los elementos interactivos deben tener un tamaño mínimo de 44x44 points */
+  /* En web: 44x44px para cumplir con accesibilidad y usabilidad */
   .mac-touch-target {
-    min-height: 28px;
-    min-width: 28px;
+    min-height: 44px;
+    min-width: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   /* ========================================

@@ -42,10 +42,11 @@ export default function CatalogoPage() {
   const availableFacets = useMemo(() => {
     const allFacets = new Map<string, Set<string>>();
     
-    // Filtrar productos por categoría seleccionada si hay una
-    let productsToProcess = sampleProducts;
+    // Filtrar productos activos y por categoría seleccionada si hay una
+    // Filtrar solo productos activos (control manual desde admin)
+    let productsToProcess = sampleProducts.filter(product => product.active);
     if (selectedCategory) {
-      productsToProcess = sampleProducts.filter(product => 
+      productsToProcess = productsToProcess.filter(product => 
         product.categoryIds.includes(selectedCategory)
       );
     }
@@ -62,7 +63,7 @@ export default function CatalogoPage() {
     });
 
     // Obtener widget de las categorías para mantener consistencia
-    const getWidget = (key: string): "swatch" | "select" => {
+    const getWidget = (key: string): "swatch" | "select" | "range" => {
       // Buscar en todas las categorías para encontrar el widget correcto
       for (const category of categories) {
         const facetDef = category.facetDefs.find(f => f.key === key);
@@ -119,7 +120,8 @@ export default function CatalogoPage() {
     const counts: Record<string, Record<string, number>> = {};
     
     // Primero aplicar búsqueda y filtros de precio (pero no facetas específicas)
-    let baseProducts = sampleProducts;
+    // Filtrar solo productos activos (control manual desde admin)
+    let baseProducts = sampleProducts.filter(product => product.active);
     
     if (searchQuery.trim()) {
       const normalizedQuery = normalizeText(searchQuery);
@@ -202,7 +204,8 @@ export default function CatalogoPage() {
   }, [searchQuery, filters.priceRange, filters.facets, availableFacets]);
 
   const filteredAndSortedProducts = useMemo(() => {
-    let products = sampleProducts;
+    // Filtrar solo productos activos (control manual desde admin)
+    let products = sampleProducts.filter(product => product.active);
 
     // Aplicar filtro de categoría primero
     if (selectedCategory) {

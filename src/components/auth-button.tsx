@@ -54,13 +54,13 @@ export function AuthButton() {
 
   if (user) {
     return (
-      <button 
-        onClick={handleSignOut} 
+      <Link
+        href="/account"
         className="mac-touch-target flex items-center justify-center rounded-full hover:bg-mac-gray-2 dark:hover:bg-mac-gray-6 mac-transition-colors"
-        aria-label="Cerrar sesión"
+        aria-label="Mi cuenta"
       >
-        <LogOut className="mac-icon-large mac-text-primary" />
-      </button>
+        <User className="mac-icon-large mac-text-primary" />
+      </Link>
     );
   }
 

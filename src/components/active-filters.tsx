@@ -69,7 +69,8 @@ export function ActiveFilters({ filters, onRemoveFilter, onClearAll }: ActiveFil
         ))}
         <button
           onClick={onClearAll}
-          className="mac-text-caption-1 mac-text-secondary hover:mac-text-primary mac-transition-colors font-medium ml-auto"
+          className="mac-button-tertiary mac-text-caption-1 font-medium ml-auto"
+          aria-label="Limpiar todos los filtros"
         >
           Limpiar todo
         </button>

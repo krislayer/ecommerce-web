@@ -160,12 +160,12 @@ export function ProductFilters({ filters, onFiltersChange, availableFacets, face
         </div>
       )}
 
-      <div className="space-y-mac-sm">
+      <div className="space-y-0">
         {/* Filtro de Precio */}
-        <div className="border-b border-mac-separator pb-mac-md mb-mac-md">
+        <div className={`border-b border-mac-separator ${!expandedSections.precio ? 'pb-mac-md' : ''}`}>
           <button
             onClick={() => toggleSection("precio")}
-            className="w-full flex items-center justify-between py-mac-sm hover:bg-mac-gray-2 dark:hover:bg-[var(--mac-tertiary-background)] rounded-mac-sm px-mac-sm mac-transition-colors"
+            className="w-full flex items-center justify-between py-mac-md hover:bg-mac-gray-2 dark:hover:bg-[var(--mac-tertiary-background)] rounded-mac-sm px-mac-sm mac-transition-colors"
           >
             <h3 className="mac-text-subhead mac-text-primary uppercase tracking-wide font-semibold">
               Precio
@@ -178,7 +178,7 @@ export function ProductFilters({ filters, onFiltersChange, availableFacets, face
           </button>
           
           {expandedSections.precio && (
-            <div className="mt-mac-md space-y-mac-xs">
+            <div className="px-mac-sm pb-mac-md space-y-mac-xs">
               {PRICE_RANGES.map((range) => (
                 <label
                   key={range.value}
@@ -215,10 +215,10 @@ export function ProductFilters({ filters, onFiltersChange, availableFacets, face
           const isExpanded = expandedSections[sectionKey] ?? (sectionKey === 'category' || sectionKey === 'brand');
           
           return (
-            <div key={facet.key} className="border-b border-mac-separator pb-mac-md mb-mac-md last:border-0">
+            <div key={facet.key} className={`border-b border-mac-separator last:border-0 ${!isExpanded ? 'pb-mac-md' : ''}`}>
               <button
                 onClick={() => toggleSection(sectionKey)}
-                className="w-full flex items-center justify-between py-mac-sm hover:bg-mac-gray-2 dark:hover:bg-[var(--mac-tertiary-background)] rounded-mac-sm px-mac-sm mac-transition-colors"
+                className="w-full flex items-center justify-between py-mac-md hover:bg-mac-gray-2 dark:hover:bg-[var(--mac-tertiary-background)] rounded-mac-sm px-mac-sm mac-transition-colors"
               >
                 <h3 className="mac-text-subhead mac-text-primary uppercase tracking-wide font-semibold">
                   {FACET_LABELS[facet.key] || facet.key.replace(/_/g, " ")}
@@ -231,42 +231,44 @@ export function ProductFilters({ filters, onFiltersChange, availableFacets, face
               </button>
               
               {isExpanded && (
-                <div className="mt-mac-md">
+                <div className="px-mac-sm pb-mac-md">
                   {facet.widget === "swatch" ? (
-                    <div className="flex flex-wrap gap-mac-sm">
-                      {(() => {
-                        // Filtrar solo valores que tienen productos disponibles
-                        const availableValues = facet.values?.filter(value => {
+                    <>
+                      <div className="flex flex-wrap gap-mac-sm">
+                        {(() => {
+                          // Filtrar solo valores que tienen productos disponibles
+                          const availableValues = facet.values?.filter(value => {
+                            const count = facetCounts?.[facet.key]?.[value] || 0;
+                            return count > 0;
+                          }) || [];
+                          
+                          // Para tamaño (size), mostrar solo S, M, L por defecto
+                          if (facet.key === "size" && !showAllOptions[facet.key]) {
+                            const standardSizes = availableValues.filter(v => ["S", "M", "L"].includes(v));
+                            return standardSizes;
+                          }
+                          // Para otros filtros, mostrar primeras 3 opciones
+                          return showAllOptions[facet.key] ? availableValues : availableValues.slice(0, 3);
+                        })().map((value) => {
                           const count = facetCounts?.[facet.key]?.[value] || 0;
-                          return count > 0;
-                        }) || [];
-                        
-                        // Para tamaño (size), mostrar solo S, M, L por defecto
-                        if (facet.key === "size" && !showAllOptions[facet.key]) {
-                          const standardSizes = availableValues.filter(v => ["S", "M", "L"].includes(v));
-                          return standardSizes;
-                        }
-                        // Para otros filtros, mostrar primeras 3 opciones
-                        return showAllOptions[facet.key] ? availableValues : availableValues.slice(0, 3);
-                      })().map((value) => {
-                        const count = facetCounts?.[facet.key]?.[value] || 0;
-                        return (
-                          <button
-                            key={value}
-                            onClick={() => toggleFacet(facet.key, value)}
-                            className={`mac-chip ${
-                              filters.facets[facet.key]?.includes(value)
-                                ? "selected"
-                                : ""
-                            }`}
-                          >
-                            {value}
-                            {count > 0 && (
-                              <span className="mac-text-caption-1 opacity-75">({count})</span>
-                            )}
-                          </button>
-                        );
-                      })}
+                          return (
+                            <button
+                              key={value}
+                              onClick={() => toggleFacet(facet.key, value)}
+                              className={`mac-chip ${
+                                filters.facets[facet.key]?.includes(value)
+                                  ? "selected"
+                                  : ""
+                              }`}
+                            >
+                              {value}
+                              {count > 0 && (
+                                <span className="mac-text-caption-1 opacity-75">({count})</span>
+                              )}
+                            </button>
+                          );
+                        })}
+                      </div>
                       {(() => {
                         // Filtrar solo valores que tienen productos disponibles
                         const availableValues = facet.values?.filter(value => {
@@ -281,22 +283,26 @@ export function ProductFilters({ filters, onFiltersChange, availableFacets, face
                           if (hasMoreSizes && !showAllOptions[facet.key]) {
                             const hiddenCount = availableValues.filter(v => !["S", "M", "L"].includes(v)).length;
                             return (
-                              <button 
-                                onClick={() => toggleShowAll(facet.key)}
-                                className="mac-button-tertiary mac-text-caption-1"
-                              >
-                                +{hiddenCount} más
-                              </button>
+                              <div className="pt-mac-xs">
+                                <button 
+                                  onClick={() => toggleShowAll(facet.key)}
+                                  className="mac-button-tertiary mac-text-caption-1"
+                                >
+                                  +{hiddenCount} más
+                                </button>
+                              </div>
                             );
                           }
                           if (hasMoreSizes && showAllOptions[facet.key]) {
                             return (
-                              <button 
-                                onClick={() => toggleShowAll(facet.key)}
-                                className="mac-button-tertiary mac-text-caption-1"
-                              >
-                                Ver menos
-                              </button>
+                              <div className="pt-mac-xs">
+                                <button 
+                                  onClick={() => toggleShowAll(facet.key)}
+                                  className="mac-button-tertiary mac-text-caption-1"
+                                >
+                                  Ver menos
+                                </button>
+                              </div>
                             );
                           }
                           return null;
@@ -304,29 +310,33 @@ export function ProductFilters({ filters, onFiltersChange, availableFacets, face
                         // Para otros filtros, mostrar botón si hay más de 3 opciones disponibles
                         if (availableValues.length > 3 && !showAllOptions[facet.key]) {
                           return (
-                            <button 
-                              onClick={() => toggleShowAll(facet.key)}
-                              className="mac-button-tertiary mac-text-caption-1"
-                            >
-                              +{availableValues.length - 3} más
-                            </button>
+                            <div className="pt-mac-xs">
+                              <button 
+                                onClick={() => toggleShowAll(facet.key)}
+                                className="mac-button-tertiary mac-text-caption-1"
+                              >
+                                +{availableValues.length - 3} más
+                              </button>
+                            </div>
                           );
                         }
                         if (availableValues.length > 3 && showAllOptions[facet.key]) {
                           return (
-                            <button 
-                              onClick={() => toggleShowAll(facet.key)}
-                              className="mac-button-tertiary mac-text-caption-1"
-                            >
-                              Ver menos
-                            </button>
+                            <div className="pt-mac-xs">
+                              <button 
+                                onClick={() => toggleShowAll(facet.key)}
+                                className="mac-button-tertiary mac-text-caption-1"
+                              >
+                                Ver menos
+                              </button>
+                            </div>
                           );
                         }
                         return null;
                       })()}
-                    </div>
+                    </>
                   ) : (
-                    <div className="space-y-mac-xs">
+                    <div className="space-y-mac-xs pb-mac-md">
                       {(() => {
                         // Filtrar solo valores que tienen productos disponibles
                         const availableValues = facet.values?.filter(value => {
@@ -381,22 +391,26 @@ export function ProductFilters({ filters, onFiltersChange, availableFacets, face
                           if (hasMoreSizes && !showAllOptions[facet.key]) {
                             const hiddenCount = availableValues.filter(v => !["S", "M", "L"].includes(v)).length;
                             return (
-                              <button 
-                                onClick={() => toggleShowAll(facet.key)}
-                                className="mac-button-tertiary mac-text-caption-1 mt-mac-xs"
-                              >
-                                +{hiddenCount} más
-                              </button>
+                              <div className="pt-mac-xs pb-mac-md">
+                                <button 
+                                  onClick={() => toggleShowAll(facet.key)}
+                                  className="mac-button-tertiary mac-text-caption-1"
+                                >
+                                  +{hiddenCount} más
+                                </button>
+                              </div>
                             );
                           }
                           if (hasMoreSizes && showAllOptions[facet.key]) {
                             return (
-                              <button 
-                                onClick={() => toggleShowAll(facet.key)}
-                                className="mac-button-tertiary mac-text-caption-1 mt-mac-xs"
-                              >
-                                Ver menos
-                              </button>
+                              <div className="pt-mac-xs pb-mac-md">
+                                <button 
+                                  onClick={() => toggleShowAll(facet.key)}
+                                  className="mac-button-tertiary mac-text-caption-1"
+                                >
+                                  Ver menos
+                                </button>
+                              </div>
                             );
                           }
                           return null;
@@ -404,22 +418,26 @@ export function ProductFilters({ filters, onFiltersChange, availableFacets, face
                         // Para otros filtros, mostrar botón si hay más de 3 opciones disponibles
                         if (availableValues.length > 3 && !showAllOptions[facet.key]) {
                           return (
-                            <button 
-                              onClick={() => toggleShowAll(facet.key)}
-                              className="mac-button-tertiary mac-text-caption-1 mt-mac-xs"
-                            >
-                              +{availableValues.length - 3} más
-                            </button>
+                            <div className="pt-mac-xs">
+                              <button 
+                                onClick={() => toggleShowAll(facet.key)}
+                                className="mac-button-tertiary mac-text-caption-1"
+                              >
+                                +{availableValues.length - 3} más
+                              </button>
+                            </div>
                           );
                         }
                         if (availableValues.length > 3 && showAllOptions[facet.key]) {
                           return (
-                            <button 
-                              onClick={() => toggleShowAll(facet.key)}
-                              className="mac-button-tertiary mac-text-caption-1 mt-mac-xs"
-                            >
-                              Ver menos
-                            </button>
+                            <div className="pt-mac-xs">
+                              <button 
+                                onClick={() => toggleShowAll(facet.key)}
+                                className="mac-button-tertiary mac-text-caption-1"
+                              >
+                                Ver menos
+                              </button>
+                            </div>
                           );
                         }
                         return null;

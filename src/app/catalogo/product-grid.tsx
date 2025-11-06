@@ -2,11 +2,10 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useSelector, useDispatch } from "react-redux";
-import { Heart, ShoppingCart } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { Heart, ShoppingCart, Sparkles } from "lucide-react";
 import type { Product } from "@/lib/domain/entities/product";
-import type { RootState } from "@/store";
-import { toggleFavorite } from "@/store/slice/favoritesSlice";
+import { useFavorites } from "@/lib/hooks/useFavorites";
 import { addItem, toggleCart } from "@/store/slice/cartSlice";
 
 interface ProductGridProps {
@@ -15,12 +14,18 @@ interface ProductGridProps {
 
 export function ProductGrid({ products }: ProductGridProps) {
   const dispatch = useDispatch();
-  const favorites = useSelector((state: RootState) => state.favorites.productIds);
+  const { isFavorite, handleToggleFavorite, isAuthenticated } = useFavorites();
 
-  const handleToggleFavorite = (productId: string, e: React.MouseEvent) => {
+  const handleFavoriteClick = (productId: string, e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    dispatch(toggleFavorite(productId));
+    
+    if (!isAuthenticated) {
+      window.location.href = "/login";
+      return;
+    }
+    
+    handleToggleFavorite(productId);
   };
 
   const handleAddToCart = (product: Product, e: React.MouseEvent) => {
@@ -85,6 +90,33 @@ export function ProductGrid({ products }: ProductGridProps) {
             
             {/* Contenido */}
             <div className="p-mac-md flex flex-col grow">
+              {/* Badges de condición y calificación */}
+              <div className="flex flex-wrap gap-mac-xs mb-mac-sm">
+                {product.condition === "new" ? (
+                  <span className="badge-new mac-chip inline-flex items-center gap-mac-xs" style={{ padding: '2px 8px', fontSize: '11px' }}>
+                    <Sparkles className="mac-icon-small" style={{ width: '10px', height: '10px' }} />
+                    <span className="font-medium">Nuevo</span>
+                  </span>
+                ) : (
+                  <>
+                    <span className="badge-used mac-chip inline-flex items-center gap-mac-xs" style={{ padding: '2px 8px', fontSize: '11px' }}>
+                      <span className="font-medium">Seminuevo</span>
+                    </span>
+                    {product.conditionRating !== undefined && (
+                      <span className="badge-rating mac-chip mac-text-caption-1" style={{ padding: '2px 8px', fontSize: '11px' }}>
+                        <span className="font-semibold">{product.conditionRating}</span>
+                        <span className="mac-text-tertiary">/10</span>
+                      </span>
+                    )}
+                  </>
+                )}
+                {!product.active && (
+                  <span className="mac-chip mac-text-caption-1" style={{ backgroundColor: 'var(--mac-secondary-background)', color: 'var(--mac-tertiary-label)', borderColor: 'var(--mac-separator)', padding: '2px 8px', fontSize: '11px' }}>
+                    No disponible
+                  </span>
+                )}
+              </div>
+
               {/* Título */}
               <h3 className="mac-product-card-title line-clamp-2 mb-mac-sm">
                 {product.name}
@@ -101,19 +133,20 @@ export function ProductGrid({ products }: ProductGridProps) {
               <div className="flex gap-mac-sm mt-auto justify-end">
                 {/* Botón Favoritos */}
                 <button
-                  onClick={(e) => handleToggleFavorite(product.id, e)}
+                  onClick={(e) => handleFavoriteClick(product.id, e)}
                   className={`mac-touch-target rounded-full flex items-center justify-center mac-transition-colors ${
-                    favorites.includes(product.id)
+                    isFavorite(product.id)
                       ? "bg-mac-red/10"
                       : "hover:bg-mac-gray-2 dark:hover:bg-mac-gray-6"
-                  }`}
-                  aria-label={favorites.includes(product.id) ? "Quitar de favoritos" : "Agregar a favoritos"}
+                  } ${!isAuthenticated ? "opacity-70" : ""}`}
+                  aria-label={isFavorite(product.id) ? "Quitar de favoritos" : "Agregar a favoritos"}
+                  title={!isAuthenticated ? "Inicia sesión para agregar favoritos" : ""}
                 >
                   <Heart 
                     className="mac-icon-medium mac-text-secondary" 
-                    fill={favorites.includes(product.id) ? "var(--mac-red)" : "none"} 
-                    stroke={favorites.includes(product.id) ? "var(--mac-red)" : "currentColor"}
-                    style={favorites.includes(product.id) ? { color: 'var(--mac-red)' } : {}}
+                    fill={isFavorite(product.id) ? "var(--mac-red)" : "none"} 
+                    stroke={isFavorite(product.id) ? "var(--mac-red)" : "currentColor"}
+                    style={isFavorite(product.id) ? { color: 'var(--mac-red)' } : {}}
                   />
                 </button>
 

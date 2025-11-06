@@ -13,7 +13,7 @@ export function Navbar() {
   const itemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
-    <nav className="mac-navbar">
+    <nav className="mac-navbar backdrop-blur-[4px] backdrop-saturate-[180%] bg-white/70 dark:bg-black/45 sticky top-0 z-[100] border-b border-[var(--mac-separator)] px-mac-md py-mac-md shadow-[0_1px_0_rgba(0,0,0,0.05)] dark:shadow-[0_1px_0_rgba(255,255,255,0.05)]">
           <div className="max-w-7xl mx-auto">
             <div className="flex items-center justify-between">
           <Link 

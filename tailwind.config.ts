@@ -71,6 +71,11 @@ const config: Config = {
       // Backdrop blur macOS
       backdropBlur: {
         'mac': '40px',
+        'mac-xl': '80px',
+      },
+      backdropSaturate: {
+        'mac': '180%',
+        'mac-intense': '200%',
       },
       // Transiciones macOS
       transitionTimingFunction: {
