@@ -455,6 +455,29 @@
   .mac-navbar {
     /* El backdrop-filter y el background se manejan con clases de Tailwind */
     /* Mantenemos solo estilos básicos que no interfieran */
+    transition: background-color 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+  }
+
+  /* Asegurar que el navbar respete el modo oscuro */
+  html.dark .mac-navbar {
+    background-color: rgba(0, 0, 0, 0.45);
+  }
+
+  html:not(.dark) .mac-navbar {
+    background-color: rgba(255, 255, 255, 0.70);
+  }
+
+  /* Sidebar del carrito - mismo tratamiento que navbar */
+  .cart-sidebar {
+    transition: background-color 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+  }
+
+  html.dark .cart-sidebar {
+    background-color: rgba(0, 0, 0, 0.45);
+  }
+
+  html:not(.dark) .cart-sidebar {
+    background-color: rgba(255, 255, 255, 0.70);
   }
 
   /* Badge macOS - Apple HIG: Caption 1 para badges pequeños */

@@ -30,7 +30,7 @@ export function CartSidebar() {
       />
 
       {/* Sidebar */}
-      <div className="relative w-full sm:w-96 h-full max-h-[90vh] flex flex-col mac-material shadow-mac-lg rounded-mac-lg overflow-hidden">
+      <div className="cart-sidebar relative w-full sm:w-96 h-full max-h-[90vh] flex flex-col backdrop-blur-[4px] backdrop-saturate-[180%] shadow-mac-lg rounded-mac-lg overflow-hidden border border-[var(--mac-separator)]">
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className="flex items-center justify-between p-mac-md border-b border-mac-separator shrink-0">
