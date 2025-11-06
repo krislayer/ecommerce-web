@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useSelector, useDispatch } from "react-redux";
-import { Heart, ShoppingCart, Star } from "lucide-react";
+import { Heart, ShoppingCart } from "lucide-react";
 import type { Product } from "@/lib/domain/entities/product";
 import type { RootState } from "@/store";
 import { toggleFavorite } from "@/store/slice/favoritesSlice";
@@ -89,15 +89,6 @@ export function ProductGrid({ products }: ProductGridProps) {
               <h3 className="mac-product-card-title line-clamp-2 mb-mac-sm">
                 {product.name}
               </h3>
-              
-              {/* Rating */}
-              <div className="flex items-center gap-mac-xs mb-mac-sm">
-                <div className="flex text-yellow-400">
-                  {Array.from({ length: 5 }, (_, i) => (
-                    <Star key={i} className="mac-icon-small fill-current" />
-                  ))}
-                </div>
-              </div>
               
               {/* Precio */}
               <div className="mb-mac-sm">

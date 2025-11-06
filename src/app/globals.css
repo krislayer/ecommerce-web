@@ -194,6 +194,52 @@
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   }
 
+  /* Badges de condición de producto según Apple HIG */
+  .badge-new {
+    background-color: rgba(52, 199, 89, 0.12);
+    color: var(--mac-green);
+    border-color: rgba(52, 199, 89, 0.25);
+  }
+
+  .badge-new svg {
+    color: var(--mac-green);
+  }
+
+  .dark .badge-new {
+    background-color: rgba(52, 199, 89, 0.2);
+    color: #4CD964;
+    border-color: rgba(52, 199, 89, 0.35);
+  }
+
+  .dark .badge-new svg {
+    color: #4CD964;
+  }
+
+  .badge-used {
+    background-color: rgba(255, 149, 0, 0.12);
+    color: var(--mac-orange);
+    border-color: rgba(255, 149, 0, 0.25);
+  }
+
+  .dark .badge-used {
+    background-color: rgba(255, 149, 0, 0.2);
+    color: #FFAD33;
+    border-color: rgba(255, 149, 0, 0.35);
+  }
+
+  /* Badge de calificación según Apple HIG */
+  .badge-rating {
+    background-color: var(--mac-tertiary-background);
+    color: var(--mac-label);
+    border-color: var(--mac-separator);
+  }
+
+  .dark .badge-rating {
+    background-color: var(--mac-tertiary-background);
+    color: var(--mac-label);
+    border-color: var(--mac-separator);
+  }
+
   /* Botón secundario macOS */
   .mac-button-secondary {
     background-color: var(--mac-secondary-background);

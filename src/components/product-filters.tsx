@@ -167,7 +167,7 @@ export function ProductFilters({ filters, onFiltersChange, availableFacets, face
             onClick={() => toggleSection("precio")}
             className="w-full flex items-center justify-between py-mac-sm hover:bg-mac-gray-2 dark:hover:bg-[var(--mac-tertiary-background)] rounded-mac-sm px-mac-sm mac-transition-colors"
           >
-            <h3 className="mac-text-headline mac-text-primary uppercase tracking-wide">
+            <h3 className="mac-text-subhead mac-text-primary uppercase tracking-wide font-semibold">
               Precio
             </h3>
             <ChevronDown
@@ -192,7 +192,7 @@ export function ProductFilters({ filters, onFiltersChange, availableFacets, face
                       onChange={() => handlePriceChange(range.value)}
                       className="w-4 h-4 border-2 border-mac-separator mac-text-primary focus:ring-mac-blue focus:ring-2 cursor-pointer"
                     />
-                    <span className="mac-text-body mac-text-secondary group-hover:mac-text-primary mac-transition-colors">
+                    <span className="mac-text-footnote mac-text-secondary group-hover:mac-text-primary mac-transition-colors">
                       {range.label}
                     </span>
                   </div>
@@ -220,7 +220,7 @@ export function ProductFilters({ filters, onFiltersChange, availableFacets, face
                 onClick={() => toggleSection(sectionKey)}
                 className="w-full flex items-center justify-between py-mac-sm hover:bg-mac-gray-2 dark:hover:bg-[var(--mac-tertiary-background)] rounded-mac-sm px-mac-sm mac-transition-colors"
               >
-                <h3 className="mac-text-headline mac-text-primary uppercase tracking-wide">
+                <h3 className="mac-text-subhead mac-text-primary uppercase tracking-wide font-semibold">
                   {FACET_LABELS[facet.key] || facet.key.replace(/_/g, " ")}
                 </h3>
                 <ChevronDown
@@ -355,7 +355,7 @@ export function ProductFilters({ filters, onFiltersChange, availableFacets, face
                                 onChange={() => toggleFacet(facet.key, value)}
                                 className="w-4 h-4 border-2 border-mac-separator rounded-mac-sm mac-text-primary focus:ring-mac-blue focus:ring-2 cursor-pointer"
                               />
-                              <span className="mac-text-body mac-text-secondary group-hover:mac-text-primary mac-transition-colors">
+                              <span className="mac-text-footnote mac-text-secondary group-hover:mac-text-primary mac-transition-colors">
                                 {value}
                               </span>
                             </div>

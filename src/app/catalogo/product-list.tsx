@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Star } from "lucide-react";
 import type { Product } from "@/lib/domain/entities/product";
 
 interface ProductListProps {
@@ -50,15 +49,6 @@ export function ProductList({ products }: ProductListProps) {
                 <h3 className="mac-text-headline mac-text-primary mb-mac-sm line-clamp-2">
                   {product.name}
                 </h3>
-
-                {/* Rating */}
-                <div className="flex items-center gap-mac-xs mb-mac-sm">
-                  <div className="flex text-yellow-400">
-                    {Array.from({ length: 5 }, (_, i) => (
-                      <Star key={i} className="mac-icon-small fill-current" />
-                    ))}
-                  </div>
-                </div>
 
                 {/* Descripción */}
                 <p className="mac-text-subhead mac-text-secondary line-clamp-2 mb-mac-sm">

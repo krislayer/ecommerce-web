@@ -48,7 +48,7 @@ export function CartSidebar() {
           <div className="flex-1 overflow-y-auto p-mac-md space-y-mac-md">
             {items.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-mac-2xl">
-                <p className="mac-text-body mac-text-secondary text-center">
+                <p className="mac-text-subhead mac-text-secondary text-center">
                   Tu carrito está vacío
                 </p>
               </div>
@@ -69,10 +69,10 @@ export function CartSidebar() {
                       />
                     )}
                     <div className="flex-1 min-w-0">
-                      <p className="mac-text-body mac-text-primary font-medium truncate">
+                      <p className="mac-text-footnote mac-text-primary font-medium truncate">
                         {item.variant.sku}
                       </p>
-                      <p className="mac-text-subhead mac-text-secondary mt-mac-xs">
+                      <p className="mac-text-footnote mac-text-secondary mt-mac-xs">
                         {ShippingService.formatPrice(item.variant.price)}
                       </p>
                       <div className="flex items-center gap-mac-sm mt-mac-sm">
@@ -89,7 +89,7 @@ export function CartSidebar() {
                         >
                           <Minus className="mac-icon-small mac-text-primary" />
                         </button>
-                        <span className="mac-text-body mac-text-primary min-w-[24px] text-center">
+                        <span className="mac-text-footnote mac-text-primary min-w-[24px] text-center font-medium">
                           {item.quantity}
                         </span>
                         <button

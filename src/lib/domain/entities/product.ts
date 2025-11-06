@@ -10,6 +10,10 @@ export interface Product {
   active: boolean;
   createdAt: number;
   updatedAt: number;
+  // Condición del producto: nuevo o seminuevo
+  condition: "new" | "used";
+  // Calificación del estado (solo para productos seminuevos): 0-10 (ej: 9, 9.5, 8)
+  conditionRating?: number; // Opcional, solo presente si condition === "used"
 }
 
 export interface ProductVariant {

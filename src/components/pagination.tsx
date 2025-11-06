@@ -78,7 +78,7 @@ export function Pagination({ currentPage, totalPages, onPageChange, itemsPerPage
             <button
               key={pageNum}
               onClick={() => onPageChange(pageNum)}
-              className={`mac-touch-target rounded-mac-sm mac-text-body font-medium flex items-center justify-center mac-transition-colors ${
+              className={`mac-touch-target rounded-mac-sm mac-text-footnote font-medium flex items-center justify-center mac-transition-colors ${
                 currentPage === pageNum
                   ? "mac-button-primary"
                   : "mac-button-secondary"
