@@ -1,15 +1,21 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { useRouter } from "next/navigation";
 import type { RootState } from "@/store";
+import { clearCart } from "@/store/slice/cartSlice";
 import { ShippingService } from "@/lib/services/shipping.service";
 import { Truck, Store, Lock } from "lucide-react";
-import Link from "next/link";
 import Image from "next/image";
+import { Loading } from "@/components/loading";
 
 export default function CheckoutPage() {
   const [isMobile, setIsMobile] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const dispatch = useDispatch();
+  const router = useRouter();
+  const cartItems = useSelector((state: RootState) => state.cart.items);
 
   useEffect(() => {
     // Detectar si es móvil
@@ -24,7 +30,50 @@ export default function CheckoutPage() {
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
-  const cartItems = useSelector((state: RootState) => state.cart.items);
+
+  // En móvil: verificar si el pedido fue enviado cuando el usuario regresa al navegador
+  useEffect(() => {
+    if (!isMobile || typeof window === 'undefined') return;
+
+    const checkOrderSent = () => {
+      const orderSent = sessionStorage.getItem('orderSent');
+      if (orderSent === 'true') {
+        // Limpiar la marca y redirigir a página de éxito
+        sessionStorage.removeItem('orderSent');
+        router.push("/checkout/success");
+      }
+    };
+
+    // Verificar al montar el componente
+    checkOrderSent();
+
+    // Verificar cuando el usuario regresa al navegador (después de abrir WhatsApp)
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        checkOrderSent();
+      }
+    };
+
+    // Verificar cuando la ventana recupera el foco
+    const handleFocus = () => {
+      checkOrderSent();
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('focus', handleFocus);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('focus', handleFocus);
+    };
+  }, [isMobile, router]);
+
+  // Proteger ruta: redirigir si el carrito está vacío (excepto durante el proceso de envío)
+  useEffect(() => {
+    if (cartItems.length === 0 && !isSubmitting) {
+      router.push("/catalogo");
+    }
+  }, [cartItems.length, isSubmitting, router]);
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -67,20 +116,72 @@ export default function CheckoutPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!isFormValid) return;
+    if (!isFormValid || isSubmitting) return;
     
-    const whatsappUrl = `https://wa.me/50250123456?text=${encodeURIComponent(
-      formatWhatsAppMessage()
-    )}`;
+    setIsSubmitting(true);
+    
+    // Número de WhatsApp - Configurado temporalmente
+    // Formato: código de país + número (sin espacios, guiones, paréntesis, ni el símbolo +)
+    // Número actual: +50256995320 → 50256995320
+    // IMPORTANTE: El número debe estar registrado en WhatsApp y ser válido
+    const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "50256995320";
+    
+    // Limpiar el número: solo dígitos, eliminar espacios, guiones, paréntesis, +
+    const cleanNumber = whatsappNumber.replace(/\D/g, "");
+    
+    // Validar formato: debe tener entre 10 y 15 dígitos (formato internacional)
+    if (cleanNumber.length < 10 || cleanNumber.length > 15) {
+      console.error("Número de WhatsApp inválido:", cleanNumber);
+      console.error("El número debe tener entre 10 y 15 dígitos. Configura NEXT_PUBLIC_WHATSAPP_NUMBER en tus variables de entorno.");
+      alert(`Error: Número de WhatsApp inválido (${cleanNumber.length} dígitos).\n\nPor favor configura NEXT_PUBLIC_WHATSAPP_NUMBER con un número válido.\nFormato: código país + número (ejemplo: 50212345678)`);
+      setIsSubmitting(false);
+      return;
+    }
+    
+    // Log para debugging (solo en desarrollo)
+    if (process.env.NODE_ENV === 'development') {
+      console.log("Número de WhatsApp configurado:", cleanNumber);
+      console.log("URL que se abrirá:", `https://wa.me/${cleanNumber}`);
+    }
+    
+    const message = formatWhatsAppMessage();
+    const encodedMessage = encodeURIComponent(message);
+    
+    // Construir URL según el dispositivo
+    let whatsappUrl: string;
     
     if (isMobile) {
-      // En móvil: abre directamente la app de WhatsApp (si está instalada)
-      // Si no está instalada, abre WhatsApp Web en el navegador
+      // En móvil: usar wa.me (abre app directamente si está instalada)
+      whatsappUrl = `https://wa.me/${cleanNumber}?text=${encodedMessage}`;
+      
+      // Limpiar carrito
+      dispatch(clearCart());
+      
+      // En móvil, cuando WhatsApp está instalado, window.location.href abre la app
+      // y el navegador queda en segundo plano. Cuando el usuario regrese, necesita
+      // ver la página de éxito. Usamos sessionStorage para marcar el pedido como enviado
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem('orderSent', 'true');
+      }
+      
+      // Abrir WhatsApp - esto puede cambiar la URL o abrir la app
+      // Si WhatsApp está instalado, la app se abre y el navegador queda en segundo plano
+      // Si no está instalado, se abre WhatsApp Web en el navegador
       window.location.href = whatsappUrl;
     } else {
-      // En desktop: abre WhatsApp Web en una nueva pestaña
-      // Si el usuario no está logueado, se le pedirá escanear el código QR
+      // En desktop: usar web.whatsapp.com para mejor compatibilidad
+      whatsappUrl = `https://web.whatsapp.com/send?phone=${cleanNumber}&text=${encodedMessage}`;
+      
+      // Limpiar carrito
+      dispatch(clearCart());
+      
+      // Abrir WhatsApp Web en nueva pestaña PRIMERO (sin delay)
+      // Esto evita el parpadeo porque la nueva pestaña se abre inmediatamente
       window.open(whatsappUrl, "_blank");
+      
+      // Redirigir a página de éxito inmediatamente después de abrir WhatsApp
+      // No usar setOrderCompleted aquí para evitar mostrar loading en desktop
+      router.push("/checkout/success");
     }
   };
 
@@ -113,22 +214,15 @@ Envío: ${formData.shippingMethod === "pickup" ? "Gratis (Recoger en tienda)" : 
 Gracias por tu compra en ¡Qué Chulito! ❤️`;
   };
 
-  if (cartItems.length === 0) {
-    return (
-      <div className="min-h-screen mac-bg-grouped flex items-center justify-center px-mac-md">
-        <div className="max-w-md w-full mac-card text-center">
-          <h1 className="mac-text-title-2 mac-text-primary mb-mac-md">
-            Tu carrito está vacío
-          </h1>
-          <p className="mac-text-body mac-text-secondary mb-mac-lg">
-            Agrega productos a tu carrito antes de finalizar la compra
-          </p>
-          <Link href="/catalogo" className="mac-button-primary inline-block">
-            Ver Catálogo
-          </Link>
-        </div>
-      </div>
-    );
+  // Mostrar loading si el carrito está vacío (será redirigido) o si se está enviando el pedido
+  // Apple HIG: Loading full-screen debe ser minimalista - solo spinner centrado sin card
+  if (cartItems.length === 0 && !isSubmitting) {
+    return <Loading fullScreen size="xl" label="Redirigiendo" />;
+  }
+
+  // Mostrar loading cuando se está enviando el pedido
+  if (isSubmitting) {
+    return <Loading fullScreen size="xl" label="Enviando pedido" />;
   }
 
   return (
@@ -391,17 +485,17 @@ Gracias por tu compra en ¡Qué Chulito! ❤️`;
 
               {/* Botón de envío - Solo visible en mobile */}
               <div className="lg:hidden">
-                <button
-                  type="submit"
-                  className={`mac-button-primary w-full ${
-                    !isFormValid ? "opacity-50 cursor-not-allowed" : ""
-                  }`}
-                  disabled={!isFormValid}
-                  aria-label="Enviar pedido por WhatsApp"
-                >
-                  <Lock className="w-4 h-4" />
-                  Enviar Pedido por WhatsApp
-                </button>
+                  <button
+                    type="submit"
+                    className={`mac-button-primary w-full ${
+                      !isFormValid ? "opacity-50 cursor-not-allowed" : ""
+                    }`}
+                    disabled={!isFormValid}
+                    aria-label="Enviar pedido por WhatsApp"
+                  >
+                    <Lock className="w-4 h-4" />
+                    Enviar Pedido por WhatsApp
+                  </button>
                 <p className="mac-text-caption-1 mac-text-tertiary text-center mt-mac-sm">
                   {isMobile 
                     ? "Se abrirá WhatsApp con tu pedido listo para enviar. Si no tienes WhatsApp instalado, se abrirá WhatsApp Web."
@@ -503,7 +597,7 @@ Gracias por tu compra en ¡Qué Chulito! ❤️`;
                     Enviar Pedido por WhatsApp
                   </button>
                   <p className="mac-text-caption-1 mac-text-tertiary text-center mt-mac-sm">
-                    Se abrirá WhatsApp con tu pedido listo para enviar
+                    Se abrirá WhatsApp Web en una nueva pestaña. Si no estás logueado, escanea el código QR con tu teléfono.
                   </p>
                 </div>
               </div>

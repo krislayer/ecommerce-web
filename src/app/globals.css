@@ -994,16 +994,21 @@
     transition-timing-function: cubic-bezier(0.4, 0.0, 0.2, 1);
   }
 
-  /* Activity Indicator (Spinner) estilo macOS - Basado en UIActivityIndicatorView de Apple */
-  /* Diseño fiel a las especificaciones de Apple HIG: círculo con segmentos rotatorios */
+  /* Activity Indicator (Spinner) estilo macOS/iOS - Apple HIG */
+  /* Basado en NSProgressIndicator y UIActivityIndicatorView */
+  /* Apple HIG: Debe ser claro, no distractivo, usar colores del sistema y animaciones suaves */
+  /* Diseño inspirado en UIActivityIndicatorView de iOS y NSProgressIndicator de macOS */
   .mac-activity-indicator {
     display: inline-block;
     width: 20px;
     height: 20px;
     position: relative;
+    /* Apple HIG: El indicador debe ser visible pero no distractivo */
   }
 
-  /* Círculo principal con segmento visible - similar a UIActivityIndicatorView */
+  /* Arco principal - estilo Apple nativo con gradiente de opacidad */
+  /* Apple HIG: Los segmentos deben ser claros pero sutiles, con transiciones suaves */
+  /* Diseño inspirado en UIActivityIndicatorView de iOS con arco de aproximadamente 45 grados */
   .mac-activity-indicator::before {
     content: '';
     position: absolute;
@@ -1013,14 +1018,29 @@
     height: 100%;
     border-radius: 50%;
     border: 2px solid transparent;
+    /* Apple HIG: Usar color del sistema con opacidad apropiada */
+    /* Arco principal con opacidad completa en la parte superior */
     border-top-color: var(--mac-blue);
-    border-right-color: transparent;
+    /* Gradiente de opacidad hacia la derecha (70% opacidad para mejor visibilidad) */
+    border-right-color: rgba(0, 122, 255, 0.7);
     border-bottom-color: transparent;
     border-left-color: transparent;
-    animation: macSpinnerRotate 0.75s linear infinite;
+    /* Apple HIG: Animación suave con easing natural de Apple */
+    /* iOS usa aproximadamente 1s, macOS puede ser ligeramente más rápido */
+    animation: macSpinnerRotate 0.8s cubic-bezier(0.4, 0.0, 0.2, 1) infinite;
+    /* Apple HIG: El spinner debe tener un aspecto limpio y profesional */
+    /* Opacidad aumentada para mejor visibilidad */
+    opacity: 1;
   }
 
-  /* Segundo segmento con opacidad reducida para efecto de seguimiento */
+  /* Modo oscuro: ajustar colores para mejor contraste */
+  .dark .mac-activity-indicator::before {
+    border-top-color: var(--mac-blue);
+    border-right-color: rgba(10, 132, 255, 0.7);
+  }
+
+  /* Segundo arco con opacidad reducida para efecto de seguimiento suave */
+  /* Apple HIG: Múltiples segmentos crean sensación de movimiento continuo y fluido */
   .mac-activity-indicator::after {
     content: '';
     position: absolute;
@@ -1030,16 +1050,26 @@
     height: 100%;
     border-radius: 50%;
     border: 2px solid transparent;
-    border-top-color: var(--mac-blue);
-    border-right-color: transparent;
+    /* Segundo arco con opacidad más baja para efecto de cola suave */
+    /* Opacidades aumentadas para mejor visibilidad */
+    border-top-color: rgba(0, 122, 255, 0.5);
+    border-right-color: rgba(0, 122, 255, 0.3);
     border-bottom-color: transparent;
     border-left-color: transparent;
-    opacity: 0.3;
-    animation: macSpinnerRotate 0.75s linear infinite;
-    animation-delay: -0.25s;
+    /* Apple HIG: Opacidad reducida para efecto de seguimiento suave */
+    animation: macSpinnerRotate 0.8s cubic-bezier(0.4, 0.0, 0.2, 1) infinite;
+    animation-delay: -0.4s;
+    opacity: 0.7;
   }
 
-  /* Animación continua y suave - velocidad estándar de Apple (0.75s) */
+  /* Modo oscuro: ajustar colores para mejor contraste */
+  .dark .mac-activity-indicator::after {
+    border-top-color: rgba(10, 132, 255, 0.5);
+    border-right-color: rgba(10, 132, 255, 0.3);
+  }
+
+  /* Animación suave con easing de Apple - Apple HIG: transiciones naturales */
+  /* Apple HIG: Las animaciones deben ser fluidas y naturales, sin saltos */
   @keyframes macSpinnerRotate {
     0% {
       transform: rotate(0deg);

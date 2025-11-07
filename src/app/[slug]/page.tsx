@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { ProductClient } from "./product-client";
 import { sampleProducts } from "@/lib/data/products";
 import { Suspense } from "react";
+import { Loading } from "@/components/loading";
 
 async function getProduct(slug: string) {
   // Simular un pequeño delay para evitar problemas de timing
@@ -22,7 +23,7 @@ export default async function ProductPage({
   }
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<Loading fullScreen size="xl" label="Cargando producto" />}>
       <ProductClient product={product} />
     </Suspense>
   );

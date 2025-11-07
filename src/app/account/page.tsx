@@ -14,6 +14,7 @@ import { signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase/client";
 import { useDispatch } from "react-redux";
 import { setUser } from "@/store/slice/authSlice";
+import { Loading } from "@/components/loading";
 
 export default function AccountPage() {
   const router = useRouter();
@@ -54,13 +55,7 @@ export default function AccountPage() {
   }, [user, loading, router]);
 
   if (loading) {
-    return (
-      <div className="min-h-screen mac-bg-grouped flex items-center justify-center">
-        <div className="mac-card">
-          <p className="mac-text-body mac-text-secondary">Cargando...</p>
-        </div>
-      </div>
-    );
+    return <Loading fullScreen size="xl" label="Cargando" />;
   }
 
   if (!user) {
@@ -178,4 +173,3 @@ export default function AccountPage() {
     </div>
   );
 }
-

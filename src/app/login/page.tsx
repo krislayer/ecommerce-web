@@ -7,6 +7,7 @@ import { auth, isFirebaseConfigured } from "@/lib/firebase/client";
 import { setUser, setLoading } from "@/store/slice/authSlice";
 import type { RootState } from "@/store";
 import { useRouter } from "next/navigation";
+import { Loading } from "@/components/loading";
 
 export default function LoginPage() {
   const dispatch = useDispatch();
@@ -48,16 +49,7 @@ export default function LoginPage() {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen mac-bg-grouped flex items-center justify-center">
-        <div className="mac-card text-center p-mac-xl">
-          <div className="flex flex-col items-center gap-mac-md">
-            <div className="mac-activity-indicator-lg"></div>
-            <p className="mac-text-body mac-text-secondary">Cargando...</p>
-          </div>
-        </div>
-      </div>
-    );
+    return <Loading fullScreen size="xl" label="Cargando" />;
   }
 
   if (user) {

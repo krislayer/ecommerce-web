@@ -10,3 +10,4 @@ export { ActiveFilters } from "./active-filters";
 export { ViewToggle } from "./view-toggle";
 export { Pagination } from "./pagination";
 export { CategoryNavigation } from "./category-navigation";
+export { Loading } from "./loading";
