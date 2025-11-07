@@ -7,6 +7,7 @@ import { setCartOpen, removeItem, updateQuantity } from "@/store/slice/cartSlice
 import type { RootState } from "@/store";
 import Image from "next/image";
 import { ShippingService } from "@/lib/services/shipping.service";
+import { FreeShippingProgress } from "./free-shipping-progress";
 
 export function CartSidebar() {
   const { items, isOpen } = useSelector((state: RootState) => state.cart);
@@ -148,17 +149,8 @@ export function CartSidebar() {
                 <span>{ShippingService.formatPrice(shippingCalculation.total)}</span>
               </div>
               
-              {!shippingCalculation.isFreeShipping && shippingCalculation.remainingForFreeShipping && (
-                <div className="mac-text-caption-1 mac-text-tertiary text-center py-mac-sm rounded-mac-sm bg-mac-blue/5">
-                  Agrega {ShippingService.formatPrice(shippingCalculation.remainingForFreeShipping)} más para envío gratis
-                </div>
-              )}
-              
-              {shippingCalculation.isFreeShipping && (
-                <div className="mac-text-caption-1 text-center py-mac-sm rounded-mac-sm bg-mac-green/10" style={{ color: 'var(--mac-green)' }}>
-                  ¡Felicitaciones! Tienes envío gratis
-                </div>
-              )}
+              {/* Componente de progreso hacia envío gratis */}
+              <FreeShippingProgress subtotal={subtotal} />
               
               <Link
                 href="/checkout"
