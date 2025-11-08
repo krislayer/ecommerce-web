@@ -40,6 +40,11 @@ export default function CheckoutSuccessPage() {
             Volver al Inicio
           </Link>
         </div>
+        
+        {/* Nota sobre historial */}
+        <p className="mac-text-caption-1 mac-text-tertiary mt-mac-lg">
+          💡 Tu historial de pedidos está disponible en tu conversación de WhatsApp
+        </p>
       </div>
     </div>
   );

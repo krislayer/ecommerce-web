@@ -15,7 +15,7 @@ export class WhatsAppMessageFactory implements IWhatsAppMessageFactory {
 
     const clientInfo = order.userId
       ? `Cliente registrado`
-      : `Cliente:\n${order.guestInfo.name}\n${order.guestInfo.phone}${order.guestInfo.email ? `\n${order.guestInfo.email}` : ""}`;
+      : order.guestInfo.name;
 
     return `🛒 *Nuevo Pedido #${order.id.slice(-6)}*
 
@@ -27,10 +27,10 @@ ${itemsText}
 *Resumen:*
 Subtotal: Q${order.subtotal.toFixed(2)}
 Descuento: Q${order.discount.toFixed(2)}
-Envío: Q${order.shipping.toFixed(2)}
+Entrega: Q${order.shipping.toFixed(2)}
 *Total: Q${order.total.toFixed(2)}*
 
-*Método de envío:* ${order.shippingMethod.type === "pickup" ? "Recoger en tienda" : `Envío local${order.shippingMethod.address ? ` - ${order.shippingMethod.address}` : ""}`}
+*Método de entrega:* ${order.shippingMethod.type === "pickup" ? "Entrega coordinada - Coordinaremos el punto de encuentro por WhatsApp" : `Entrega a domicilio (Cabecera municipal)${order.shippingMethod.address ? ` - ${order.shippingMethod.address}` : ""}`}
 
 Gracias por tu compra en ¡Qué Chulito! ❤️`;
   }

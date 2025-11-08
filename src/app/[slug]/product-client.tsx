@@ -534,7 +534,7 @@ export function ProductClient({ product }: ProductClientProps) {
           </div>
         </div>
 
-        {/* Información de envío y devoluciones */}
+        {/* Información de entrega y devoluciones */}
         <div className="mac-card mt-mac-lg">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-mac-lg">
             <div className="flex items-start gap-mac-md">
@@ -543,10 +543,10 @@ export function ProductClient({ product }: ProductClientProps) {
               </div>
               <div>
                 <h3 className="mac-text-subhead mac-text-primary mb-mac-xs font-semibold">
-                  Envío Gratis
+                  Entrega Gratis
                 </h3>
                 <p className="mac-text-footnote mac-text-secondary">
-                  En compras mayores a Q200
+                  En compras mayores a Q300
                 </p>
               </div>
             </div>

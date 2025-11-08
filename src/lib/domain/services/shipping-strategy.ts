@@ -11,12 +11,12 @@ export class PickupStrategy implements IShippingStrategy {
   }
 
   getName(): string {
-    return "Recoger en tienda";
+    return "Entrega coordinada";
   }
 }
 
 export class LocalDeliveryStrategy implements IShippingStrategy {
-  private readonly baseRate = 50; // GTQ
+  private readonly baseRate = 20; // GTQ
 
   calculate(weight: number, distance?: number): number {
     let cost = this.baseRate;
@@ -33,7 +33,7 @@ export class LocalDeliveryStrategy implements IShippingStrategy {
   }
 
   getName(): string {
-    return "Envío local";
+    return "Entrega a domicilio";
   }
 }
 

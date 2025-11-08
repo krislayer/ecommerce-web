@@ -2,12 +2,11 @@
 
 import Link from "next/link";
 import { useSelector, useDispatch } from "react-redux";
-import { X, Trash2, Plus, Minus } from "lucide-react";
+import { X, Trash2, Plus, Minus, ShoppingBag } from "lucide-react";
 import { setCartOpen, removeItem, updateQuantity } from "@/store/slice/cartSlice";
 import type { RootState } from "@/store";
 import Image from "next/image";
 import { ShippingService } from "@/lib/services/shipping.service";
-import { FreeShippingProgress } from "./free-shipping-progress";
 
 export function CartSidebar() {
   const { items, isOpen } = useSelector((state: RootState) => state.cart);
@@ -18,7 +17,7 @@ export function CartSidebar() {
     0
   );
 
-  const shippingCalculation = ShippingService.calculateShipping(subtotal);
+  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
 
   if (!isOpen) return null;
 
@@ -35,7 +34,14 @@ export function CartSidebar() {
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className="flex items-center justify-between p-mac-md border-b border-mac-separator shrink-0">
-            <h2 className="mac-text-title-2 mac-text-primary">Carrito</h2>
+            <div className="flex items-center gap-mac-sm">
+              <h2 className="mac-text-title-2 mac-text-primary">Carrito</h2>
+              {items.length > 0 && (
+                <span className="mac-text-footnote mac-text-secondary">
+                  ({totalItems} {totalItems === 1 ? 'artículo' : 'artículos'})
+                </span>
+              )}
+            </div>
             <button
               onClick={() => dispatch(setCartOpen(false))}
               className="mac-touch-target flex items-center justify-center rounded-full hover:bg-mac-gray-2 dark:hover:bg-mac-gray-6 mac-transition-colors"
@@ -49,9 +55,18 @@ export function CartSidebar() {
           <div className="flex-1 overflow-y-auto p-mac-md space-y-mac-md">
             {items.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-mac-2xl">
-                <p className="mac-text-subhead mac-text-secondary text-center">
+                <ShoppingBag className="mac-icon-xlarge mac-text-tertiary mb-mac-md" />
+                <p className="mac-text-subhead mac-text-secondary text-center mb-mac-md">
                   Tu carrito está vacío
                 </p>
+                <Link
+                  href="/catalogo"
+                  className="mac-button-secondary"
+                  onClick={() => dispatch(setCartOpen(false))}
+                >
+                  <ShoppingBag className="mac-icon-small" />
+                  Continuar comprando
+                </Link>
               </div>
             ) : (
               items.map((item) => (
@@ -124,40 +139,29 @@ export function CartSidebar() {
           {/* Footer */}
           {items.length > 0 && (
             <div className="p-mac-md border-t border-mac-separator space-y-mac-md shrink-0">
-              {/* Desglose de precios */}
-              <div className="space-y-mac-sm">
-                <div className="flex justify-between mac-text-subhead mac-text-secondary">
-                  <span>Subtotal:</span>
-                  <span>{ShippingService.formatPrice(shippingCalculation.subtotal)}</span>
-                </div>
-                
-                <div className="flex justify-between mac-text-subhead mac-text-secondary">
-                  <span>Envío:</span>
-                  <span>
-                    {shippingCalculation.isFreeShipping 
-                      ? "Gratis" 
-                      : ShippingService.formatPrice(shippingCalculation.shippingCost)
-                    }
-                  </span>
-                </div>
-              </div>
-
-              <div className="mac-separator"></div>
-
+              {/* Subtotal */}
               <div className="flex justify-between mac-text-title-3 mac-text-primary">
-                <span>Total:</span>
-                <span>{ShippingService.formatPrice(shippingCalculation.total)}</span>
+                <span>Subtotal:</span>
+                <span>{ShippingService.formatPrice(subtotal)}</span>
               </div>
               
-              {/* Componente de progreso hacia envío gratis */}
-              <FreeShippingProgress subtotal={subtotal} />
-              
+              {/* Botón Finalizar compra - CTA Principal */}
               <Link
                 href="/checkout"
                 className="mac-button-primary w-full text-center"
                 onClick={() => dispatch(setCartOpen(false))}
               >
                 Finalizar Compra
+              </Link>
+              
+              {/* Botón Continuar comprando - Acción secundaria */}
+              <Link
+                href="/catalogo"
+                className="mac-button-secondary w-full text-center"
+                onClick={() => dispatch(setCartOpen(false))}
+              >
+                <ShoppingBag className="mac-icon-small" />
+                Continuar comprando
               </Link>
             </div>
           )}

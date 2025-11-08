@@ -6,13 +6,15 @@ import { useRouter } from "next/navigation";
 import type { RootState } from "@/store";
 import { clearCart } from "@/store/slice/cartSlice";
 import { ShippingService } from "@/lib/services/shipping.service";
-import { Truck, Store, Lock } from "lucide-react";
+import { Truck, MapPin, Lock, AlertCircle, ExternalLink } from "lucide-react";
 import Image from "next/image";
 import { Loading } from "@/components/loading";
+import { FreeShippingProgress } from "@/components/free-shipping-progress";
 
 export default function CheckoutPage() {
   const [isMobile, setIsMobile] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [desktopConfirmationVisible, setDesktopConfirmationVisible] = useState(false);
   const dispatch = useDispatch();
   const router = useRouter();
   const cartItems = useSelector((state: RootState) => state.cart.items);
@@ -68,50 +70,92 @@ export default function CheckoutPage() {
     };
   }, [isMobile, router]);
 
-  // Proteger ruta: redirigir si el carrito está vacío (excepto durante el proceso de envío)
+  // Proteger ruta: redirigir si el carrito está vacío (excepto durante el proceso de envío del pedido)
   useEffect(() => {
     if (cartItems.length === 0 && !isSubmitting) {
       router.push("/catalogo");
     }
   }, [cartItems.length, isSubmitting, router]);
+
   const [formData, setFormData] = useState({
     name: "",
-    phone: "",
-    email: "",
     shippingMethod: "pickup" as "pickup" | "local",
     address: "",
   });
   const [touched, setTouched] = useState({
     name: false,
-    phone: false,
-    email: false,
     address: false,
   });
+
+  useEffect(() => {
+    if (formData.shippingMethod === "pickup") {
+      setDesktopConfirmationVisible(false);
+    }
+  }, [formData.shippingMethod]);
 
   const subtotal = cartItems.reduce(
     (sum, item) => sum + item.variant.price * item.quantity,
     0
   );
 
+  const shippingCalculation = ShippingService.calculateShipping(subtotal);
+  
+  // Calcular costo de entrega basado en el método seleccionado
   const getShippingCost = () => {
     if (formData.shippingMethod === "pickup") {
       return 0;
     }
-    const shippingCalc = ShippingService.calculateShipping(subtotal);
-    return shippingCalc.shippingCost;
+    return shippingCalculation.shippingCost;
   };
 
   const shippingCost = getShippingCost();
   const total = subtotal + shippingCost;
-  const shippingCalculation = ShippingService.calculateShipping(subtotal);
 
   // Validaciones según Apple HIG: feedback inmediato y claro
   const isNameValid = formData.name.length >= 2;
-  const isPhoneValid = /^502\d{8}$/.test(formData.phone);
-  const isEmailValid = formData.email === "" || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email);
   const isAddressValid = formData.shippingMethod === "pickup" || formData.address.length > 0;
   
-  const isFormValid = isNameValid && isPhoneValid && isEmailValid && isAddressValid;
+  const isFormValid = isNameValid && isAddressValid;
+
+  const notifyWhatsappError = (error: unknown) => {
+    const errorMessage = error instanceof Error ? error.message : "Error desconocido";
+    console.error("Error al preparar el mensaje de WhatsApp:", errorMessage);
+    alert(`Hubo un error al procesar tu pedido: ${errorMessage}\n\nPor favor intenta de nuevo.`);
+  };
+
+  const buildWhatsappUrls = () => {
+    const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "50256995320";
+    const cleanNumber = whatsappNumber.replace(/\D/g, "");
+
+    if (cleanNumber.length < 10 || cleanNumber.length > 15) {
+      throw new Error(`Número de WhatsApp inválido (${cleanNumber.length} dígitos).\n\nPor favor configura NEXT_PUBLIC_WHATSAPP_NUMBER con un número válido.`);
+    }
+
+    const message = formatWhatsAppMessage();
+    const encodedMessage = encodeURIComponent(message);
+
+    return {
+      mobile: `https://wa.me/${cleanNumber}?text=${encodedMessage}`,
+      desktop: `https://web.whatsapp.com/send?phone=${cleanNumber}&text=${encodedMessage}`,
+    };
+  };
+
+  const handleDesktopWhatsappOpen = () => {
+    try {
+      const { desktop } = buildWhatsappUrls();
+      window.open(desktop, "_blank");
+      setDesktopConfirmationVisible(true);
+    } catch (error) {
+      notifyWhatsappError(error);
+    }
+  };
+
+  const handleDesktopConfirmation = () => {
+    dispatch(clearCart());
+    setDesktopConfirmationVisible(false);
+    setIsSubmitting(false);
+    router.push("/checkout/success");
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -119,69 +163,30 @@ export default function CheckoutPage() {
     if (!isFormValid || isSubmitting) return;
     
     setIsSubmitting(true);
-    
-    // Número de WhatsApp - Configurado temporalmente
-    // Formato: código de país + número (sin espacios, guiones, paréntesis, ni el símbolo +)
-    // Número actual: +50256995320 → 50256995320
-    // IMPORTANTE: El número debe estar registrado en WhatsApp y ser válido
-    const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "50256995320";
-    
-    // Limpiar el número: solo dígitos, eliminar espacios, guiones, paréntesis, +
-    const cleanNumber = whatsappNumber.replace(/\D/g, "");
-    
-    // Validar formato: debe tener entre 10 y 15 dígitos (formato internacional)
-    if (cleanNumber.length < 10 || cleanNumber.length > 15) {
-      console.error("Número de WhatsApp inválido:", cleanNumber);
-      console.error("El número debe tener entre 10 y 15 dígitos. Configura NEXT_PUBLIC_WHATSAPP_NUMBER en tus variables de entorno.");
-      alert(`Error: Número de WhatsApp inválido (${cleanNumber.length} dígitos).\n\nPor favor configura NEXT_PUBLIC_WHATSAPP_NUMBER con un número válido.\nFormato: código país + número (ejemplo: 50212345678)`);
-      setIsSubmitting(false);
-      return;
+
+    if (!isMobile) {
+      setDesktopConfirmationVisible(false);
     }
     
-    // Log para debugging (solo en desarrollo)
-    if (process.env.NODE_ENV === 'development') {
-      console.log("Número de WhatsApp configurado:", cleanNumber);
-      console.log("URL que se abrirá:", `https://wa.me/${cleanNumber}`);
-    }
-    
-    const message = formatWhatsAppMessage();
-    const encodedMessage = encodeURIComponent(message);
-    
-    // Construir URL según el dispositivo
-    let whatsappUrl: string;
-    
-    if (isMobile) {
-      // En móvil: usar wa.me (abre app directamente si está instalada)
-      whatsappUrl = `https://wa.me/${cleanNumber}?text=${encodedMessage}`;
-      
-      // Limpiar carrito
-      dispatch(clearCart());
-      
-      // En móvil, cuando WhatsApp está instalado, window.location.href abre la app
-      // y el navegador queda en segundo plano. Cuando el usuario regrese, necesita
-      // ver la página de éxito. Usamos sessionStorage para marcar el pedido como enviado
-      if (typeof window !== 'undefined') {
-        sessionStorage.setItem('orderSent', 'true');
+    try {
+      const { mobile, desktop } = buildWhatsappUrls();
+
+      if (isMobile) {
+        dispatch(clearCart());
+        
+        if (typeof window !== "undefined") {
+          sessionStorage.setItem("orderSent", "true");
+          window.location.href = mobile;
+        }
+      } else {
+        window.open(desktop, "_blank");
+        setDesktopConfirmationVisible(true);
+        setIsSubmitting(false);
+        return;
       }
-      
-      // Abrir WhatsApp - esto puede cambiar la URL o abrir la app
-      // Si WhatsApp está instalado, la app se abre y el navegador queda en segundo plano
-      // Si no está instalado, se abre WhatsApp Web en el navegador
-      window.location.href = whatsappUrl;
-    } else {
-      // En desktop: usar web.whatsapp.com para mejor compatibilidad
-      whatsappUrl = `https://web.whatsapp.com/send?phone=${cleanNumber}&text=${encodedMessage}`;
-      
-      // Limpiar carrito
-      dispatch(clearCart());
-      
-      // Abrir WhatsApp Web en nueva pestaña PRIMERO (sin delay)
-      // Esto evita el parpadeo porque la nueva pestaña se abre inmediatamente
-      window.open(whatsappUrl, "_blank");
-      
-      // Redirigir a página de éxito inmediatamente después de abrir WhatsApp
-      // No usar setOrderCompleted aquí para evitar mostrar loading en desktop
-      router.push("/checkout/success");
+    } catch (error) {
+      notifyWhatsappError(error);
+      setIsSubmitting(false);
     }
   };
 
@@ -193,12 +198,13 @@ export default function CheckoutPage() {
       )
       .join("\n\n");
 
+    // Construir información del cliente
+    const clientInfo = formData.name;
+
     return `🛒 *Nuevo Pedido*
 
 Cliente:
-${formData.name}
-${formData.phone}
-${formData.email}
+${clientInfo}
 
 *Productos:*
 ${itemsText}
@@ -206,10 +212,10 @@ ${itemsText}
 *Resumen:*
 Subtotal: ${ShippingService.formatPrice(subtotal)}
 Descuento: Q0.00
-Envío: ${formData.shippingMethod === "pickup" ? "Gratis (Recoger en tienda)" : shippingCalculation.isFreeShipping ? "Gratis (Envío gratis por compra mayor a Q300)" : ShippingService.formatPrice(shippingCost)}
+Entrega: ${formData.shippingMethod === "pickup" ? "Gratis (Entrega coordinada)" : shippingCalculation.isFreeShipping ? "Gratis (Entrega gratis por compra mayor a Q300)" : ShippingService.formatPrice(shippingCost)}
 *Total: ${ShippingService.formatPrice(total)}*
 
-*Método de envío:* ${formData.shippingMethod === "pickup" ? "Recoger en tienda" : `Envío local${formData.address ? ` - ${formData.address}` : ""}`}
+*Método de entrega:* ${formData.shippingMethod === "pickup" ? "Entrega coordinada - Coordinaremos el punto de encuentro por WhatsApp" : `Entrega a domicilio (Cabecera municipal)${formData.address ? ` - ${formData.address}` : ""}`}
 
 Gracias por tu compra en ¡Qué Chulito! ❤️`;
   };
@@ -227,134 +233,67 @@ Gracias por tu compra en ¡Qué Chulito! ❤️`;
 
   return (
     <div className="min-h-screen mac-bg-grouped">
-      <div className="max-w-7xl mx-auto px-mac-md py-mac-xl mac-fade-in">
-        {/* Header */}
+      <div className="max-w-4xl mx-auto px-mac-md py-mac-xl mac-fade-in">
+        {/* Header según Apple HIG: jerarquía clara y espaciado consistente */}
         <div className="mb-mac-xl">
-          <h1 className="mac-text-title-1 mac-text-primary mb-mac-xs">
+          <h1 className="mac-text-title-1 mac-text-primary mb-mac-sm">
             Finalizar Compra
           </h1>
           <p className="mac-text-body mac-text-secondary">
-            Completa tu información para procesar tu pedido
+            Tu pedido se enviará por WhatsApp. Te contactaremos directamente.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-mac-lg">
-          {/* Columna principal - Formulario */}
-          <div className="lg:col-span-2 space-y-mac-lg">
-            <form id="checkout-form" onSubmit={handleSubmit} className="space-y-mac-lg">
-              {/* Información de Contacto */}
-              <div className="mac-card space-y-mac-md">
-                <div className="mb-mac-md">
-                  <h2 className="mac-text-title-2 mac-text-primary mb-mac-xs">
+        <div className="grid lg:grid-cols-3 gap-mac-xl">
+          {/* Columna principal - Formulario estilo macOS System Preferences */}
+          <div className="lg:col-span-2 space-y-mac-md">
+            <form id="checkout-form" onSubmit={handleSubmit} className="space-y-mac-md">
+              {/* Grupo 1: Información de Contacto */}
+              <div className="mac-list">
+                <div className="mac-list-item">
+                  <h3 className="mac-text-subhead mac-text-primary block mb-mac-md font-semibold">
                     Información de contacto
-                  </h2>
-                  <p className="mac-text-footnote mac-text-secondary">
-                    Necesitamos algunos datos para procesar tu pedido
+                  </h3>
+                  <label htmlFor="name" className="mac-text-footnote mac-text-primary block mb-mac-xs font-medium">
+                    Nombre completo
+                  </label>
+                  <input
+                    id="name"
+                    type="text"
+                    required
+                    value={formData.name}
+                    onChange={(e) => {
+                      setFormData({ ...formData, name: e.target.value });
+                      setTouched({ ...touched, name: true });
+                    }}
+                    onBlur={() => setTouched({ ...touched, name: true })}
+                    className={`mac-input w-full mt-mac-xs ${
+                      touched.name && !isNameValid ? "border-[#FF3B30] focus:border-[#FF3B30] focus:ring-[#FF3B30]/20" : ""
+                    }`}
+                    placeholder="Tu nombre completo"
+                    aria-invalid={touched.name && !isNameValid}
+                    aria-describedby={touched.name && !isNameValid ? "name-error" : undefined}
+                  />
+                {touched.name && !isNameValid && (
+                  <p id="name-error" className="mac-text-caption-1 text-[#FF3B30] mt-mac-xs">
+                    El nombre debe tener al menos 2 caracteres
                   </p>
-                </div>
-                
-                <div className="space-y-mac-md">
-                  <div>
-                    <label htmlFor="name" className="mac-text-subhead mac-text-primary mb-mac-xs block font-medium">
-                      Nombre completo
-                    </label>
-                    <input
-                      id="name"
-                      type="text"
-                      required
-                      value={formData.name}
-                      onChange={(e) => {
-                        setFormData({ ...formData, name: e.target.value });
-                        setTouched({ ...touched, name: true });
-                      }}
-                      onBlur={() => setTouched({ ...touched, name: true })}
-                      className={`mac-input w-full ${
-                        touched.name && !isNameValid ? "border-[#FF3B30] focus:border-[#FF3B30] focus:ring-[#FF3B30]/20" : ""
-                      }`}
-                      placeholder="Nombre completo"
-                      aria-invalid={touched.name && !isNameValid}
-                      aria-describedby={touched.name && !isNameValid ? "name-error" : undefined}
-                    />
-                    {touched.name && !isNameValid && (
-                      <p id="name-error" className="mac-text-caption-1 text-[#FF3B30] mt-mac-xs">
-                        El nombre debe tener al menos 2 caracteres
-                      </p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label htmlFor="phone" className="mac-text-subhead mac-text-primary mb-mac-xs block font-medium">
-                      Teléfono
-                    </label>
-                    <input
-                      id="phone"
-                      type="tel"
-                      required
-                      value={formData.phone}
-                      onChange={(e) => {
-                        setFormData({ ...formData, phone: e.target.value });
-                        setTouched({ ...touched, phone: true });
-                      }}
-                      onBlur={() => setTouched({ ...touched, phone: true })}
-                      className={`mac-input w-full ${
-                        touched.phone && !isPhoneValid ? "border-[#FF3B30] focus:border-[#FF3B30] focus:ring-[#FF3B30]/20" : ""
-                      }`}
-                      placeholder="50212345678"
-                      aria-invalid={touched.phone && !isPhoneValid}
-                      aria-describedby={touched.phone && !isPhoneValid ? "phone-error" : undefined}
-                    />
-                    {touched.phone && !isPhoneValid && (
-                      <p id="phone-error" className="mac-text-caption-1 text-[#FF3B30] mt-mac-xs">
-                        Formato: 50212345678
-                      </p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label htmlFor="email" className="mac-text-subhead mac-text-primary mb-mac-xs block font-medium">
-                      Email <span className="mac-text-caption-1 mac-text-tertiary font-normal">(opcional)</span>
-                    </label>
-                    <input
-                      id="email"
-                      type="email"
-                      value={formData.email}
-                      onChange={(e) => {
-                        setFormData({ ...formData, email: e.target.value });
-                        setTouched({ ...touched, email: true });
-                      }}
-                      onBlur={() => setTouched({ ...touched, email: true })}
-                      className={`mac-input w-full ${
-                        touched.email && !isEmailValid ? "border-[#FF3B30] focus:border-[#FF3B30] focus:ring-[#FF3B30]/20" : ""
-                      }`}
-                      placeholder="tu@email.com"
-                      aria-invalid={touched.email && !isEmailValid}
-                      aria-describedby={touched.email && !isEmailValid ? "email-error" : undefined}
-                    />
-                    {touched.email && !isEmailValid && (
-                      <p id="email-error" className="mac-text-caption-1 text-[#FF3B30] mt-mac-xs">
-                        Email inválido
-                      </p>
-                    )}
-                  </div>
-                </div>
+                )}
               </div>
+            </div>
 
-              {/* Método de Envío */}
-              <div className="mac-card space-y-mac-md">
-                <div className="mb-mac-md">
-                  <h2 className="mac-text-title-2 mac-text-primary mb-mac-xs">
-                    Método de envío
-                  </h2>
-                  <p className="mac-text-footnote mac-text-secondary">
-                    ¿Cómo quieres recibir tu pedido?
-                  </p>
-                </div>
-
-                {/* Radio buttons estilo Apple - Lista agrupada */}
-                <div className="mac-list">
+            {/* Grupo 2: Método de Entrega */}
+            <div className="mac-list">
+              <div className="mac-list-item">
+                <h3 className="mac-text-subhead mac-text-primary block mb-mac-md font-semibold">
+                  Método de entrega
+                </h3>
+                <div className="space-y-mac-sm">
                   <label 
-                    className={`mac-list-item flex items-start gap-mac-md cursor-pointer mac-transition-colors ${
-                      formData.shippingMethod === "pickup" ? "bg-[#007AFF]/10 dark:bg-[#0A84FF]/10" : ""
+                    className={`flex items-start gap-mac-md cursor-pointer rounded-mac-sm p-mac-sm -mx-mac-sm transition-colors ${
+                      formData.shippingMethod === "pickup" 
+                        ? "bg-[#007AFF]/10 dark:bg-[#0A84FF]/10" 
+                        : "hover:bg-mac-gray-2 dark:hover:bg-mac-gray-6"
                     }`}
                   >
                     <div className="flex items-center justify-center mt-0.5 shrink-0">
@@ -367,7 +306,7 @@ Gracias por tu compra en ¡Qué Chulito! ❤️`;
                         className="sr-only"
                       />
                       <div 
-                        className={`w-5 h-5 rounded-full border-2 flex items-center justify-center mac-transition-all ${
+                        className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
                           formData.shippingMethod === "pickup"
                             ? "border-[#007AFF] bg-[#007AFF] dark:border-[#0A84FF] dark:bg-[#0A84FF]"
                             : "border-[#8E8E93] bg-transparent dark:border-[#636366]"
@@ -382,22 +321,24 @@ Gracias por tu compra en ¡Qué Chulito! ❤️`;
                       <div className={`mac-text-body mb-mac-xs flex items-center gap-mac-sm ${
                         formData.shippingMethod === "pickup" ? "font-semibold mac-text-primary" : "mac-text-primary"
                       }`}>
-                        <Store 
+                        <MapPin 
                           className={`w-4 h-4 shrink-0 ${
                             formData.shippingMethod === "pickup" ? "text-[#007AFF] dark:text-[#0A84FF]" : "mac-text-secondary"
                           }`}
                         />
-                        Recoger en tienda
+                        Entrega coordinada
                       </div>
                       <div className="mac-text-footnote mac-text-secondary">
-                        Gratis - Dirección: [Tu dirección]
+                        Gratis - Coordinaremos el punto de encuentro por WhatsApp
                       </div>
                     </div>
                   </label>
 
                   <label 
-                    className={`mac-list-item flex items-start gap-mac-md cursor-pointer mac-transition-colors ${
-                      formData.shippingMethod === "local" ? "bg-[#007AFF]/10 dark:bg-[#0A84FF]/10" : ""
+                    className={`flex items-start gap-mac-md cursor-pointer rounded-mac-sm p-mac-sm -mx-mac-sm transition-colors ${
+                      formData.shippingMethod === "local" 
+                        ? "bg-[#007AFF]/10 dark:bg-[#0A84FF]/10" 
+                        : "hover:bg-mac-gray-2 dark:hover:bg-mac-gray-6"
                     }`}
                   >
                     <div className="flex items-center justify-center mt-0.5 shrink-0">
@@ -410,7 +351,7 @@ Gracias por tu compra en ¡Qué Chulito! ❤️`;
                         className="sr-only"
                       />
                       <div 
-                        className={`w-5 h-5 rounded-full border-2 flex items-center justify-center mac-transition-all ${
+                        className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
                           formData.shippingMethod === "local"
                             ? "border-[#007AFF] bg-[#007AFF] dark:border-[#0A84FF] dark:bg-[#0A84FF]"
                             : "border-[#8E8E93] bg-transparent dark:border-[#636366]"
@@ -430,140 +371,179 @@ Gracias por tu compra en ¡Qué Chulito! ❤️`;
                             formData.shippingMethod === "local" ? "text-[#007AFF] dark:text-[#0A84FF]" : "mac-text-secondary"
                           }`}
                         />
-                        Envío local
+                        Entrega a domicilio
                       </div>
                       <div className="mac-text-footnote mac-text-secondary">
                         {shippingCalculation.isFreeShipping ? (
                           <span className="text-[#34C759] dark:text-[#30D158] font-medium">
-                            Gratis (Compra mayor a Q300)
+                            Gratis (Compra mayor a Q300) - Solo cabecera municipal
                           </span>
                         ) : (
-                          <div>
-                            <span>{ShippingService.formatPrice(shippingCalculation.shippingCost)} GTQ</span>
-                            {shippingCalculation.remainingForFreeShipping && (
-                              <div className="mac-text-caption-1 mt-mac-xs text-[#34C759] dark:text-[#30D158]">
-                                Agrega {ShippingService.formatPrice(shippingCalculation.remainingForFreeShipping)} más para envío gratis
-                              </div>
-                            )}
-                          </div>
+                          <span>{ShippingService.formatPrice(shippingCalculation.shippingCost)} GTQ - Solo cabecera municipal</span>
                         )}
                       </div>
+                      
+                      {/* Barra de progreso hacia entrega gratis - Integrada dentro del label */}
+                      {formData.shippingMethod === "local" && !shippingCalculation.isFreeShipping && (
+                        <div className="mt-mac-sm">
+                          <FreeShippingProgress subtotal={subtotal} />
+                        </div>
+                      )}
                     </div>
                   </label>
                 </div>
-
-                {formData.shippingMethod === "local" && (
-                  <div className="mt-mac-md mac-fade-in">
-                    <label htmlFor="address" className="mac-text-subhead mac-text-primary mb-mac-xs block font-medium">
-                      Dirección de envío
-                    </label>
-                    <textarea
-                      id="address"
-                      required={formData.shippingMethod === "local"}
-                      value={formData.address}
-                      onChange={(e) => {
-                        setFormData({ ...formData, address: e.target.value });
-                        setTouched({ ...touched, address: true });
-                      }}
-                      onBlur={() => setTouched({ ...touched, address: true })}
-                      className={`mac-input w-full resize-none ${
-                        touched.address && !isAddressValid ? "border-[#FF3B30] focus:border-[#FF3B30] focus:ring-[#FF3B30]/20" : ""
-                      }`}
-                      rows={3}
-                      placeholder="Calle, número, zona..."
-                      aria-invalid={touched.address && !isAddressValid}
-                      aria-describedby={touched.address && !isAddressValid ? "address-error" : undefined}
-                    />
-                    {touched.address && !isAddressValid && (
-                      <p id="address-error" className="mac-text-caption-1 text-[#FF3B30] mt-mac-xs">
-                        La dirección es requerida para envío local
-                      </p>
-                    )}
-                  </div>
-                )}
               </div>
+            </div>
 
-              {/* Botón de envío - Solo visible en mobile */}
-              <div className="lg:hidden">
-                  <button
-                    type="submit"
-                    className={`mac-button-primary w-full ${
-                      !isFormValid ? "opacity-50 cursor-not-allowed" : ""
+            {/* Grupo 3: Dirección (condicional) */}
+            {formData.shippingMethod === "local" && (
+              <div className="mac-list mac-fade-in">
+                <div className="mac-list-item">
+                  <h3 className="mac-text-subhead mac-text-primary block mb-mac-md font-semibold">
+                    Dirección de entrega
+                  </h3>
+                  <label htmlFor="address" className="sr-only">
+                    Ingresa tu dirección
+                  </label>
+                  <textarea
+                    id="address"
+                    required={formData.shippingMethod === "local"}
+                    value={formData.address}
+                    onChange={(e) => {
+                      setFormData({ ...formData, address: e.target.value });
+                      setTouched({ ...touched, address: true });
+                    }}
+                    onBlur={() => setTouched({ ...touched, address: true })}
+                    className={`mac-input w-full resize-none ${
+                      touched.address && !isAddressValid ? "border-[#FF3B30] focus:border-[#FF3B30] focus:ring-[#FF3B30]/20" : ""
                     }`}
-                    disabled={!isFormValid}
-                    aria-label="Enviar pedido por WhatsApp"
-                  >
-                    <Lock className="w-4 h-4" />
-                    Enviar Pedido por WhatsApp
-                  </button>
-                <p className="mac-text-caption-1 mac-text-tertiary text-center mt-mac-sm">
-                  {isMobile 
-                    ? "Se abrirá WhatsApp con tu pedido listo para enviar. Si no tienes WhatsApp instalado, se abrirá WhatsApp Web."
-                    : "Se abrirá WhatsApp Web en una nueva pestaña. Si no estás logueado, escanea el código QR con tu teléfono."
-                  }
-                </p>
+                    rows={3}
+                    placeholder="No olvides agregar alguna referencia sobre tu dirección para facilitar la entrega"
+                    aria-invalid={touched.address && !isAddressValid}
+                    aria-describedby={touched.address && !isAddressValid ? "address-error" : undefined}
+                  />
+                  {touched.address && !isAddressValid && (
+                    <p id="address-error" className="mac-text-caption-1 text-[#FF3B30] mt-mac-xs">
+                      La dirección es requerida para entrega a domicilio
+                    </p>
+                  )}
+                </div>
               </div>
-            </form>
-          </div>
+            )}
 
-          {/* Columna lateral - Resumen sticky (solo desktop) */}
-          <div className="lg:col-span-1">
-            <div className="lg:sticky lg:top-mac-xl">
-              <div className="mac-card space-y-mac-md">
-                {/* Productos */}
-                <div>
-                  <h2 className="mac-text-title-2 mac-text-primary mb-mac-md">
-                    Resumen del pedido
-                  </h2>
-                  
-                  <div className="space-y-mac-sm mb-mac-md">
-                    {cartItems.map((item) => (
-                      <div key={item.variant.id} className="flex items-center gap-mac-md">
-                        {item.variant.image && (
-                          <div className="relative w-16 h-16 rounded-mac-sm overflow-hidden bg-mac-gray-2 shrink-0">
-                            <Image
-                              src={item.variant.image}
-                              alt={item.variant.sku}
-                              fill
-                              className="object-cover"
-                              sizes="64px"
-                            />
-                          </div>
-                        )}
-                        <div className="flex-1 min-w-0">
-                          <p className="mac-text-footnote mac-text-primary font-medium truncate">
-                            {item.variant.sku}
-                          </p>
-                          <p className="mac-text-caption-1 mac-text-secondary mt-mac-xs">
-                            Cantidad: {item.quantity} × {ShippingService.formatPrice(item.variant.price)}
-                          </p>
-                        </div>
-                        <p className="mac-text-body mac-text-primary font-semibold shrink-0">
-                          {ShippingService.formatPrice(item.variant.price * item.quantity)}
-                        </p>
-                      </div>
-                    ))}
+            {!isMobile && desktopConfirmationVisible && (
+              <div className="mac-card border border-[#007AFF]/20 bg-[#007AFF]/10 dark:bg-[#0A84FF]/10 mac-fade-in">
+                <div className="flex items-start gap-mac-md">
+                  <div className="mt-0.5">
+                    <AlertCircle className="w-5 h-5 text-[#007AFF] dark:text-[#0A84FF]" />
+                  </div>
+                  <div className="space-y-mac-sm">
+                    <div>
+                      <p className="mac-text-body mac-text-primary font-semibold">
+                        Confirma el envío en WhatsApp Web
+                      </p>
+                      <p className="mac-text-footnote mac-text-secondary mt-mac-xs">
+                        Abre la pestaña de WhatsApp Web, inicia sesión si es necesario y envía el mensaje con tu pedido. Cuando hayas terminado, confirma para continuar.
+                      </p>
+                    </div>
+                    <div className="flex flex-col sm:flex-row gap-mac-sm">
+                      <button
+                        type="button"
+                        className="mac-button-secondary flex items-center justify-center gap-mac-xs"
+                        onClick={handleDesktopWhatsappOpen}
+                      >
+                        <ExternalLink className="mac-icon-small" />
+                        Abrir WhatsApp Web
+                      </button>
+                      <button
+                        type="button"
+                        className="mac-button-primary flex items-center justify-center"
+                        onClick={handleDesktopConfirmation}
+                      >
+                        Ya envié mi pedido
+                      </button>
+                    </div>
+                    <p className="mac-text-caption-1 mac-text-tertiary">
+                      Si no ves la conversación, asegúrate de iniciar sesión en web.whatsapp.com antes de confirmar.
+                    </p>
                   </div>
                 </div>
+              </div>
+            )}
 
-                {/* Separador */}
+            {/* Botón de envío del pedido - Solo visible en mobile */}
+            <div className="lg:hidden pt-mac-md">
+              <button
+                type="submit"
+                className={`mac-button-primary w-full ${
+                  !isFormValid ? "opacity-50 cursor-not-allowed" : ""
+                }`}
+                disabled={!isFormValid}
+                aria-label="Enviar pedido por WhatsApp"
+              >
+                <Lock className="w-4 h-4" />
+                Enviar Pedido por WhatsApp
+              </button>
+              <p className="mac-text-caption-1 mac-text-tertiary text-center mt-mac-sm">
+                {isMobile 
+                  ? "Se abrirá WhatsApp con tu pedido listo para enviar"
+                  : "Se abrirá WhatsApp Web en una nueva pestaña"
+                }
+              </p>
+            </div>
+          </form>
+        </div>
+
+        {/* Columna lateral - Resumen estilo macOS System Preferences */}
+        <div className="lg:col-span-1">
+          <div className="lg:sticky lg:top-mac-xl">
+            <div className="mac-list">
+              <div className="mac-list-item">
+                <h2 className="mac-text-title-2 mac-text-primary mb-mac-md">
+                  Resumen
+                </h2>
+                
+                {/* Productos */}
+                <div className="space-y-mac-md mb-mac-md">
+                  {cartItems.map((item) => (
+                    <div key={item.variant.id} className="flex items-center gap-mac-md">
+                      {item.variant.image && (
+                        <div className="relative w-14 h-14 rounded-mac-sm overflow-hidden bg-mac-gray-2 shrink-0">
+                          <Image
+                            src={item.variant.image}
+                            alt={item.variant.sku}
+                            fill
+                            className="object-cover"
+                            sizes="56px"
+                          />
+                        </div>
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <p className="mac-text-body mac-text-primary font-medium truncate">
+                          {item.variant.sku}
+                        </p>
+                        <p className="mac-text-footnote mac-text-secondary mt-mac-xs">
+                          {item.quantity} × {ShippingService.formatPrice(item.variant.price)}
+                        </p>
+                      </div>
+                      <p className="mac-text-body mac-text-primary font-semibold shrink-0">
+                        {ShippingService.formatPrice(item.variant.price * item.quantity)}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+
                 <div className="mac-separator"></div>
 
                 {/* Resumen de precios */}
-                <div className="space-y-mac-sm">
+                <div className="space-y-mac-sm mt-mac-md">
                   <div className="flex justify-between items-center">
                     <span className="mac-text-body mac-text-secondary">Subtotal</span>
                     <span className="mac-text-body mac-text-primary">{ShippingService.formatPrice(subtotal)}</span>
                   </div>
                   
-                  {formData.shippingMethod === "local" && !shippingCalculation.isFreeShipping && shippingCalculation.remainingForFreeShipping && (
-                    <div className="mac-text-caption-1 text-[#34C759] dark:text-[#30D158]">
-                      Agrega {ShippingService.formatPrice(shippingCalculation.remainingForFreeShipping)} más para envío gratis
-                    </div>
-                  )}
-                  
                   <div className="flex justify-between items-center">
-                    <span className="mac-text-body mac-text-secondary">Envío</span>
+                    <span className="mac-text-body mac-text-secondary">Entrega</span>
                     <span className={`mac-text-body ${shippingCost === 0 ? "text-[#34C759] dark:text-[#30D158] font-medium" : "mac-text-primary"}`}>
                       {formData.shippingMethod === "pickup" 
                         ? "Gratis" 
@@ -581,30 +561,31 @@ Gracias por tu compra en ¡Qué Chulito! ❤️`;
                     <span className="mac-text-title-3 mac-text-primary font-semibold">{ShippingService.formatPrice(total)}</span>
                   </div>
                 </div>
-
-                {/* Botón de envío - Solo visible en desktop */}
-                <div className="hidden lg:block pt-mac-md">
-                  <button
-                    type="submit"
-                    form="checkout-form"
-                    className={`mac-button-primary w-full ${
-                      !isFormValid ? "opacity-50 cursor-not-allowed" : ""
-                    }`}
-                    disabled={!isFormValid}
-                    aria-label="Enviar pedido por WhatsApp"
-                  >
-                    <Lock className="w-4 h-4" />
-                    Enviar Pedido por WhatsApp
-                  </button>
-                  <p className="mac-text-caption-1 mac-text-tertiary text-center mt-mac-sm">
-                    Se abrirá WhatsApp Web en una nueva pestaña. Si no estás logueado, escanea el código QR con tu teléfono.
-                  </p>
-                </div>
               </div>
+            </div>
+
+            {/* Botón de envío del pedido - Solo visible en desktop */}
+            <div className="hidden lg:block mt-mac-md">
+              <button
+                type="submit"
+                form="checkout-form"
+                className={`mac-button-primary w-full ${
+                  !isFormValid ? "opacity-50 cursor-not-allowed" : ""
+                }`}
+                disabled={!isFormValid}
+                aria-label="Enviar pedido por WhatsApp"
+              >
+                <Lock className="w-4 h-4" />
+                Enviar Pedido por WhatsApp
+              </button>
+              <p className="mac-text-caption-1 mac-text-tertiary text-center mt-mac-sm">
+                Se abrirá WhatsApp Web en una nueva pestaña
+              </p>
             </div>
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }

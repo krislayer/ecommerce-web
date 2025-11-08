@@ -40,7 +40,7 @@ export default function Home() {
                 <Truck className="mac-icon-xlarge" style={{ color: 'var(--mac-blue)' }} />
               </div>
               <h3 className="mac-text-headline mac-text-primary mb-mac-sm">
-                Envío Rápido
+                Entrega Rápida
               </h3>
               <p className="mac-text-body mac-text-secondary">
                 Entrega en 24-48 horas en toda Guatemala

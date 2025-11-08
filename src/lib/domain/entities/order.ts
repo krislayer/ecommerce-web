@@ -3,8 +3,7 @@ export interface Order {
   userId?: string;
   guestInfo: {
     name: string;
-    phone: string;
-    email?: string;
+    // Email removido: no se necesita ya que el contacto es directo por WhatsApp
   };
   items: OrderItem[];
   subtotal: number;

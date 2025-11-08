@@ -37,9 +37,7 @@ service cloud.firestore {
     // Orders - anyone can create, users can read their own
     match /orders/{orderId} {
       allow create: if true;
-      allow read: if request.auth != null && 
-                      (resource.data.userId == request.auth.uid || 
-                       resource.data.guestInfo.phone == request.auth.token.phone);
+      allow read: if request.auth != null && resource.data.userId == request.auth.uid;
       allow update: if false; // Only admins via Functions
     }
     

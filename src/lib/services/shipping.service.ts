@@ -13,7 +13,7 @@ export interface ShippingCalculation {
 
 export class ShippingService {
   private static readonly FREE_SHIPPING_THRESHOLD = 300; // Q300
-  private static readonly STANDARD_SHIPPING_COST = 25; // Q25 costo estándar de envío
+  private static readonly STANDARD_SHIPPING_COST = 20; // Q20 costo estándar de envío
 
   /**
    * Calcula el costo de envío basado en el subtotal del carrito

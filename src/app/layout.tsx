@@ -4,7 +4,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "¡Qué Chulito! - Ecommerce Guatemala",
-  description: "Moda y estilo para toda la familia. Envíos y pickup disponibles.",
+  description: "Moda y estilo para toda la familia. Entregas y pickup disponibles.",
   keywords: ["ropa mujer", "moda", "Guatemala", "GTQ"],
   authors: [{ name: "¡Qué Chulito!" }],
   openGraph: {

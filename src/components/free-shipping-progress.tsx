@@ -7,7 +7,7 @@ interface FreeShippingProgressProps {
 }
 
 /**
- * Componente de progreso hacia envío gratis
+ * Componente de progreso hacia entrega gratis
  * Diseñado siguiendo Apple Human Interface Guidelines
  * 
  * Apple HIG: Los indicadores de progreso deben ser claros, simples y usar
@@ -23,8 +23,8 @@ export function FreeShippingProgress({ subtotal }: FreeShippingProgressProps) {
 
   // Determinar el mensaje según el estado
   const message = isFreeShipping 
-    ? "¡Tu envío es totalmente gratis!"
-    : `Faltan ${ShippingService.formatPrice(remainingForFreeShipping || 0)} para que tu envío sea gratis!`;
+    ? "¡Tu entrega a domicilio es totalmente gratis!"
+    : `Agrega ${ShippingService.formatPrice(remainingForFreeShipping || 0)} a tu pedido para que tu entrega a domicilio sea gratis`;
 
   // Apple HIG: Usar azul para progreso positivo, verde solo cuando está completo
   // El rojo se reserva para errores/alertas, no para progreso
@@ -33,7 +33,7 @@ export function FreeShippingProgress({ subtotal }: FreeShippingProgressProps) {
   return (
     <div className="flex flex-col gap-mac-sm">
       {/* Mensaje superior - Apple HIG: Usar tipografía apropiada para información secundaria */}
-      <p className="mac-text-footnote mac-text-primary text-center">
+      <p className="mac-text-footnote mac-text-primary">
         {message}
       </p>
 
@@ -41,9 +41,8 @@ export function FreeShippingProgress({ subtotal }: FreeShippingProgressProps) {
       <div className="relative w-full">
         {/* Fondo de la barra - Apple HIG: Usar colores sutiles del sistema */}
         <div 
-          className="w-full rounded-full relative overflow-visible"
+          className="w-full rounded-full relative overflow-visible bg-[var(--mac-gray-2)] dark:bg-[var(--mac-tertiary-background)]"
           style={{ 
-            backgroundColor: 'var(--mac-gray-2)',
             height: '6px', // Balance entre visibilidad y sutileza según Apple HIG
           }}
         >
