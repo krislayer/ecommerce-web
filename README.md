@@ -2,6 +2,25 @@
 
 Ecommerce moderno para Guatemala con diseño Liquid Glass, mobile-first y arquitectura SOLID.
 
+> ⚠️ **NOTA IMPORTANTE**: Este proyecto se encuentra actualmente **en desarrollo**. Las funcionalidades mostradas están en fase de construcción y pueden estar sujetas a cambios. No se recomienda su uso en producción hasta que se complete el desarrollo.
+
+## 📸 Vista Previa
+
+### Página Principal
+![Página Principal](./docs/images/homepage.png)
+
+### Catálogo de Productos
+![Catálogo](./docs/images/catalog.png)
+
+### Detalle de Producto
+![Detalle de Producto](./docs/images/product-detail.png)
+
+### Carrito de Compras
+![Carrito](./docs/images/cart.png)
+
+### Modo Oscuro
+![Modo Oscuro](./docs/images/dark-mode.png)
+
 ## 🚀 Tecnologías
 
 - **Next.js 16** (App Router, React 19, TypeScript)
@@ -82,6 +101,38 @@ src/
 ```bash
 npm run lint
 ```
+
+## 📷 Cómo Agregar Imágenes al README
+
+Para mostrar capturas de pantalla de tu proyecto en el README:
+
+1. **Toma capturas de pantalla** de las siguientes vistas:
+   - Página principal (`/`)
+   - Catálogo de productos (`/catalogo`)
+   - Detalle de producto (`/[slug]`)
+   - Carrito de compras (sidebar)
+   - Modo oscuro (toggle del tema)
+
+2. **Guarda las imágenes** en la carpeta `docs/images/` con estos nombres:
+   - `homepage.png` - Página principal
+   - `catalog.png` - Catálogo
+   - `product-detail.png` - Detalle de producto
+   - `cart.png` - Carrito
+   - `dark-mode.png` - Modo oscuro
+
+3. **Formato recomendado**:
+   - Formato: PNG o JPG
+   - Tamaño: 1200px de ancho (para mejor visualización)
+   - Puedes usar herramientas como [Lightshot](https://app.prntscr.com/) o la herramienta de captura de tu sistema
+
+4. **Las imágenes ya están referenciadas** en el README, solo necesitas agregar los archivos.
+
+### Ejemplo de captura de pantalla
+
+Puedes usar herramientas como:
+- **macOS**: `Cmd + Shift + 4` para captura de área
+- **Windows**: `Win + Shift + S` para captura de área
+- **Navegador**: DevTools → Toggle device toolbar → Capturar
 
 ## 📄 Licencia
 
