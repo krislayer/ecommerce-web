@@ -7,12 +7,24 @@ import { useDebounce } from "@/lib/hooks/useDebounce";
 interface ProductSearchProps {
   onSearch: (query: string) => void;
   placeholder?: string;
+  /** Cuando llega desde la URL u otra navegación, fuerza el texto del campo una sola vez por valor distinto. */
+  hydrateFromExternal?: string;
 }
 
-export function ProductSearch({ onSearch, placeholder = "Buscar productos..." }: ProductSearchProps) {
+export function ProductSearch({
+  onSearch,
+  placeholder = "Buscar productos...",
+  hydrateFromExternal,
+}: ProductSearchProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
   const isMountedRef = useRef(false);
+
+  /** Alinea el campo con `?q=` u otra navegación; el filtrado lo maneja el padre vía URL. */
+  useEffect(() => {
+    if (hydrateFromExternal === undefined) return;
+    setSearchQuery(hydrateFromExternal);
+  }, [hydrateFromExternal]);
 
   // Ejecutar búsqueda cuando cambia el valor debounced (pero no en el primer render)
   useEffect(() => {

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { ProductGrid } from "./product-grid";
 import { ProductList } from "./product-list";
 import { ProductSearch } from "@/components/product-search";
@@ -30,7 +31,11 @@ const categorySearchSynonyms: Record<string, string[]> = {
   accesorios: ["accesorio", "accesorios", "complemento", "complementos"],
 };
 
-export default function CatalogoPage() {
+function CatalogoPageInner() {
+  const searchParams = useSearchParams();
+  const spKey = searchParams.toString();
+  const qFromUrl = searchParams.get("q")?.trim() ?? "";
+
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [filters, setFilters] = useState<FilterState>({
@@ -40,6 +45,14 @@ export default function CatalogoPage() {
   const [sortBy, setSortBy] = useState<SortOption>("relevance");
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const [currentPage, setCurrentPage] = useState(1);
+
+  useEffect(() => {
+    const p = new URLSearchParams(spKey);
+    setSearchQuery(p.get("q")?.trim() ?? "");
+    const c = p.get("category");
+    setSelectedCategory(c && categories.some((x) => x.id === c) ? c : null);
+    setCurrentPage(1);
+  }, [spKey]);
   const itemsPerPage = 12;
 
   const handleSearch = useCallback((query: string) => {
@@ -321,7 +334,8 @@ export default function CatalogoPage() {
             Descubre moda, belleza, hogar, tecnología y más. Encuentra todo lo que necesitas en un solo lugar.
           </p>
           
-          <ProductSearch 
+          <ProductSearch
+            hydrateFromExternal={qFromUrl}
             onSearch={handleSearch}
             placeholder="Buscar por nombre, descripción o categoría..."
           />
@@ -402,5 +416,23 @@ export default function CatalogoPage() {
       </div>
       </div>
     </div>
+  );
+}
+
+function CatalogoSuspenseFallback() {
+  return (
+    <div className="min-h-screen mac-bg-grouped mac-fade-in">
+      <div className="mx-auto flex max-w-7xl flex-col items-center justify-center px-mac-md py-mac-3xl">
+        <p className="mac-text-body mac-text-secondary">Cargando catálogo…</p>
+      </div>
+    </div>
+  );
+}
+
+export default function CatalogoPage() {
+  return (
+    <Suspense fallback={<CatalogoSuspenseFallback />}>
+      <CatalogoPageInner />
+    </Suspense>
   );
 }

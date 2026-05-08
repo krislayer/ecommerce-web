@@ -74,6 +74,16 @@ export default function ContactPage() {
             </a>
           </div>
         </div>
+
+        {/* Política breve — ancla desde la tienda */}
+        <section id="devoluciones" className="mac-card mt-mac-lg scroll-mt-24">
+          <h2 className="mac-text-title-2 mac-text-primary mb-mac-md">
+            Devoluciones y cambios
+          </h2>
+          <p className="mac-text-body mac-text-secondary">
+            Escríbenos por WhatsApp o correo para coordinar devoluciones o cambios según disponibilidad. Te responderemos en el menor tiempo posible.
+          </p>
+        </section>
       </div>
     </div>
   );
