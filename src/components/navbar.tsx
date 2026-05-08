@@ -2,9 +2,8 @@
 
 import Link from "next/link";
 import { useSelector, useDispatch } from "react-redux";
-import { ShoppingCart, User } from "lucide-react";
+import { ShoppingCart } from "lucide-react";
 import { toggleCart } from "@/store/slice/cartSlice";
-import { AuthButton } from "./auth-button";
 import { ThemeToggle } from "./theme-toggle";
 import type { RootState } from "@/store";
 
@@ -14,7 +13,7 @@ export function Navbar() {
   const itemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
-    <nav className="mac-navbar backdrop-blur-[4px] backdrop-saturate-[180%] sticky top-0 z-[100] border-b border-[var(--mac-separator)] px-mac-md py-mac-md shadow-[0_1px_0_rgba(0,0,0,0.05)] dark:shadow-[0_1px_0_rgba(255,255,255,0.05)]">
+    <nav className="mac-navbar backdrop-blur-xs backdrop-saturate-180 sticky top-0 z-100 border-b border-(--mac-separator) px-mac-md py-mac-md shadow-[0_1px_0_rgba(0,0,0,0.05)] dark:shadow-[0_1px_0_rgba(255,255,255,0.05)]">
           <div className="max-w-7xl mx-auto">
             <div className="flex items-center justify-between">
           <Link 
@@ -26,7 +25,6 @@ export function Navbar() {
 
           <div className="flex items-center gap-mac-md">
                 <ThemeToggle />
-                <AuthButton />
                 <div className="relative">
                   <button 
                     onClick={() => dispatch(toggleCart())}

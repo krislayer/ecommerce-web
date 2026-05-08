@@ -1,139 +1,61 @@
-# ¡Qué Chulito! - Ecommerce Guatemala
+# ecommerce-web — ¡Qué Chulito!
 
-Ecommerce moderno para Guatemala con diseño Liquid Glass, mobile-first y arquitectura SOLID.
+Tienda en línea construida con **Next.js 16** (App Router): catálogo local, carrito y favoritos en el navegador, y pedidos por **WhatsApp**. No hay servidor de auth ni backend de datos: el contenido sale de archivos en el repo.
 
-> ⚠️ **NOTA IMPORTANTE**: Este proyecto se encuentra actualmente **en desarrollo**. Las funcionalidades mostradas están en fase de construcción y pueden estar sujetas a cambios. No se recomienda su uso en producción hasta que se complete el desarrollo.
+## Requisitos
 
-## 📸 Vista Previa
+- Node.js 20 o superior (recomendado para alinear con el tipo de proyecto)
 
-### Página Principal
-![Página Principal](./docs/images/homepage.png)
-
-### Catálogo de Productos
-![Catálogo](./docs/images/catalog.png)
-
-### Detalle de Producto
-![Detalle de Producto](./docs/images/product-detail.png)
-
-### Carrito de Compras
-![Carrito](./docs/images/cart.png)
-
-### Modo Oscuro
-![Modo Oscuro](./docs/images/dark-mode.png)
-
-## 🚀 Tecnologías
-
-- **Next.js 16** (App Router, React 19, TypeScript)
-- **TailwindCSS v4** (Design Tokens, modo oscuro)
-- **Redux Toolkit** + RTK Query + redux-persist
-- **Firebase** (Hosting, Functions, Firestore, Auth)
-- **next-themes** (tema claro/oscuro)
-- **zod** (validación)
-
-## 📦 Instalación
+## Arranque
 
 ```bash
 npm install
-```
-
-## ⚙️ Configuración
-
-1. Copia `.env.local.example` a `.env.local`
-2. Configura tus credenciales de Firebase
-3. Ejecuta el seed de datos iniciales:
-
-```bash
-npm run seed
-```
-
-## 🏃 Desarrollo
-
-```bash
+cp env.example .env.local   # opcional pero recomendado en local
 npm run dev
 ```
 
-Abre [http://localhost:3000](http://localhost:3000)
+Abre [http://localhost:3000](http://localhost:3000).
 
-## 🏗️ Build
+## Variables de entorno
 
-```bash
-npm run build
-npm start
-```
+Copia `env.example` a `.env.local` y ajusta:
 
-## 🚀 Deploy a Firebase
+| Variable | Uso |
+|----------|-----|
+| `NEXT_PUBLIC_WHATSAPP_NUMBER` | Número de WhatsApp Business (solo dígitos: código país + número, sin `+`, espacios ni guiones). Ejemplo Guatemala: `50256995320`. |
 
-```bash
-firebase login
-firebase init
-firebase deploy
-```
+El checkout construye enlaces `wa.me` con ese número.
 
-## 📱 Características
+## Catálogo y categorías
 
-- ✅ Diseño Liquid Glass mobile-first
-- ✅ Arquitectura SOLID + Patrones de Diseño
-- ✅ Firestore optimizado multi-categoría
-- ✅ Checkout vía WhatsApp
-- ✅ Modo oscuro automático
-- ✅ Accesibilidad WCAG básica
-- ✅ SEO optimizado
+- **Productos:** [`src/lib/data/products.ts`](src/lib/data/products.ts) — arreglo `sampleProducts`; cada ítem debe cumplir el tipo [`Product`](src/lib/domain/entities/product.ts).
+- **Categorías y facetas (filtros):** [`src/lib/data/categories.ts`](src/lib/data/categories.ts) — `categoryIds` de cada producto deben coincidir con ids definidos ahí.
 
-## 🏗️ Arquitectura
+Las imágenes usan URLs externas; los hosts permitidos están en [`next.config.ts`](next.config.ts) (`images.remotePatterns`), hoy orientados a Unsplash.
 
-```
-src/
-├── app/              # Pages (App Router)
-├── components/       # UI Liquid Glass
-├── store/           # Redux Toolkit
-├── lib/
-│   ├── firebase/    # Client + Admin SDK
-│   ├── domain/      # Entities, Repositories, Services
-│   ├── infrastructure/ # Firestore implementations
-│   ├── services/    # OrderService, WhatsAppFactory
-│   └── utils/       # Helpers
-├── scripts/         # Seed scripts
-└── seeds/           # Data seeds
-```
+## Scripts
 
-## 🧪 Testing
+| Comando | Descripción |
+|---------|-------------|
+| `npm run dev` | Desarrollo (Turbopack por defecto en Next 16) |
+| `npm run build` | Compilación de producción |
+| `npm run start` | Servir el build (`build` antes) |
+| `npm run lint` | ESLint |
 
-```bash
-npm run lint
-```
+## Estado en el cliente
 
-## 📷 Cómo Agregar Imágenes al README
+- **Carrito y favoritos:** Redux + persistencia (`redux-persist`).
+- Sin cuentas de usuario ni Firebase.
 
-Para mostrar capturas de pantalla de tu proyecto en el README:
+## Assets del plantilla Next (`create-next-app`)
 
-1. **Toma capturas de pantalla** de las siguientes vistas:
-   - Página principal (`/`)
-   - Catálogo de productos (`/catalogo`)
-   - Detalle de producto (`/[slug]`)
-   - Carrito de compras (sidebar)
-   - Modo oscuro (toggle del tema)
+Siguen los mismos archivos por defecto de la plantilla **App Router + TypeScript**:
 
-2. **Guarda las imágenes** en la carpeta `docs/images/` con estos nombres:
-   - `homepage.png` - Página principal
-   - `catalog.png` - Catálogo
-   - `product-detail.png` - Detalle de producto
-   - `cart.png` - Carrito
-   - `dark-mode.png` - Modo oscuro
+- [`src/app/favicon.ico`](src/app/favicon.ico)
+- En [`public/`](public/): `file.svg`, `globe.svg`, `next.svg`, `vercel.svg`, `window.svg` (ilustraciones de ejemplo; la app no los importa hoy).
 
-3. **Formato recomendado**:
-   - Formato: PNG o JPG
-   - Tamaño: 1200px de ancho (para mejor visualización)
-   - Puedes usar herramientas como [Lightshot](https://app.prntscr.com/) o la herramienta de captura de tu sistema
+Si necesitas `robots.txt` u Open Graph en producción, conviene añadirlos aparte (no forman parte del scaffold mínimo).
 
-4. **Las imágenes ya están referenciadas** en el README, solo necesitas agregar los archivos.
+## Tipos de TypeScript
 
-### Ejemplo de captura de pantalla
-
-Puedes usar herramientas como:
-- **macOS**: `Cmd + Shift + 4` para captura de área
-- **Windows**: `Win + Shift + S` para captura de área
-- **Navegador**: DevTools → Toggle device toolbar → Capturar
-
-## 📄 Licencia
-
-MIT
+`next-env.d.ts` está versionado; Next puede regenerarlo al ejecutar `dev`/`build`.

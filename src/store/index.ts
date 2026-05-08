@@ -2,19 +2,20 @@ import { configureStore } from "@reduxjs/toolkit";
 import { persistStore, persistReducer } from "redux-persist";
 import createWebStorage from "redux-persist/lib/storage/createWebStorage";
 import cartReducer from "./slice/cartSlice";
-import authReducer from "./slice/authSlice";
 import favoritesReducer from "./slice/favoritesSlice";
 
-// Crear storage seguro para SSR
 const createNoopStorage = () => {
   return {
-    getItem(_key: string) {
+    getItem(key: string) {
+      void key;
       return Promise.resolve(null);
     },
-    setItem(_key: string, value: any) {
+    setItem(key: string, value: unknown) {
+      void key;
       return Promise.resolve(value);
     },
-    removeItem(_key: string) {
+    removeItem(key: string) {
+      void key;
       return Promise.resolve();
     },
   };
@@ -25,14 +26,8 @@ const storage =
     ? createWebStorage("local")
     : createNoopStorage();
 
-// Configuración específica para cada reducer
 const cartPersistConfig = {
   key: "cart",
-  storage,
-};
-
-const authPersistConfig = {
-  key: "auth",
   storage,
 };
 
@@ -42,13 +37,14 @@ const favoritesPersistConfig = {
 };
 
 const persistedCartReducer = persistReducer(cartPersistConfig, cartReducer);
-const persistedAuthReducer = persistReducer(authPersistConfig, authReducer);
-const persistedFavoritesReducer = persistReducer(favoritesPersistConfig, favoritesReducer);
+const persistedFavoritesReducer = persistReducer(
+  favoritesPersistConfig,
+  favoritesReducer
+);
 
 export const store = configureStore({
   reducer: {
     cart: persistedCartReducer,
-    auth: persistedAuthReducer,
     favorites: persistedFavoritesReducer,
   },
   middleware: (getDefaultMiddleware) =>
@@ -63,4 +59,3 @@ export const persistor = persistStore(store);
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
-

@@ -22,6 +22,14 @@ const normalizeText = (text: string): string => {
     .toLowerCase();
 };
 
+/** Términos de búsqueda en español asociados a cada categoría (estable fuera del componente). */
+const categorySearchSynonyms: Record<string, string[]> = {
+  woman: ["mujer", "femenino", "femenina", "dama", "damas"],
+  men: ["hombre", "masculino", "masculina", "caballero", "caballeros"],
+  kids: ["niño", "niña", "niños", "niñas", "infantil"],
+  accesorios: ["accesorio", "accesorios", "complemento", "complementos"],
+};
+
 export default function CatalogoPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -77,7 +85,7 @@ export default function CatalogoPage() {
 
     // Convertir a FacetDefinition solo con valores que existen en productos
     return Array.from(allFacets.entries())
-      .filter(([key, values]) => values.size > 0) // Solo facetas con valores
+      .filter(([, values]) => values.size > 0) // Solo facetas con valores
       .map(([key, values]) => ({
         key,
         type: "enum" as const,
@@ -85,14 +93,6 @@ export default function CatalogoPage() {
         widget: getWidget(key),
       }));
   }, [selectedCategory]);
-
-  // Mapeo de categorías para búsqueda (mantiene términos en español para UX)
-  const categoryMap: Record<string, string[]> = {
-    "woman": ["mujer", "femenino", "femenina", "dama", "damas"],
-    "men": ["hombre", "masculino", "masculina", "caballero", "caballeros"],
-    "kids": ["niño", "niña", "niños", "niñas", "infantil"],
-    "accesorios": ["accesorio", "accesorios", "complemento", "complementos"],
-  };
 
   const handleRemoveFilter = (type: keyof FilterState, value: string) => {
     const newFilters = { ...filters };
@@ -131,7 +131,7 @@ export default function CatalogoPage() {
         
         const categoryMatches = product.categoryIds.some(catId => {
           if (normalizeText(catId).includes(normalizedQuery)) return true;
-          const mappedTerms = categoryMap[catId] || [];
+          const mappedTerms = categorySearchSynonyms[catId] || [];
           return mappedTerms.some(term => normalizeText(term).includes(normalizedQuery));
         });
         if (categoryMatches) return true;
@@ -223,7 +223,7 @@ export default function CatalogoPage() {
         
         const categoryMatches = product.categoryIds.some(catId => {
           if (normalizeText(catId).includes(normalizedQuery)) return true;
-          const mappedTerms = categoryMap[catId] || [];
+          const mappedTerms = categorySearchSynonyms[catId] || [];
           return mappedTerms.some(term => normalizeText(term).includes(normalizedQuery));
         });
         if (categoryMatches) return true;

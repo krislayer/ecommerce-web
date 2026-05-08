@@ -14,17 +14,11 @@ interface ProductListProps {
 
 export function ProductList({ products }: ProductListProps) {
   const dispatch = useDispatch();
-  const { isFavorite, handleToggleFavorite, isAuthenticated } = useFavorites();
+  const { isFavorite, handleToggleFavorite } = useFavorites();
 
   const handleFavoriteClick = (productId: string, e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    
-    if (!isAuthenticated) {
-      window.location.href = "/login";
-      return;
-    }
-    
     handleToggleFavorite(productId);
   };
 
@@ -144,9 +138,8 @@ export function ProductList({ products }: ProductListProps) {
                       isFavorite(product.id)
                         ? "bg-mac-red/10"
                         : "hover:bg-mac-gray-2 dark:hover:bg-mac-gray-6"
-                    } ${!isAuthenticated ? "opacity-70" : ""}`}
+                    }`}
                     aria-label={isFavorite(product.id) ? "Quitar de favoritos" : "Agregar a favoritos"}
-                    title={!isAuthenticated ? "Inicia sesión para agregar favoritos" : ""}
                   >
                     <Heart 
                       className="mac-icon-medium mac-text-secondary" 

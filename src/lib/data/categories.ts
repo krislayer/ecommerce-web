@@ -1,4 +1,4 @@
-import type { Category, FacetDefinition } from "../domain/entities/product";
+import type { Category } from "../domain/entities/product";
 
 export const categories: Category[] = [
   {

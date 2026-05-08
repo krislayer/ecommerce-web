@@ -165,7 +165,7 @@ export function ProductFilters({ filters, onFiltersChange, availableFacets, face
         <div className={`border-b border-mac-separator ${!expandedSections.precio ? 'pb-mac-md' : ''}`}>
           <button
             onClick={() => toggleSection("precio")}
-            className="w-full flex items-center justify-between py-mac-md hover:bg-mac-gray-2 dark:hover:bg-[var(--mac-tertiary-background)] rounded-mac-sm px-mac-sm mac-transition-colors"
+            className="w-full flex items-center justify-between py-mac-md hover:bg-mac-gray-2 dark:hover:bg-(--mac-tertiary-background) rounded-mac-sm px-mac-sm mac-transition-colors"
           >
             <h3 className="mac-text-subhead mac-text-primary uppercase tracking-wide font-semibold">
               Precio
@@ -182,7 +182,7 @@ export function ProductFilters({ filters, onFiltersChange, availableFacets, face
               {PRICE_RANGES.map((range) => (
                 <label
                   key={range.value}
-                  className="flex items-center justify-between cursor-pointer hover:bg-mac-gray-2 dark:hover:bg-[var(--mac-tertiary-background)] p-mac-sm rounded-mac-sm mac-transition-colors group"
+                  className="flex items-center justify-between cursor-pointer hover:bg-mac-gray-2 dark:hover:bg-(--mac-tertiary-background) p-mac-sm rounded-mac-sm mac-transition-colors group"
                 >
                   <div className="flex items-center gap-mac-md">
                     <input
@@ -218,7 +218,7 @@ export function ProductFilters({ filters, onFiltersChange, availableFacets, face
             <div key={facet.key} className={`border-b border-mac-separator last:border-0 ${!isExpanded ? 'pb-mac-md' : ''}`}>
               <button
                 onClick={() => toggleSection(sectionKey)}
-                className="w-full flex items-center justify-between py-mac-md hover:bg-mac-gray-2 dark:hover:bg-[var(--mac-tertiary-background)] rounded-mac-sm px-mac-sm mac-transition-colors"
+                className="w-full flex items-center justify-between py-mac-md hover:bg-mac-gray-2 dark:hover:bg-(--mac-tertiary-background) rounded-mac-sm px-mac-sm mac-transition-colors"
               >
                 <h3 className="mac-text-subhead mac-text-primary uppercase tracking-wide font-semibold">
                   {FACET_LABELS[facet.key] || facet.key.replace(/_/g, " ")}
@@ -278,7 +278,6 @@ export function ProductFilters({ filters, onFiltersChange, availableFacets, face
                         
                         // Para tamaño (size), mostrar botón "Ver más" si hay más de S, M, L
                         if (facet.key === "size") {
-                          const standardSizes = availableValues.filter(v => ["S", "M", "L"].includes(v));
                           const hasMoreSizes = availableValues.some(v => !["S", "M", "L"].includes(v));
                           if (hasMoreSizes && !showAllOptions[facet.key]) {
                             const hiddenCount = availableValues.filter(v => !["S", "M", "L"].includes(v)).length;
@@ -356,7 +355,7 @@ export function ProductFilters({ filters, onFiltersChange, availableFacets, face
                         return (
                           <label
                             key={value}
-                            className="flex items-center justify-between cursor-pointer hover:bg-mac-gray-2 dark:hover:bg-[var(--mac-tertiary-background)] p-mac-sm rounded-mac-sm mac-transition-colors group"
+                            className="flex items-center justify-between cursor-pointer hover:bg-mac-gray-2 dark:hover:bg-(--mac-tertiary-background) p-mac-sm rounded-mac-sm mac-transition-colors group"
                           >
                             <div className="flex items-center gap-mac-md">
                               <input
@@ -386,7 +385,6 @@ export function ProductFilters({ filters, onFiltersChange, availableFacets, face
                         
                         // Para tamaño (size), mostrar botón "Ver más" si hay más de S, M, L
                         if (facet.key === "size") {
-                          const standardSizes = availableValues.filter(v => ["S", "M", "L"].includes(v));
                           const hasMoreSizes = availableValues.some(v => !["S", "M", "L"].includes(v));
                           if (hasMoreSizes && !showAllOptions[facet.key]) {
                             const hiddenCount = availableValues.filter(v => !["S", "M", "L"].includes(v)).length;

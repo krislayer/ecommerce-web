@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { categories } from "@/lib/data/categories";
 import { Shirt, Home, Smartphone, Grid3X3, Handbag, ToyBrick, Smile } from "lucide-react";
 
@@ -10,8 +9,6 @@ interface CategoryNavigationProps {
 }
 
 export function CategoryNavigation({ selectedCategory, onCategorySelect }: CategoryNavigationProps) {
-  const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
-
   // Íconos mejorados según Apple HIG - Más representativos y claros
   // Según SF Symbols y Apple HIG, los íconos deben ser:
   // - Claros y reconocibles
@@ -62,8 +59,6 @@ export function CategoryNavigation({ selectedCategory, onCategorySelect }: Categ
           <button
             key={category.id}
             onClick={() => onCategorySelect(category.id)}
-            onMouseEnter={() => setHoveredCategory(category.id)}
-            onMouseLeave={() => setHoveredCategory(null)}
             className={`mac-chip flex items-center gap-mac-sm ${
               selectedCategory === category.id
                 ? "selected"

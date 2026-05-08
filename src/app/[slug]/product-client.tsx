@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { addItem } from "@/store/slice/cartSlice";
 import { setCartOpen } from "@/store/slice/cartSlice";
 import { useFavorites } from "@/lib/hooks/useFavorites";
@@ -9,7 +9,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { Plus, Minus, Heart, ChevronRight, Share2, Package, RotateCcw, Truck, Sparkles, Copy, Check, ShoppingCart } from "lucide-react";
 import type { Product } from "@/lib/domain/entities/product";
-import type { RootState } from "@/store";
 import { categories } from "@/lib/data/categories";
 import { sampleProducts } from "@/lib/data/products";
 
@@ -24,7 +23,7 @@ interface ProductClientProps {
 
 export function ProductClient({ product }: ProductClientProps) {
   const dispatch = useDispatch();
-  const { isFavorite, handleToggleFavorite, isAuthenticated } = useFavorites();
+  const { isFavorite, handleToggleFavorite } = useFavorites();
   const [selectedAttributes, setSelectedAttributes] = useState<
     Record<string, string>
   >({});
@@ -79,8 +78,8 @@ export function ProductClient({ product }: ProductClientProps) {
           url: window.location.href,
         });
         return;
-      } catch (err) {
-        // Usuario canceló o hubo error - mostrar menú de todas formas
+      } catch {
+        // Diálogo cancelado o error: seguir mostrando el menú
       }
     }
     
@@ -114,7 +113,7 @@ export function ProductClient({ product }: ProductClientProps) {
           setShowShareMenu(false);
         }, 2000);
         return;
-      } catch (err) {
+      } catch {
         // Si falla, usar método alternativo
       }
     }
@@ -215,12 +214,6 @@ export function ProductClient({ product }: ProductClientProps) {
   const handleRelatedFavoriteClick = (productId: string, e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    
-    if (!isAuthenticated) {
-      window.location.href = "/login";
-      return;
-    }
-    
     handleToggleFavorite(productId);
   };
 
@@ -241,7 +234,7 @@ export function ProductClient({ product }: ProductClientProps) {
               <Link href="/catalogo" className="hover:mac-text-primary mac-transition-colors">
                 Catálogo
               </Link>
-              {productCategories.map((category, index) => (
+              {productCategories.map((category) => (
                 <span key={category.id} className="flex items-center gap-mac-xs">
                   <ChevronRight className="mac-icon-small" />
                   <Link 
@@ -336,20 +329,13 @@ export function ProductClient({ product }: ProductClientProps) {
               </div>
               {/* Botón Favoritos */}
               <button
-                onClick={() => {
-                  if (!isAuthenticated) {
-                    window.location.href = "/login";
-                    return;
-                  }
-                  handleToggleFavorite(product.id);
-                }}
+                onClick={() => handleToggleFavorite(product.id)}
                 className={`mac-touch-target rounded-full flex items-center justify-center mac-transition-colors shrink-0 ${
                   isProductFavorite
                     ? "bg-mac-red/10"
                     : "hover:bg-mac-gray-2 dark:hover:bg-mac-gray-6"
-                } ${!isAuthenticated ? "opacity-70" : ""}`}
+                }`}
                 aria-label={isProductFavorite ? "Quitar de favoritos" : "Agregar a favoritos"}
-                title={!isAuthenticated ? "Inicia sesión para agregar favoritos" : ""}
               >
                 <Heart 
                   className="mac-icon-large mac-text-secondary" 
@@ -386,7 +372,7 @@ export function ProductClient({ product }: ProductClientProps) {
                     <button
                       key={index}
                       onClick={() => setSelectedImageIndex(index)}
-                      className={`flex-shrink-0 aspect-square w-20 h-20 relative overflow-hidden rounded-mac-md border-2 transition-all mac-touch-target ${
+                      className={`shrink-0 aspect-square w-20 h-20 relative overflow-hidden rounded-mac-md border-2 transition-all mac-touch-target ${
                         selectedImageIndex === index
                           ? "border-mac-blue ring-2 ring-mac-blue/20"
                           : "border-transparent hover:border-mac-separator"
@@ -538,7 +524,7 @@ export function ProductClient({ product }: ProductClientProps) {
         <div className="mac-card mt-mac-lg">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-mac-lg">
             <div className="flex items-start gap-mac-md">
-              <div className="rounded-full bg-mac-blue/10 p-mac-sm flex-shrink-0">
+              <div className="rounded-full bg-mac-blue/10 p-mac-sm shrink-0">
                 <Truck className="mac-icon-medium" style={{ color: 'var(--mac-blue)' }} />
               </div>
               <div>
@@ -551,7 +537,7 @@ export function ProductClient({ product }: ProductClientProps) {
               </div>
             </div>
             <div className="flex items-start gap-mac-md">
-              <div className="rounded-full bg-mac-green/10 p-mac-sm flex-shrink-0">
+              <div className="rounded-full bg-mac-green/10 p-mac-sm shrink-0">
                 <Package className="mac-icon-medium" style={{ color: 'var(--mac-green)' }} />
               </div>
               <div>
@@ -564,7 +550,7 @@ export function ProductClient({ product }: ProductClientProps) {
               </div>
             </div>
             <div className="flex items-start gap-mac-md">
-              <div className="rounded-full bg-mac-orange/10 p-mac-sm flex-shrink-0">
+              <div className="rounded-full bg-mac-orange/10 p-mac-sm shrink-0">
                 <RotateCcw className="mac-icon-medium" style={{ color: 'var(--mac-orange)' }} />
               </div>
               <div>
@@ -645,9 +631,8 @@ export function ProductClient({ product }: ProductClientProps) {
                             isFavorite(relatedProduct.id)
                               ? "bg-mac-red/10"
                               : "hover:bg-mac-gray-2 dark:hover:bg-mac-gray-6"
-                          } ${!isAuthenticated ? "opacity-70" : ""}`}
+                          }`}
                           aria-label={isFavorite(relatedProduct.id) ? "Quitar de favoritos" : "Agregar a favoritos"}
-                          title={!isAuthenticated ? "Inicia sesión para agregar favoritos" : ""}
                         >
                           <Heart 
                             className="mac-icon-medium mac-text-secondary" 

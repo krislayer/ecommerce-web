@@ -48,7 +48,8 @@ export function Pagination({ currentPage, totalPages, onPageChange, itemsPerPage
   const endItem = Math.min(currentPage * itemsPerPage, totalItems);
 
   return (
-    <div className="flex items-center justify-center gap-mac-sm">
+    <div className="flex flex-col items-center gap-mac-sm">
+      <div className="flex items-center justify-center gap-mac-sm flex-wrap">
       {/* Botón Anterior */}
       <button
         onClick={() => onPageChange(currentPage - 1)}
@@ -102,6 +103,10 @@ export function Pagination({ currentPage, totalPages, onPageChange, itemsPerPage
       >
         Siguiente
       </button>
+      </div>
+      <p className="mac-text-caption-1 mac-text-tertiary">
+        Mostrando {startItem}–{endItem} de {totalItems}
+      </p>
     </div>
   );
 }

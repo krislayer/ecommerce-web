@@ -7,12 +7,9 @@ export type SortOption = "relevance" | "price-asc" | "price-desc" | "name-asc" |
 interface ProductSortProps {
   sortBy: SortOption;
   onSortChange: (sort: SortOption) => void;
-  currentCount?: number;
-  totalCount?: number;
-  searchQuery?: string;
 }
 
-export function ProductSort({ sortBy, onSortChange, currentCount, totalCount, searchQuery }: ProductSortProps) {
+export function ProductSort({ sortBy, onSortChange }: ProductSortProps) {
   const sortOptions: { value: SortOption; label: string }[] = [
     { value: "relevance", label: "Relevancia" },
     { value: "price-asc", label: "Menor precio" },

@@ -33,7 +33,7 @@ export default function CheckoutPage() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // En móvil: verificar si el pedido fue enviado cuando el usuario regresa al navegador
+  // En móvil: si ya se envió el pedido por WhatsApp, al volver a esta pestaña redirigir a éxito
   useEffect(() => {
     if (!isMobile || typeof window === 'undefined') return;
 
@@ -49,7 +49,7 @@ export default function CheckoutPage() {
     // Verificar al montar el componente
     checkOrderSent();
 
-    // Verificar cuando el usuario regresa al navegador (después de abrir WhatsApp)
+    // Cuando la pestaña vuelve a la vista tras abrir WhatsApp
     const handleVisibilityChange = () => {
       if (!document.hidden) {
         checkOrderSent();
@@ -87,11 +87,10 @@ export default function CheckoutPage() {
     address: false,
   });
 
-  useEffect(() => {
-    if (formData.shippingMethod === "pickup") {
-      setDesktopConfirmationVisible(false);
-    }
-  }, [formData.shippingMethod]);
+  const handleShippingMethodChange = (shippingMethod: "pickup" | "local") => {
+    setFormData((prev) => ({ ...prev, shippingMethod }));
+    if (shippingMethod === "pickup") setDesktopConfirmationVisible(false);
+  };
 
   const subtotal = cartItems.reduce(
     (sum, item) => sum + item.variant.price * item.quantity,
@@ -173,10 +172,16 @@ export default function CheckoutPage() {
 
       if (isMobile) {
         dispatch(clearCart());
-        
-        if (typeof window !== "undefined") {
+
+        if (typeof document !== "undefined") {
           sessionStorage.setItem("orderSent", "true");
-          window.location.href = mobile;
+          const anchor = document.createElement("a");
+          anchor.href = mobile;
+          anchor.rel = "noopener noreferrer";
+          anchor.target = "_self";
+          document.body.appendChild(anchor);
+          anchor.click();
+          anchor.remove();
         }
       } else {
         window.open(desktop, "_blank");
@@ -302,7 +307,7 @@ Gracias por tu compra en ¡Qué Chulito! ❤️`;
                         name="shipping"
                         value="pickup"
                         checked={formData.shippingMethod === "pickup"}
-                        onChange={(e) => setFormData({ ...formData, shippingMethod: e.target.value as "pickup" | "local" })}
+                        onChange={() => handleShippingMethodChange("pickup")}
                         className="sr-only"
                       />
                       <div 
@@ -347,7 +352,7 @@ Gracias por tu compra en ¡Qué Chulito! ❤️`;
                         name="shipping"
                         value="local"
                         checked={formData.shippingMethod === "local"}
-                        onChange={(e) => setFormData({ ...formData, shippingMethod: e.target.value as "pickup" | "local" })}
+                        onChange={() => handleShippingMethodChange("local")}
                         className="sr-only"
                       />
                       <div 
