@@ -23,7 +23,7 @@ function ProductDescription({ product }: { product: Product }) {
       <VariantSelector product={product} />
       {product.description ? (
         <Prose
-          className="mb-6 text-sm leading-tight dark:text-white/[60%]"
+          className="mb-6 text-sm leading-tight dark:text-white/60"
           html={product.description}
         />
       ) : null}
