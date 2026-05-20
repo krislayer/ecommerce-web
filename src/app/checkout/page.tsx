@@ -7,9 +7,9 @@ import type { RootState } from "@/store";
 import { clearCart, removeItem, updateQuantity } from "@/store/slice/cartSlice";
 import { ShippingService } from "@/lib/services/shipping.service";
 import { Loading } from "@/components/loading";
-import { FreeShippingProgress } from "@/components/free-shipping-progress";
 import Price from "@/components/price";
 import { CartLineItem } from "@/components/cart/cart-line-item";
+import { formatVariantLabel } from "@/lib/cart/variant-label";
 import LoadingDots from "@/components/loading-dots";
 
 export default function CheckoutPage() {
@@ -52,14 +52,19 @@ export default function CheckoutPage() {
   }, [cartItems.length, isSubmitting, router]);
 
   const subtotal = cartItems.reduce((s, i) => s + i.variant.price * i.quantity, 0);
-  const shippingCalc = ShippingService.calculateShipping(subtotal);
-  const shippingCost = formData.shippingMethod === "pickup" ? 0 : shippingCalc.shippingCost;
+  const standardShipping = ShippingService.getStandardShippingCost();
+  const shippingCost = formData.shippingMethod === "pickup" ? 0 : standardShipping;
   const total = subtotal + shippingCost;
   const isValid = formData.name.length >= 2 && (formData.shippingMethod === "pickup" || formData.address.length > 0);
 
   const buildMessage = () => {
     const items = cartItems
-      .map((i) => `• ${i.variant.name ?? i.variant.sku}\n  x${i.quantity} — Q${i.variant.price.toFixed(2)}`)
+      .map((i) => {
+        const label = formatVariantLabel(i.variant.attributes);
+        const name = i.variant.name ?? i.variant.sku;
+        const detail = label ? `${name} (${label})` : name;
+        return `• ${detail}\n  x${i.quantity} — Q${i.variant.price.toFixed(2)}`;
+      })
       .join("\n");
     return encodeURIComponent(
       `🛒 *Nuevo Pedido*\n\n${formData.name}\n\n${items}\n\nTotal: ${ShippingService.formatPrice(total)}\n\n¡Qué Chulito!`,
@@ -95,7 +100,7 @@ export default function CheckoutPage() {
 
   return (
     <div className="mx-auto max-w-lg px-4 py-12">
-      <h1 className="mb-8 text-lg font-semibold">Checkout</h1>
+      <h1 className="mb-8 text-lg font-semibold">Finalizar compra</h1>
 
       <ul className="mb-8 grow overflow-auto">
         {cartItems.map((item) => (
@@ -124,31 +129,39 @@ export default function CheckoutPage() {
         </div>
 
         <div>
-          <p className="mb-2 text-sm text-neutral-500 dark:text-neutral-400">Entrega</p>
-          <div className="space-y-2 text-sm">
-            <label className="flex cursor-pointer items-center gap-2">
+          <p className="mb-3 text-sm text-neutral-500 dark:text-neutral-400">Entrega</p>
+          <div className="space-y-4 text-sm">
+            <label className="flex cursor-pointer gap-3">
               <input
                 type="radio"
+                className="mt-1 shrink-0"
                 checked={formData.shippingMethod === "pickup"}
                 onChange={() => setFormData({ ...formData, shippingMethod: "pickup" })}
               />
-              Entrega coordinada (gratis)
+              <span className="flex flex-col gap-0.5">
+                <span className="font-medium text-black dark:text-white">
+                  Entrega coordinada (gratis)
+                </span>
+                <span className="text-neutral-500 dark:text-neutral-400">
+                  Coordinaremos el punto de encuentro por WhatsApp
+                </span>
+              </span>
             </label>
-            <label className="flex cursor-pointer items-center gap-2">
+            <label className="flex cursor-pointer gap-3">
               <input
                 type="radio"
+                className="mt-1 shrink-0"
                 checked={formData.shippingMethod === "local"}
                 onChange={() => setFormData({ ...formData, shippingMethod: "local" })}
               />
-              A domicilio —{" "}
-              {shippingCalc.isFreeShipping ? "gratis" : ShippingService.formatPrice(shippingCalc.shippingCost)}
+              <span className="flex flex-col gap-0.5">
+                <span className="font-medium text-black dark:text-white">
+                  A domicilio — {ShippingService.formatPrice(ShippingService.getStandardShippingCost())}
+                </span>
+                <span className="text-neutral-500 dark:text-neutral-400">Solo cabecera municipal</span>
+              </span>
             </label>
           </div>
-          {formData.shippingMethod === "local" && !shippingCalc.isFreeShipping ? (
-            <div className="mt-3">
-              <FreeShippingProgress subtotal={subtotal} />
-            </div>
-          ) : null}
         </div>
 
         {formData.shippingMethod === "local" ? (
@@ -163,27 +176,23 @@ export default function CheckoutPage() {
               value={formData.address}
               onChange={(e) => setFormData({ ...formData, address: e.target.value })}
               className={`${inputClass} resize-none`}
-              placeholder="Dirección y referencias"
+              placeholder="Agrega una referencia para facilitar la entrega"
             />
           </div>
         ) : null}
 
         <div className="py-4 text-sm text-neutral-500 dark:text-neutral-400">
-          <div className="mb-3 flex items-center justify-between border-b border-neutral-200 pb-1 dark:border-neutral-700">
-            <p>Impuestos</p>
-            <Price amount={0} className="text-right text-base text-black dark:text-white" />
-          </div>
-          <div className="mb-3 flex items-center justify-between border-b border-neutral-200 pb-1 pt-1 dark:border-neutral-700">
-            <p>Envío</p>
-            <p className="text-right text-black dark:text-white">
-              {formData.shippingMethod === "pickup"
-                ? "Gratis"
-                : shippingCalc.isFreeShipping
-                  ? "Gratis"
-                  : ShippingService.formatPrice(shippingCost)}
-            </p>
-          </div>
-          <div className="mb-3 flex items-center justify-between border-b border-neutral-200 pb-1 pt-1 dark:border-neutral-700">
+          {formData.shippingMethod === "local" ? (
+            <div className="mb-3 flex items-center justify-between border-b border-neutral-200 pb-1 dark:border-neutral-700">
+              <p>Envío</p>
+              <p className="text-right text-black dark:text-white">
+                {ShippingService.formatPrice(standardShipping)}
+              </p>
+            </div>
+          ) : null}
+          <div
+            className={`mb-3 flex items-center justify-between border-b border-neutral-200 pb-1 dark:border-neutral-700 ${formData.shippingMethod === "local" ? "pt-1" : ""}`}
+          >
             <p>Total</p>
             <Price amount={total} className="text-right text-base text-black dark:text-white" />
           </div>

@@ -3,8 +3,6 @@ export type MenuItem = {
   path: string;
 };
 
-export const headerMenu: MenuItem[] = [{ title: "Catálogo", path: "/search" }];
-
 export const footerMenu: MenuItem[] = [
   { title: "Inicio", path: "/" },
   { title: "Catálogo", path: "/search" },

@@ -1,6 +1,8 @@
 import clsx from "clsx";
 import LogoIcon from "@/components/icons/logo";
 
+export const SITE_NAME = "¡Qué Chulito!";
+
 export default function LogoSquare({ size }: { size?: "sm" | undefined }) {
   return (
     <div

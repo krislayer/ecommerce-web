@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { productPath } from "@/lib/paths";
+import { buildCartItemProductUrl, formatVariantLabel } from "@/lib/cart/variant-label";
 import Price from "@/components/price";
 import type { CartItem } from "@/store/slice/cartSlice";
 import { DeleteItemButton } from "./delete-item-button";
@@ -26,7 +26,8 @@ export function CartLineItem({
 }: CartLineItemProps) {
   const title = item.variant.name ?? item.variant.productId;
   const image = item.variant.image;
-  const href = productPath(item.variant.productId);
+  const variantLabel = formatVariantLabel(item.variant.attributes);
+  const href = buildCartItemProductUrl(item.variant.productId, item.variant.attributes);
 
   return (
     <li className="flex w-full flex-col border-b border-neutral-300 dark:border-neutral-700">
@@ -49,6 +50,9 @@ export function CartLineItem({
           <Link href={href} onClick={onNavigate} className="z-30 ml-2 flex flex-row space-x-4">
             <div className="flex flex-1 flex-col text-base">
               <span className="leading-tight">{title}</span>
+              {variantLabel ? (
+                <p className="text-sm text-neutral-500 dark:text-neutral-400">{variantLabel}</p>
+              ) : null}
             </div>
           </Link>
         </div>

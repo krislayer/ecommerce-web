@@ -53,12 +53,13 @@ export function Navbar() {
             </ul>
           ) : null}
         </div>
-        <div className="hidden justify-center md:flex md:w-1/3">
-          <Suspense fallback={<SearchSkeleton />}>
-            <Search />
-          </Suspense>
-        </div>
-        <div className="flex justify-end md:w-1/3">
+        <div className="hidden md:block md:w-1/3" aria-hidden="true" />
+        <div className="flex items-center justify-end gap-6 md:w-1/3">
+          <div className="hidden w-80 md:flex">
+            <Suspense fallback={<SearchSkeleton />}>
+              <Search />
+            </Suspense>
+          </div>
           <CartModal />
         </div>
       </div>
