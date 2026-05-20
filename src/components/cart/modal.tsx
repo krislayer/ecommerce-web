@@ -9,15 +9,14 @@ import { Fragment, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "@/store";
 import { removeItem, setCartOpen, updateQuantity } from "@/store/slice/cartSlice";
+import { iconControlClassName, iconControlGlyphClassName } from "@/lib/ui/icon-control";
 import { CartLineItem } from "./cart-line-item";
 import OpenCart from "./open-cart";
 
 function CloseCart({ className }: { className?: string }) {
   return (
-    <div className="relative flex h-11 w-11 items-center justify-center rounded-md border border-neutral-200 text-black transition-colors dark:border-neutral-700 dark:text-white">
-      <XMarkIcon
-        className={clsx("h-6 transition-all ease-in-out hover:scale-110", className)}
-      />
+    <div className={iconControlClassName}>
+      <XMarkIcon className={clsx(iconControlGlyphClassName, "h-6 w-6", className)} />
     </div>
   );
 }

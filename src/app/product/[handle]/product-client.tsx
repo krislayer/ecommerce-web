@@ -8,6 +8,7 @@ import Prose from "@/components/prose";
 import { AddToCartButton } from "@/components/cart/add-to-cart-button";
 import { Gallery } from "@/components/product/gallery";
 import { VariantSelector } from "@/components/product/variant-selector";
+import { formatProductCondition } from "@/lib/product/condition";
 import { productPath } from "@/lib/paths";
 import type { Product } from "@/lib/domain/entities/product";
 
@@ -15,6 +16,9 @@ function ProductDescription({ product }: { product: Product }) {
   return (
     <>
       <div className="mb-6 flex flex-col border-b pb-6 dark:border-neutral-700">
+        <p className="mb-1 text-sm font-medium text-neutral-500 dark:text-neutral-400">
+          {formatProductCondition(product.condition)}
+        </p>
         <h1 className="mb-2 text-5xl font-medium">{product.name}</h1>
         <div className="mr-auto w-auto rounded-full bg-blue-600 p-2 text-sm text-white">
           <Price amount={product.price} currencyCode="GTQ" />
@@ -47,7 +51,12 @@ function RelatedProducts({ products }: { products: Product[] }) {
             <Link href={productPath(product.id)} className="relative h-full w-full" prefetch={true}>
               <GridTileImage
                 alt={product.name}
-                label={{ title: product.name, amount: String(product.price), currencyCode: "GTQ" }}
+                label={{
+                  title: product.name,
+                  amount: String(product.price),
+                  currencyCode: "GTQ",
+                  condition: product.condition,
+                }}
                 src={product.images[0]}
                 fill
                 sizes="(min-width: 1024px) 20vw, (min-width: 768px) 25vw, (min-width: 640px) 33vw, (min-width: 475px) 50vw, 100vw"

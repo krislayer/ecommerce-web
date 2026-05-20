@@ -4,13 +4,11 @@ import clsx from "clsx";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
+import { iconControlClassName, iconControlGlyphClassName } from "@/lib/ui/icon-control";
 
 type ThemeToggleProps = {
   variant?: "default" | "icon";
 };
-
-const iconButtonClass =
-  "flex h-11 w-11 shrink-0 items-center justify-center rounded-md border border-neutral-200 bg-white text-black transition-colors hover:bg-neutral-100 dark:border-neutral-700 dark:bg-black dark:text-white dark:hover:bg-neutral-900";
 
 export function ThemeToggle({ variant = "default" }: ThemeToggleProps) {
   const [mounted, setMounted] = useState(false);
@@ -28,16 +26,16 @@ export function ThemeToggle({ variant = "default" }: ThemeToggleProps) {
       <button
         type="button"
         onClick={() => setTheme(isDark ? "light" : "dark")}
-        className={iconButtonClass}
+        className={clsx(iconControlClassName, "shrink-0")}
         aria-label={label}
         aria-pressed={isDark}
       >
         {!mounted ? (
-          <Moon className="h-4 w-4" aria-hidden />
+          <Moon className={clsx(iconControlGlyphClassName, "w-4")} aria-hidden />
         ) : isDark ? (
-          <Sun className="h-4 w-4" aria-hidden />
+          <Sun className={clsx(iconControlGlyphClassName, "w-4")} aria-hidden />
         ) : (
-          <Moon className="h-4 w-4" aria-hidden />
+          <Moon className={clsx(iconControlGlyphClassName, "w-4")} aria-hidden />
         )}
       </button>
     );
@@ -48,7 +46,7 @@ export function ThemeToggle({ variant = "default" }: ThemeToggleProps) {
       type="button"
       onClick={() => setTheme(isDark ? "light" : "dark")}
       className={clsx(
-        "flex h-8 w-max flex-none items-center justify-center rounded-md border border-neutral-200 bg-white text-xs text-black dark:border-neutral-700 dark:bg-black dark:text-white",
+        "flex h-8 w-max flex-none items-center justify-center rounded-md border border-neutral-200 text-xs text-black transition-colors dark:border-neutral-700 dark:text-white",
       )}
       aria-label={label}
       aria-pressed={isDark}

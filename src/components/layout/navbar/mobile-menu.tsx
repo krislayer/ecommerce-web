@@ -1,10 +1,12 @@
 "use client";
 
+import clsx from "clsx";
 import { Dialog, Transition } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Fragment, Suspense, useEffect, useState } from "react";
+import { iconControlClassName, iconControlGlyphClassName } from "@/lib/ui/icon-control";
 import Search, { SearchSkeleton } from "./search";
 
 type MenuItem = {
@@ -38,9 +40,9 @@ export default function MobileMenu({ menu }: { menu: MenuItem[] }) {
       <button
         onClick={openMobileMenu}
         aria-label="Abrir menú"
-        className="flex h-11 w-11 items-center justify-center rounded-md border border-neutral-200 text-black transition-colors md:hidden dark:border-neutral-700 dark:text-white"
+        className={clsx(iconControlClassName, "md:hidden")}
       >
-        <Bars3Icon className="h-4" />
+        <Bars3Icon className={iconControlGlyphClassName} />
       </button>
       <Transition show={isOpen}>
         <Dialog onClose={closeMobileMenu} className="relative z-50">
@@ -67,11 +69,11 @@ export default function MobileMenu({ menu }: { menu: MenuItem[] }) {
             <Dialog.Panel className="fixed bottom-0 left-0 right-0 top-0 flex h-full w-full flex-col bg-white pb-6 dark:bg-black">
               <div className="p-4">
                 <button
-                  className="mb-4 flex h-11 w-11 items-center justify-center rounded-md border border-neutral-200 text-black transition-colors dark:border-neutral-700 dark:text-white"
+                  className={clsx(iconControlClassName, "mb-4")}
                   onClick={closeMobileMenu}
                   aria-label="Cerrar menú"
                 >
-                  <XMarkIcon className="h-6" />
+                  <XMarkIcon className={clsx(iconControlGlyphClassName, "h-6 w-6")} />
                 </button>
 
                 <div className="mb-4 w-full">

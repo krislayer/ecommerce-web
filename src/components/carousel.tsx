@@ -27,6 +27,7 @@ export function Carousel() {
                   title: product.name,
                   amount: String(product.price),
                   currencyCode: "GTQ",
+                  condition: product.condition,
                 }}
                 src={product.images[0]}
                 fill

@@ -36,6 +36,7 @@ function ThreeItemGridItem({
             title: item.name,
             amount: String(item.price),
             currencyCode: "GTQ",
+            condition: item.condition,
           }}
         />
       </Link>

@@ -1,5 +1,6 @@
 import clsx from "clsx";
 import Image from "next/image";
+import type { Product } from "@/lib/domain/entities/product";
 import Label from "../label";
 
 export function GridTileImage({
@@ -15,6 +16,7 @@ export function GridTileImage({
     amount: number | string;
     currencyCode?: string;
     position?: "bottom" | "center";
+    condition?: Product["condition"];
   };
 } & React.ComponentProps<typeof Image>) {
   return (
@@ -42,6 +44,7 @@ export function GridTileImage({
           amount={label.amount}
           currencyCode={label.currencyCode}
           position={label.position}
+          condition={label.condition}
         />
       ) : null}
     </div>
