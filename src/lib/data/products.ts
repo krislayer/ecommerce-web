@@ -115,7 +115,7 @@ export const sampleProducts: Product[] = [
     categoryIds: ["woman"],
     images: [
       "https://images.unsplash.com/photo-1658334379173-d4241007e67e?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1170",
-      "https://images.unsplash.com/photo-1542272604-787c133383f3?w=800",
+      "https://images.unsplash.com/photo-1594633312681-425a7b956cc2?ixlib=rb-4.1.0&auto=format&fit=crop&q=80&w=800",
     ],
     attrs: {
       size: "M",

@@ -1,6 +1,0 @@
-import { Loading } from "@/components/loading";
-
-export default function LoadingPage() {
-  return <Loading fullScreen size="xl" label="Cargando página" />;
-}
-

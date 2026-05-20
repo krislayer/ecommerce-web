@@ -1,6 +1,4 @@
-/**
- * Servicio para calcular costos de envío
- */
+import { formatStorePrice } from "@/lib/store/format-price";
 
 export interface ShippingCalculation {
   subtotal: number;
@@ -56,9 +54,6 @@ export class ShippingService {
    * Formatea el precio para mostrar
    */
   static formatPrice(price: number): string {
-    if (price % 1 === 0) {
-      return `Q${price}`;
-    }
-    return `Q${price.toFixed(2)}`;
+    return formatStorePrice(price);
   }
 }

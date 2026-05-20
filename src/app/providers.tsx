@@ -3,35 +3,25 @@
 import { ThemeProvider } from "next-themes";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
+import { Toaster } from "sonner";
 import { store, persistor } from "@/store";
-import { Navbar } from "@/components/navbar";
-import { CartSidebar } from "@/components/cart-sidebar";
-import { Footer } from "@/components/footer";
+import { Navbar } from "@/components/layout/navbar";
+import { WelcomeToast } from "@/components/welcome-toast";
 import { ScrollRestoration } from "@/components/scroll-restoration";
 import { Loading } from "@/components/loading";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <Provider store={store}>
-      <PersistGate
-        loading={
-          <Loading fullScreen size="xl" label="Cargando aplicación" />
-        }
-        persistor={persistor}
-      >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          storageKey="theme"
-        >
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem enableColorScheme storageKey="qc-theme">
+      <Provider store={store}>
+        <PersistGate loading={<Loading fullScreen size="xl" label="Cargando aplicación" />} persistor={persistor}>
           <ScrollRestoration />
+          <WelcomeToast />
+          <Toaster closeButton theme="system" />
           <Navbar />
           <main>{children}</main>
-          <Footer />
-          <CartSidebar />
-        </ThemeProvider>
-      </PersistGate>
-    </Provider>
+        </PersistGate>
+      </Provider>
+    </ThemeProvider>
   );
 }

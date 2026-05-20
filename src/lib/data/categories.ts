@@ -4,6 +4,7 @@ export const categories: Category[] = [
   {
     id: "woman",
     name: "Mujer",
+    handle: "woman",
     slug: "mujer",
     description: "Moda femenina para todas las ocasiones",
     facetDefs: [
@@ -30,6 +31,7 @@ export const categories: Category[] = [
   {
     id: "men",
     name: "Hombre",
+    handle: "man",
     slug: "hombre",
     description: "Moda masculina moderna",
     facetDefs: [
@@ -56,6 +58,7 @@ export const categories: Category[] = [
   {
     id: "kids",
     name: "Niño",
+    handle: "kids",
     slug: "niño",
     description: "Ropa para niños y niñas",
     facetDefs: [
@@ -82,6 +85,7 @@ export const categories: Category[] = [
   {
     id: "beauty",
     name: "Belleza",
+    handle: "beauty",
     slug: "belleza",
     description: "Productos de belleza y cuidado personal",
     facetDefs: [
@@ -114,6 +118,7 @@ export const categories: Category[] = [
   {
     id: "home",
     name: "Hogar",
+    handle: "home",
     slug: "hogar",
     description: "Artículos para el hogar",
     facetDefs: [
@@ -140,6 +145,7 @@ export const categories: Category[] = [
   {
     id: "technology",
     name: "Tecnología",
+    handle: "technology",
     slug: "tecnologia",
     description: "Dispositivos y accesorios tecnológicos",
     facetDefs: [
@@ -178,10 +184,16 @@ export const categories: Category[] = [
 ];
 
 export function getCategoryById(id: string): Category | undefined {
-  return categories.find(cat => cat.id === id);
+  return categories.find((cat) => cat.id === id);
+}
+
+export function getCategoryByHandle(handle: string): Category | undefined {
+  return categories.find((cat) => cat.handle === handle);
 }
 
 export function getCategoriesForIds(ids: string[]): Category[] {
-  return categories.filter(cat => ids.includes(cat.id));
+  return categories.filter((cat) => ids.includes(cat.id));
 }
+
+export const collectionHandles = categories.map((c) => c.handle);
 

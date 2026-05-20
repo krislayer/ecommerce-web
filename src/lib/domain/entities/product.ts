@@ -24,6 +24,8 @@ export interface ProductVariant {
   stock: number;
   sku: string;
   image?: string;
+  /** Etiqueta visible en carrito (nombre del producto). */
+  name?: string;
 }
 
 export interface ProductSummary {
@@ -44,6 +46,8 @@ export interface FacetDefinition {
 export interface Category {
   id: string;
   name: string;
+  /** URL pública en inglés, p. ej. /woman, /man */
+  handle: string;
   slug: string;
   facetDefs: FacetDefinition[];
   description?: string;

@@ -2,20 +2,15 @@ import Link from "next/link";
 
 export default function NotFound() {
   return (
-    <div className="flex items-center justify-center px-4 py-20">
-      <div className="backdrop-blur-2xl bg-white/30 dark:bg-black/30 rounded-3xl p-12 border border-white/20 dark:border-white/10 shadow-2xl text-center">
-        <h1 className="mac-text-404 mac-text-primary mb-mac-md">404</h1>
-        <p className="mac-text-title-3 mac-text-secondary mb-mac-lg">
-          Página no encontrada
-        </p>
-        <Link
-          href="/"
-          className="mac-button-primary"
-        >
-          Volver al inicio
-        </Link>
-      </div>
+    <div className="mx-auto flex max-w-xl flex-col items-center justify-center px-4 py-24 text-center">
+      <p className="text-5xl font-medium">404</p>
+      <p className="mt-4 text-sm text-black/60 dark:text-white/60">Esta página no existe.</p>
+      <Link
+        href="/"
+        className="mt-8 inline-block rounded-full bg-blue-600 px-8 py-3 text-sm font-medium text-white hover:opacity-90"
+      >
+        Volver al inicio
+      </Link>
     </div>
   );
 }
-

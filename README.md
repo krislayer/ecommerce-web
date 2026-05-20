@@ -1,16 +1,16 @@
 # ecommerce-web — ¡Qué Chulito!
 
-Tienda en línea construida con **Next.js 16** (App Router): catálogo local, carrito y favoritos en el navegador, y pedidos por **WhatsApp**. No hay servidor de auth ni backend de datos: el contenido sale de archivos en el repo.
+Tienda en línea con **Next.js 16** (App Router): catálogo, carrito y pedidos por **WhatsApp**. UI inspirada en [vercel/commerce](https://github.com/vercel/commerce).
 
 ## Requisitos
 
-- Node.js 20 o superior (recomendado para alinear con el tipo de proyecto)
+- Node.js 20 o superior
 
 ## Arranque
 
 ```bash
 npm install
-cp env.example .env.local   # opcional pero recomendado en local
+cp env.example .env.local
 npm run dev
 ```
 
@@ -18,44 +18,55 @@ Abre [http://localhost:3000](http://localhost:3000).
 
 ## Variables de entorno
 
-Copia `env.example` a `.env.local` y ajusta:
-
 | Variable | Uso |
 |----------|-----|
-| `NEXT_PUBLIC_WHATSAPP_NUMBER` | Número de WhatsApp Business (solo dígitos: código país + número, sin `+`, espacios ni guiones). Ejemplo Guatemala: `50256995320`. |
+| `NEXT_PUBLIC_WHATSAPP_NUMBER` | Número WhatsApp Business (solo dígitos, ej. `50256995320`) |
+| `NEXT_PUBLIC_SITE_URL` | URL pública del sitio (sitemap, OG, JSON-LD). En producción: `https://tudominio.com` |
 
-El checkout construye enlaces `wa.me` con ese número.
+## Catálogo
 
-## Catálogo y categorías
+- **Capa de datos:** [`src/lib/catalog/fetch-products.ts`](src/lib/catalog/fetch-products.ts) — punto único de lectura; hoy usa `sampleProducts` locales.
+- **Productos:** [`src/lib/data/products.ts`](src/lib/data/products.ts)
+- **Categorías:** [`src/lib/data/categories.ts`](src/lib/data/categories.ts)
+- **Pendiente:** conectar Google Sheets en `fetch-products.ts`
 
-- **Productos:** [`src/lib/data/products.ts`](src/lib/data/products.ts) — arreglo `sampleProducts`; cada ítem debe cumplir el tipo [`Product`](src/lib/domain/entities/product.ts).
-- **Categorías y facetas (filtros):** [`src/lib/data/categories.ts`](src/lib/data/categories.ts) — `categoryIds` de cada producto deben coincidir con ids definidos ahí.
+## Rutas principales
 
-Las imágenes usan URLs externas; los hosts permitidos están en [`next.config.ts`](next.config.ts) (`images.remotePatterns`), hoy orientados a Unsplash.
+| Ruta | Descripción |
+|------|-------------|
+| `/` | Home (grid destacado + carrusel) |
+| `/search` | Catálogo / búsqueda |
+| `/search/woman`, `/search/man`, … | Colecciones |
+| `/product/[handle]` | Ficha de producto |
+| `/checkout` | Pedido por WhatsApp |
+| `/about`, `/contact` | Páginas estáticas |
+| `/sitemap.xml`, `/robots.txt` | SEO |
+
+Redirects legacy vía middleware: `/catalogo` → `/search`, slugs en español → handles en inglés.
 
 ## Scripts
 
 | Comando | Descripción |
 |---------|-------------|
-| `npm run dev` | Desarrollo (Turbopack por defecto en Next 16) |
-| `npm run build` | Compilación de producción |
-| `npm run start` | Servir el build (`build` antes) |
+| `npm run dev` | Desarrollo |
+| `npm run build` | Build de producción |
+| `npm run start` | Servir build |
 | `npm run lint` | ESLint |
 
 ## Estado en el cliente
 
-- **Carrito y favoritos:** Redux + persistencia (`redux-persist`).
-- Sin cuentas de usuario ni Firebase.
+- **Carrito:** Redux + `redux-persist` (localStorage)
+- Sin cuentas de usuario
 
-## Assets del plantilla Next (`create-next-app`)
+## Deploy (Vercel)
 
-Siguen los mismos archivos por defecto de la plantilla **App Router + TypeScript**:
+1. Conectar repositorio en [vercel.com](https://vercel.com)
+2. Configurar variables de entorno (`NEXT_PUBLIC_WHATSAPP_NUMBER`, `NEXT_PUBLIC_SITE_URL`)
+3. Deploy — Next.js se detecta automáticamente
 
-- [`src/app/favicon.ico`](src/app/favicon.ico)
-- En [`public/`](public/): `file.svg`, `globe.svg`, `next.svg`, `vercel.svg`, `window.svg` (ilustraciones de ejemplo; la app no los importa hoy).
+## SEO
 
-Si necesitas `robots.txt` u Open Graph en producción, conviene añadirlos aparte (no forman parte del scaffold mínimo).
-
-## Tipos de TypeScript
-
-`next-env.d.ts` está versionado; Next puede regenerarlo al ejecutar `dev`/`build`.
+- JSON-LD (`Product`) y Open Graph en cada PDP
+- Imagen OG del sitio: `/opengraph-image`
+- Imagen OG dinámica por producto: `/product/[handle]/opengraph-image`
+- Sitemap dinámico con productos activos y colecciones

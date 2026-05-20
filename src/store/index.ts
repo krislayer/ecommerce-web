@@ -2,7 +2,6 @@ import { configureStore } from "@reduxjs/toolkit";
 import { persistStore, persistReducer } from "redux-persist";
 import createWebStorage from "redux-persist/lib/storage/createWebStorage";
 import cartReducer from "./slice/cartSlice";
-import favoritesReducer from "./slice/favoritesSlice";
 
 const createNoopStorage = () => {
   return {
@@ -31,21 +30,11 @@ const cartPersistConfig = {
   storage,
 };
 
-const favoritesPersistConfig = {
-  key: "favorites",
-  storage,
-};
-
 const persistedCartReducer = persistReducer(cartPersistConfig, cartReducer);
-const persistedFavoritesReducer = persistReducer(
-  favoritesPersistConfig,
-  favoritesReducer
-);
 
 export const store = configureStore({
   reducer: {
     cart: persistedCartReducer,
-    favorites: persistedFavoritesReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
