@@ -1,44 +1,30 @@
-"use client";
-
-import clsx from "clsx";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
 import type { MenuItem } from "@/lib/menu";
 
-export function FooterMenuItem({ item }: { item: MenuItem }) {
-  const pathname = usePathname();
-  const [active, setActive] = useState(pathname === item.path);
-
-  useEffect(() => {
-    setActive(pathname === item.path);
-  }, [pathname, item.path]);
-
-  return (
-    <li>
-      <Link
-        href={item.path}
-        className={clsx(
-          "block p-2 text-lg underline-offset-4 hover:text-black hover:underline md:inline-block md:text-sm dark:hover:text-neutral-300",
-          {
-            "text-black dark:text-neutral-300": active,
-          },
-        )}
-      >
-        {item.title}
-      </Link>
-    </li>
-  );
-}
-
-export default function FooterMenu({ menu }: { menu: readonly MenuItem[] }) {
-  if (!menu.length) return null;
+export function FooterColumn({
+  title,
+  links,
+}: {
+  title: string;
+  links: readonly MenuItem[];
+}) {
+  if (!links.length) return null;
 
   return (
-    <nav>
-      <ul>
-        {menu.map((item) => (
-          <FooterMenuItem key={item.title} item={item} />
+    <nav aria-label={title}>
+      <h3 className="mb-4 text-xs font-medium uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
+        {title}
+      </h3>
+      <ul className="flex flex-col gap-3">
+        {links.map((item) => (
+          <li key={item.path}>
+            <Link
+              href={item.path}
+              className="text-sm text-black underline-offset-4 hover:underline dark:text-white"
+            >
+              {item.title}
+            </Link>
+          </li>
         ))}
       </ul>
     </nav>

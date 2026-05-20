@@ -1,12 +1,18 @@
+import { categories } from "@/lib/data/categories";
+import { collectionPath } from "@/lib/paths";
+
 export type MenuItem = {
   title: string;
   path: string;
 };
 
-export const footerMenu: MenuItem[] = [
-  { title: "Inicio", path: "/" },
-  { title: "Catálogo", path: "/search" },
-  { title: "Sobre nosotros", path: "/about" },
-  { title: "Contacto", path: "/contact" },
+export const footerShopLinks: MenuItem[] = categories.map((category) => ({
+  title: category.name,
+  path: collectionPath(category.handle),
+}));
+
+export const footerInfoLinks: MenuItem[] = [
+  { title: "Acerca de", path: "/about" },
   { title: "Devoluciones", path: "/contact#devoluciones" },
+  { title: "Contacto", path: "/contact" },
 ];
