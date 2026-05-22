@@ -1,4 +1,8 @@
 /** Rutas alineadas con vercel/commerce */
+export function homePath() {
+  return "/";
+}
+
 export function productPath(handle: string) {
   return `/product/${handle}`;
 }

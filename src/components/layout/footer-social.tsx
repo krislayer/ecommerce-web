@@ -1,3 +1,4 @@
+import type { ReactElement } from "react";
 import type { SocialLink } from "@/lib/social";
 import { socialLinks } from "@/lib/social";
 import { iconControlClassName, iconControlGlyphClassName } from "@/lib/ui/icon-control";
@@ -26,7 +27,7 @@ function TikTokIcon() {
   );
 }
 
-const icons: Record<SocialLink["name"], () => JSX.Element> = {
+const icons: Record<SocialLink["name"], () => ReactElement> = {
   facebook: FacebookIcon,
   instagram: InstagramIcon,
   tiktok: TikTokIcon,

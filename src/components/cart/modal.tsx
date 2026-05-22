@@ -27,9 +27,21 @@ export default function CartModal() {
   const quantity = items.reduce((sum, item) => sum + item.quantity, 0);
   const subtotal = items.reduce((sum, item) => sum + item.variant.price * item.quantity, 0);
   const quantityRef = useRef<number | null>(null);
+  const isOpenRef = useRef(isOpen);
+  const autoCloseTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  isOpenRef.current = isOpen;
 
   const openCart = () => dispatch(setCartOpen(true));
   const closeCart = () => dispatch(setCartOpen(false));
+
+  useEffect(() => {
+    return () => {
+      if (autoCloseTimerRef.current) {
+        clearTimeout(autoCloseTimerRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (quantityRef.current === null) {
@@ -37,12 +49,22 @@ export default function CartModal() {
       return;
     }
 
-    if (quantity > quantityRef.current && quantity > 0 && !isOpen) {
+    const addedItems = quantity > quantityRef.current && quantity > 0;
+    const wasClosed = !isOpenRef.current;
+
+    if (addedItems && wasClosed) {
       dispatch(setCartOpen(true));
+      if (autoCloseTimerRef.current) {
+        clearTimeout(autoCloseTimerRef.current);
+      }
+      autoCloseTimerRef.current = setTimeout(() => {
+        dispatch(setCartOpen(false));
+        autoCloseTimerRef.current = null;
+      }, 2800);
     }
 
     quantityRef.current = quantity;
-  }, [quantity, isOpen, dispatch]);
+  }, [quantity, dispatch]);
 
   return (
     <>

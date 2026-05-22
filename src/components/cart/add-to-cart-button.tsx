@@ -5,6 +5,7 @@ import clsx from "clsx";
 import { useDispatch } from "react-redux";
 import { addItem } from "@/store/slice/cartSlice";
 import type { Product } from "@/lib/domain/entities/product";
+import { productToCartVariant } from "@/lib/product/cart-variant";
 
 export function AddToCartButton({ product, disabled }: { product: Product; disabled?: boolean }) {
   const dispatch = useDispatch();
@@ -12,16 +13,7 @@ export function AddToCartButton({ product, disabled }: { product: Product; disab
   const handleClick = () => {
     dispatch(
       addItem({
-        variant: {
-          id: `${product.id}-default`,
-          productId: product.id,
-          sku: product.id,
-          name: product.name,
-          price: product.price,
-          stock: 10,
-          attributes: product.attrs,
-          image: product.images[0],
-        },
+        variant: productToCartVariant(product),
         quantity: 1,
       }),
     );

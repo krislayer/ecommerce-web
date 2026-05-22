@@ -9,13 +9,20 @@ import { ShippingService } from "@/lib/services/shipping.service";
 import { Loading } from "@/components/loading";
 import Price from "@/components/price";
 import { CartLineItem } from "@/components/cart/cart-line-item";
-import { formatVariantLabel } from "@/lib/cart/variant-label";
 import LoadingDots from "@/components/loading-dots";
+import { buildEncodedWhatsAppOrderText } from "@/lib/whatsapp/build-order-message";
+import {
+  buildWhatsAppOrderUrl,
+  clearCheckoutPending,
+  hasPendingCheckout,
+  markCheckoutPending,
+} from "@/lib/whatsapp/checkout-handoff";
+import { generateOrderId } from "@/lib/whatsapp/order-id";
+import { homePath } from "@/lib/paths";
 
 export default function CheckoutPage() {
   const [isMobile, setIsMobile] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [desktopConfirmationVisible, setDesktopConfirmationVisible] = useState(false);
   const dispatch = useDispatch();
   const router = useRouter();
   const cartItems = useSelector((state: RootState) => state.cart.items);
@@ -31,21 +38,24 @@ export default function CheckoutPage() {
   }, []);
 
   useEffect(() => {
-    if (!isMobile) return;
-    const check = () => {
-      if (sessionStorage.getItem("orderSent") === "true") {
-        sessionStorage.removeItem("orderSent");
-        router.push("/checkout/success");
-      }
+    const completeHandoff = () => {
+      if (!hasPendingCheckout()) return;
+      clearCheckoutPending();
+      dispatch(clearCart());
+      router.push(homePath());
     };
-    check();
-    document.addEventListener("visibilitychange", () => !document.hidden && check());
-    window.addEventListener("focus", check);
+
+    const onVisibility = () => {
+      if (!document.hidden) completeHandoff();
+    };
+
+    document.addEventListener("visibilitychange", onVisibility);
+    window.addEventListener("focus", completeHandoff);
     return () => {
-      document.removeEventListener("visibilitychange", () => !document.hidden && check());
-      window.removeEventListener("focus", check);
+      document.removeEventListener("visibilitychange", onVisibility);
+      window.removeEventListener("focus", completeHandoff);
     };
-  }, [isMobile, router]);
+  }, [dispatch, router]);
 
   useEffect(() => {
     if (cartItems.length === 0 && !isSubmitting) router.push("/search");
@@ -57,42 +67,45 @@ export default function CheckoutPage() {
   const total = subtotal + shippingCost;
   const isValid = formData.name.length >= 2 && (formData.shippingMethod === "pickup" || formData.address.length > 0);
 
-  const buildMessage = () => {
-    const items = cartItems
-      .map((i) => {
-        const label = formatVariantLabel(i.variant.attributes);
-        const name = i.variant.name ?? i.variant.sku;
-        const detail = label ? `${name} (${label})` : name;
-        return `• ${detail}\n  x${i.quantity} — Q${i.variant.price.toFixed(2)}`;
-      })
-      .join("\n");
-    return encodeURIComponent(
-      `🛒 *Nuevo Pedido*\n\n${formData.name}\n\n${items}\n\nTotal: ${ShippingService.formatPrice(total)}\n\n¡Qué Chulito!`,
-    );
-  };
+  const buildOrderPayload = (orderId: string) => ({
+    orderId,
+    customerName: formData.name,
+    shippingMethod: formData.shippingMethod,
+    address: formData.address,
+    items: cartItems.map((i) => ({
+      productId: i.variant.productId,
+      name: i.variant.name ?? i.variant.sku,
+      attributes: i.variant.attributes,
+      quantity: i.quantity,
+      unitPrice: i.variant.price,
+    })),
+    subtotal,
+    shippingCost,
+    total,
+  });
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!isValid || isSubmitting) return;
     setIsSubmitting(true);
-    const num = (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "50256995320").replace(/\D/g, "");
-    const url = isMobile
-      ? `https://wa.me/${num}?text=${buildMessage()}`
-      : `https://web.whatsapp.com/send?phone=${num}&text=${buildMessage()}`;
+
+    const orderId = generateOrderId();
+    const encodedText = buildEncodedWhatsAppOrderText(buildOrderPayload(orderId));
+    const whatsappUrl = buildWhatsAppOrderUrl(encodedText, isMobile);
+
+    markCheckoutPending();
 
     if (isMobile) {
-      dispatch(clearCart());
-      sessionStorage.setItem("orderSent", "true");
-      window.location.href = url;
-    } else {
-      window.open(url, "_blank");
-      setDesktopConfirmationVisible(true);
-      setIsSubmitting(false);
+      window.location.href = whatsappUrl;
+      return;
     }
+
+    const opened = window.open(whatsappUrl, "_blank", "noopener,noreferrer");
+    if (!opened) window.location.href = whatsappUrl;
   };
 
   if ((cartItems.length === 0 && !isSubmitting) || isSubmitting) {
-    return <Loading fullScreen size="xl" label="Procesando…" />;
+    return <Loading fullScreen size="xl" label="Abriendo WhatsApp…" />;
   }
 
   const inputClass =
@@ -198,29 +211,13 @@ export default function CheckoutPage() {
           </div>
         </div>
 
-        {desktopConfirmationVisible ? (
-          <div className="rounded-lg border border-neutral-200 p-4 text-sm dark:border-neutral-800">
-            <p className="font-medium">Confirma el envío en WhatsApp Web y pulsa continuar.</p>
-            <button
-              type="button"
-              className="mt-3 w-full rounded-full border border-neutral-200 py-3 text-sm dark:border-neutral-700"
-              onClick={() => {
-                dispatch(clearCart());
-                router.push("/checkout/success");
-              }}
-            >
-              Ya envié mi pedido
-            </button>
-          </div>
-        ) : (
-          <button
-            type="submit"
-            disabled={!isValid}
-            className="block w-full rounded-full bg-blue-600 p-3 text-center text-sm font-medium text-white opacity-90 hover:opacity-100 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            {isSubmitting ? <LoadingDots className="bg-white" /> : "Enviar pedido por WhatsApp"}
-          </button>
-        )}
+        <button
+          type="submit"
+          disabled={!isValid}
+          className="block w-full rounded-full bg-blue-600 p-3 text-center text-sm font-medium text-white opacity-90 hover:opacity-100 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {isSubmitting ? <LoadingDots className="bg-white" /> : "Enviar pedido por WhatsApp"}
+        </button>
       </form>
     </div>
   );
